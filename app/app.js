@@ -1,5 +1,4 @@
-// 聚了吗 - 愿望清单小程序
-const App = {
+App({
   // 全局数据
   globalData: {
     userInfo: null,
@@ -18,6 +17,7 @@ const App = {
     // 小程序启动
     console.log('聚了吗小程序启动');
     this.initData();
+    console.log('数据初始化完成, feedItems:', this.globalData.feedItems.length);
   },
 
   // 初始化示例数据
@@ -281,6 +281,4 @@ const App = {
   addFeedItem(item) {
     this.globalData.feedItems.unshift(item);
   }
-};
-
-App(app);
+});

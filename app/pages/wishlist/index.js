@@ -10,10 +10,12 @@ Page({
   },
 
   onLoad() {
+    console.log('愿望清单页面加载');
     this.loadWishes();
   },
 
   onShow() {
+    console.log('愿望清单页面显示');
     this.loadWishes();
   },
 
@@ -28,6 +30,7 @@ Page({
   loadWishes() {
     const wishes = app.globalData.wishes || [];
     const museum = app.globalData.museum || [];
+    console.log('加载愿望, 总数:', wishes.length, '博物馆:', museum.length);
     this.setData({ wishes, museum });
     this.filterWishes();
   },

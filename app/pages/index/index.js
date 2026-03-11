@@ -9,15 +9,17 @@ Page({
       month: 0,
       day: 0
     },
-    likedItems: new Set()
+    likedItems: []
   },
 
   onLoad() {
+    console.log('首页加载');
     this.initDate();
     this.loadFeedData();
   },
 
   onShow() {
+    console.log('首页显示, app.globalData:', app.globalData);
     // 每次显示时刷新数据
     this.loadFeedData();
   },
@@ -45,11 +47,12 @@ Page({
   // 加载动态数据
   loadFeedData() {
     const feedItems = app.globalData.feedItems || [];
+    console.log('加载动态数据:', feedItems.length, '条');
     // 格式化数据
     this.setData({
       feedItems: feedItems.map(item => ({
         ...item,
-        liked: this.data.likedItems.has(item.id)
+        liked: this.data.likedItems.includes(item.id)
       }))
     });
   },
@@ -60,8 +63,13 @@ Page({
     const items = this.data.feedItems.map(item => {
       if (item.id === id) {
         const liked = !item.liked;
-        const newLikedItems = new Set(this.data.likedItems);
-        liked ? newLikedItems.add(id) : newLikedItems.delete(id);
+        const newLikedItems = [...this.data.likedItems];
+        if (liked) {
+          newLikedItems.push(id);
+        } else {
+          const idx = newLikedItems.indexOf(id);
+          if (idx > -1) newLikedItems.splice(idx, 1);
+        }
         this.setData({ likedItems: newLikedItems });
         return {
           ...item,
