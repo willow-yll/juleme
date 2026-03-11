@@ -5,20 +5,24 @@ Page({
   data: {
     stats: {
       wishes: 0,
-      museum: 0,
       moments: 0,
+      circles: 0,
       friends: 12
     }
   },
 
   onShow() {
+    if (!app.globalData.currentCircleId) {
+      wx.redirectTo({ url: '/pages/circle/index' });
+      return;
+    }
     this.loadStats();
   },
 
   // 加载统计数据
   loadStats() {
     const wishes = app.globalData.wishes ? app.globalData.wishes.length : 0;
-    const museum = app.globalData.museum ? app.globalData.museum.length : 0;
+    const circles = app.globalData.circles ? app.globalData.circles.length : 0;
 
     let moments = 0;
     if (app.globalData.pets) {
@@ -35,17 +39,10 @@ Page({
     this.setData({
       stats: {
         wishes,
-        museum,
         moments,
+        circles,
         friends: 12
       }
-    });
-  },
-
-  // 跳转回忆博物馆
-  goToMuseum() {
-    wx.navigateTo({
-      url: '/pages/wishlist/museum/index'
     });
   },
 
@@ -58,7 +55,7 @@ Page({
 
   // 跳转萌宠墙
   goToMoments() {
-    wx.switchTab({
+    wx.navigateTo({
       url: '/pages/moment/index'
     });
   },
@@ -67,6 +64,13 @@ Page({
   goToAnniversary() {
     wx.switchTab({
       url: '/pages/anniversary/index'
+    });
+  },
+
+  // 跳转圈子
+  goToCircles() {
+    wx.navigateTo({
+      url: '/pages/circle/index'
     });
   },
 

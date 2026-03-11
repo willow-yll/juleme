@@ -1,0 +1,255 @@
+/* 圈子页面样式 */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  position: relative;
+}
+
+/* 头部 */
+.header {
+  background: linear-gradient(135deg, #9B7DED 0%, #B794F6 100%);
+  padding: 60rpx 32rpx 40rpx;
+}
+
+.header-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #fff;
+  display: block;
+}
+
+.header-subtitle {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 8rpx;
+}
+
+/* 圈子列表 */
+.circle-list {
+  padding: 24rpx;
+}
+
+.circle-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.circle-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+}
+
+.circle-avatar text {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.circle-info {
+  flex: 1;
+}
+
+.circle-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+}
+
+.circle-desc {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+.circle-role {
+  padding: 8rpx 16rpx;
+  background: linear-gradient(135deg, var(--secondary), #FFCBA4);
+  color: #fff;
+  font-size: 22rpx;
+  border-radius: 16rpx;
+  margin-right: 12rpx;
+}
+
+.circle-arrow {
+  font-size: 40rpx;
+  color: var(--text-muted);
+}
+
+/* 待确认区域 */
+.pending-section {
+  padding: 24rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.pending-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff9e6;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 12rpx;
+  border: 2rpx solid #ffe4b3;
+}
+
+.pending-info {
+  flex: 1;
+}
+
+.pending-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+}
+
+.pending-circle {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+.pending-actions {
+  display: flex;
+  gap: 12rpx;
+}
+
+.btn-accept,
+.btn-reject {
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  border-radius: 20rpx;
+  border: none;
+}
+
+.btn-accept {
+  background: #4CAF50;
+  color: #fff;
+}
+
+.btn-reject {
+  background: #f5f5f5;
+  color: var(--text-light);
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.empty-hint {
+  font-size: 26rpx;
+  color: var(--text-muted);
+  margin-top: 12rpx;
+}
+
+/* 底部占位 */
+.tabbar-spacer {
+  height: 120rpx;
+}
+
+/* 悬浮按钮 */
+.fab {
+  position: fixed;
+  bottom: 160rpx;
+  right: 32rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #B794F6);
+  box-shadow: 0 8rpx 24rpx rgba(155, 125, 237, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-icon {
+  font-size: 56rpx;
+  color: #fff;
+  font-weight: 300;
+}
+
+/* FAB 菜单 */
+.fab-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+}
+
+.fab-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.fab-options {
+  position: absolute;
+  bottom: 280rpx;
+  right: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.fab-option {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 20rpx 32rpx;
+  border-radius: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.fab-option-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.fab-option-text {
+  font-size: 28rpx;
+  color: var(--text);
+}

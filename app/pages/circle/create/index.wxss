@@ -1,0 +1,101 @@
+/* 创建圈子样式 */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding-bottom: 140rpx;
+}
+
+.form {
+  padding: 32rpx 24rpx;
+}
+
+.form-group {
+  margin-bottom: 40rpx;
+}
+
+.label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--text);
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.input {
+  width: 100%;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.textarea {
+  width: 100%;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  min-height: 160rpx;
+  box-sizing: border-box;
+}
+
+/* 颜色选择 */
+.color-list {
+  display: flex;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+
+.color-item {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 16rpx;
+  border: 4rpx solid transparent;
+}
+
+.color-item.active {
+  border-color: var(--text);
+}
+
+/* 圈子号码 */
+.code-display {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  text-align: center;
+}
+
+.code {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 8rpx;
+  display: block;
+}
+
+.code-hint {
+  font-size: 24rpx;
+  color: var(--text-muted);
+  margin-top: 12rpx;
+  display: block;
+}
+
+/* 提交按钮 */
+.submit-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx;
+  background: #fff;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 24rpx 0;
+  font-size: 32rpx;
+}

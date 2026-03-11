@@ -143,6 +143,7 @@ Page({
       restaurant: '餐厅',
       travel: '旅行',
       sport: '运动',
+      entertainment: '娱乐',
       other: '其他'
     };
 

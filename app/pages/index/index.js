@@ -20,6 +20,10 @@ Page({
 
   onShow() {
     console.log('首页显示, app.globalData:', app.globalData);
+    if (!app.globalData.currentCircleId) {
+      wx.redirectTo({ url: '/pages/circle/index' });
+      return;
+    }
     // 每次显示时刷新数据
     this.loadFeedData();
   },

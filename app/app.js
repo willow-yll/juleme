@@ -3,6 +3,11 @@ App({
   globalData: {
     userInfo: null,
     hasLogin: false,
+    // 圈子相关
+    circles: [],
+    currentCircleId: null,
+    currentCircle: null,
+    pendingRequests: [],
     // 示例数据 - 实际项目中应从云端获取
     feedItems: [],
     wishes: [],

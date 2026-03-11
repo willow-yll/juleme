@@ -1,21 +1,24 @@
-// 愿望清单页面
+// 活动页面
 const app = getApp();
 
 Page({
   data: {
     wishes: [],
     filteredWishes: [],
-    activeTab: 'all',
-    museum: []
+    activeTab: 'all'
   },
 
   onLoad() {
-    console.log('愿望清单页面加载');
+    console.log('活动页面加载');
     this.loadWishes();
   },
 
   onShow() {
-    console.log('愿望清单页面显示');
+    console.log('活动页面显示');
+    if (!app.globalData.currentCircleId) {
+      wx.redirectTo({ url: '/pages/circle/index' });
+      return;
+    }
     this.loadWishes();
   },
 
@@ -26,12 +29,18 @@ Page({
     }, 1000);
   },
 
-  // 加载愿望数据
+  // 加载活动数据
   loadWishes() {
     const wishes = app.globalData.wishes || [];
-    const museum = app.globalData.museum || [];
-    console.log('加载愿望, 总数:', wishes.length, '博物馆:', museum.length);
-    this.setData({ wishes, museum });
+    console.log('加载活动, 总数:', wishes.length);
+
+    // 标记当前用户是否已报名
+    const wishesWithClaim = wishes.map(w => ({
+      ...w,
+      hasClaimed: w.claimed.some(c => c.user.name === '我')
+    }));
+
+    this.setData({ wishes: wishesWithClaim });
     this.filterWishes();
   },
 
@@ -42,23 +51,20 @@ Page({
     this.filterWishes();
   },
 
-  // 过滤愿望
+  // 过滤活动
   filterWishes() {
-    const { wishes, activeTab, museum } = this.data;
+    const { wishes, activeTab } = this.data;
 
     let filtered = [];
     switch (activeTab) {
       case 'all':
-        filtered = wishes.filter(w => w.status === 'active');
+        filtered = wishes;
         break;
       case 'active':
         filtered = wishes.filter(w => w.status === 'active');
         break;
       case 'done':
         filtered = wishes.filter(w => w.status === 'done');
-        break;
-      case 'museum':
-        filtered = museum;
         break;
     }
 
@@ -88,7 +94,7 @@ Page({
     const diff = target - now;
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-    if (days < 0) return '已过期';
+    if (days < 0) return '已结束';
     if (days === 0) return '就是今天！';
     return `还剩 ${days} 天`;
   },
@@ -101,30 +107,29 @@ Page({
     });
   },
 
-  // 认领愿望
+  // 报名活动
   handleClaim(e) {
     const { id } = e.currentTarget.dataset;
     const wish = this.data.wishes.find(w => w.id === id);
 
     if (!wish) return;
 
-    // 检查是否已认领
-    const isClaimed = wish.claimed.some(c => c.user.name === '我');
-    if (isClaimed) {
-      wx.showToast({ title: '已经认领过了', icon: 'none' });
+    // 检查是否已报名
+    if (wish.hasClaimed) {
+      wx.showToast({ title: '已经报名过了', icon: 'none' });
       return;
     }
 
     // 检查是否已满
     if (wish.claimed.length >= wish.maxClaim) {
-      wx.showToast({ title: '已满员啦', icon: 'none' });
+      wx.showToast({ title: '名额已满啦', icon: 'none' });
       return;
     }
 
-    // 模拟认领
+    // 报名
     const newClaimed = [...wish.claimed, { user: { avatar: 'https://picsum.photos/100', name: '我' }, wantGo: true }];
     const newWishes = this.data.wishes.map(w =>
-      w.id === id ? { ...w, claimed: newClaimed } : w
+      w.id === id ? { ...w, claimed: newClaimed, hasClaimed: true } : w
     );
 
     this.setData({ wishes: newWishes });
@@ -135,27 +140,14 @@ Page({
       id: Date.now(),
       user: { avatar: 'https://picsum.photos/100', name: '我' },
       type: 'wish',
-      content: '认领了愿望',
+      content: '报名了活动',
       title: wish.title,
       time: '刚刚',
       likes: 0,
       comments: []
     });
 
-    wx.showToast({ title: '认领成功！', icon: 'success' });
-  },
-
-  // 点赞
-  handleLike(e) {
-    const { id } = e.currentTarget.dataset;
-    const wishes = this.data.wishes.map(w => {
-      if (w.id === id) {
-        return { ...w, likes: w.likes + 1 };
-      }
-      return w;
-    });
-    this.setData({ wishes });
-    this.filterWishes();
+    wx.showToast({ title: '报名成功！', icon: 'success' });
   },
 
   // 阻止冒泡
@@ -170,7 +162,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '聚了吗 - 愿望清单',
+      title: '聚了吗 - 活动',
       path: '/pages/wishlist/index'
     };
   }

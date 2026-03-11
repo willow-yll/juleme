@@ -14,6 +14,10 @@ Page({
   },
 
   onShow() {
+    if (!app.globalData.currentCircleId) {
+      wx.redirectTo({ url: '/pages/circle/index' });
+      return;
+    }
     this.loadAnniversaries();
   },
 

@@ -1,0 +1,70 @@
+/* 加入圈子样式 */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding-bottom: 140rpx;
+}
+
+.header {
+  padding: 60rpx 32rpx 40rpx;
+  text-align: center;
+}
+
+.header-icon {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.header-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+}
+
+.header-desc {
+  font-size: 26rpx;
+  color: var(--text-muted);
+  margin-top: 8rpx;
+}
+
+.code-input-section {
+  padding: 32rpx;
+}
+
+.code-input {
+  width: 100%;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  font-size: 56rpx;
+  text-align: center;
+  letter-spacing: 8rpx;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.code-input::placeholder {
+  color: #ddd;
+  letter-spacing: 8rpx;
+}
+
+/* 提交按钮 */
+.submit-btn {
+  padding: 24rpx 32rpx;
+}
+
+.btn-block {
+  width: 100%;
+  padding: 24rpx 0;
+  font-size: 32rpx;
+}
+
+.tip {
+  text-align: center;
+  padding: 32rpx;
+  font-size: 24rpx;
+  color: var(--text-muted);
+}

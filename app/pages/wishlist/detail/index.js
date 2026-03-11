@@ -1,4 +1,4 @@
-// 愿望详情页面
+// 活动详情页面
 const app = getApp();
 
 Page({
@@ -16,7 +16,7 @@ Page({
     }
   },
 
-  // 加载愿望
+  // 加载活动
   loadWish(id) {
     const wish = app.globalData.wishes.find(w => w.id == id);
 
@@ -52,19 +52,25 @@ Page({
     const diff = target - now;
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-    if (days < 0) return '已过期';
+    if (days < 0) return '已结束';
     if (days === 0) return '就是今天！';
     if (days === 1) return '还剩 1 天';
     return `还剩 ${days} 天`;
   },
 
-  // 认领
+  // 报名
   handleClaim() {
     const { wish } = this.data;
     if (!wish) return;
 
+    const alreadyClaimed = wish.claimed.some(c => c.user.name === '我');
+    if (alreadyClaimed) {
+      wx.showToast({ title: '已经报名过了', icon: 'none' });
+      return;
+    }
+
     if (wish.claimed.length >= wish.maxClaim) {
-      wx.showToast({ title: '已满员啦', icon: 'none' });
+      wx.showToast({ title: '名额已满啦', icon: 'none' });
       return;
     }
 
@@ -84,68 +90,18 @@ Page({
       isClaimed: true
     });
 
-    wx.showToast({ title: '认领成功！', icon: 'success' });
-  },
-
-  // 点亮愿望
-  handleLightUp() {
-    const { wish } = this.data;
-
-    wx.showModal({
-      title: '点亮愿望',
-      content: '确认点亮此愿望？将进入回忆博物馆！',
-      confirmText: '点亮',
-      success: (res) => {
-        if (res.confirm) {
-          // 添加到回忆博物馆
-          const museumItem = {
-            id: Date.now(),
-            wish: { title: wish.title, category: wish.category },
-            images: [],
-            participants: wish.claimed.map(c => c.user.name),
-            feeling: '',
-            createdAt: new Date().toISOString().split('T')[0]
-          };
-
-          app.globalData.museum.push(museumItem);
-
-          // 更新愿望状态
-          const newWishes = app.globalData.wishes.map(w =>
-            w.id === wish.id ? { ...w, status: 'done' } : w
-          );
-          app.globalData.wishes = newWishes;
-
-          // 添加动态
-          app.globalData.feedItems.unshift({
-            id: Date.now(),
-            user: { avatar: 'https://picsum.photos/100', name: '我' },
-            type: 'wish',
-            content: '点亮了愿望',
-            title: wish.title,
-            time: '刚刚',
-            likes: 0,
-            comments: []
-          });
-
-          wx.showToast({ title: '已点亮！✨', icon: 'success' });
-
-          setTimeout(() => {
-            wx.navigateBack();
-          }, 1500);
-        }
-      }
-    });
+    wx.showToast({ title: '报名成功！', icon: 'success' });
   },
 
   // 分享
   handleShare() {
-    // 触发分享
+    wx.showToast({ title: '点击右上角分享', icon: 'none' });
   },
 
   onShareAppMessage() {
     const { wish } = this.data;
     return {
-      title: wish ? `一起完成 "${wish.title}" 吧！` : '聚了吗 - 愿望清单',
+      title: wish ? `一起参加“${wish.title}”吧！` : '聚了吗 - 活动',
       path: `/pages/wishlist/detail?id=${wish?.id}`
     };
   }

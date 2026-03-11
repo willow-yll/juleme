@@ -28,11 +28,11 @@
     </view>
   </view>
 
-  <!-- 愿望表单 -->
+  <!-- 活动表单 -->
   <view class="form" wx:if="{{type === 'wish'}}">
     <view class="form-group">
-      <text class="label">愿望标题</text>
-      <input class="input" placeholder="许一个愿望吧~" bindinput="onTitleInput" value="{{form.title}}" />
+      <text class="label">活动标题</text>
+      <input class="input input-title" placeholder="填写活动标题~" bindinput="onTitleInput" value="{{form.title}}" />
     </view>
 
     <view class="form-group">
@@ -68,6 +68,14 @@
           <text>运动</text>
         </view>
         <view
+          class="category-item {{form.category === 'entertainment' ? 'active' : ''}}"
+          bindtap="selectCategory"
+          data-category="entertainment"
+        >
+          <text>🎉</text>
+          <text>娱乐</text>
+        </view>
+        <view
           class="category-item {{form.category === 'other' ? 'active' : ''}}"
           bindtap="selectCategory"
           data-category="other"
@@ -79,19 +87,19 @@
     </view>
 
     <view class="form-group">
-      <text class="label">目标日期</text>
+      <text class="label">活动日期</text>
       <picker mode="date" value="{{form.targetDate}}" bindchange="onDateChange">
         <view class="picker">
           <text wx:if="{{form.targetDate}}">{{form.targetDate}}</text>
-          <text wx:else class="placeholder">选择目标日期</text>
+          <text wx:else class="placeholder">选择活动日期</text>
         </view>
       </picker>
     </view>
 
     <view class="form-group">
-      <text class="label">最大认领人数</text>
+      <text class="label">最大参与人数</text>
       <view class="claim-slider">
-        <slider min="1" max="10" value="{{form.maxClaim}}" bindchange="onMaxClaimChange" activeColor="#9B7DED" block-color="#9B7DED" />
+        <slider min="1" max="30" value="{{form.maxClaim}}" bindchange="onMaxClaimChange" activeColor="#9B7DED" block-color="#9B7DED" />
         <text class="slider-value">{{form.maxClaim}}人</text>
       </view>
     </view>

@@ -64,6 +64,7 @@
 .tag-restaurant { background: #FFF3E0; }
 .tag-travel { background: #E3F2FD; }
 .tag-sport { background: #E8F5E9; }
+.tag-entertainment { background: #FCE4EC; }
 .tag-other { background: #F3E5F5; }
 
 .category-icon {
@@ -78,6 +79,7 @@
 .tag-restaurant .category-text { color: #FF9800; }
 .tag-travel .category-text { color: #2196F3; }
 .tag-sport .category-text { color: #4CAF50; }
+.tag-entertainment .category-text { color: #E91E63; }
 .tag-other .category-text { color: #9C27B0; }
 
 /* 愿望内容 */
@@ -195,6 +197,11 @@
 .action-btn-secondary {
   background: var(--bg);
   color: var(--text-light);
+}
+
+.action-btn-primary.disabled {
+  background: #ccc;
+  color: #fff;
 }
 
 /* 底部占位 */

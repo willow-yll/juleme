@@ -1,0 +1,27 @@
+<!-- 加入圈子 -->
+<view class="page">
+  <view class="header">
+    <text class="header-icon">🔗</text>
+    <text class="header-title">输入圈子号码</text>
+    <text class="header-desc">输入朋友给你的6位圈子号码</text>
+  </view>
+
+  <view class="code-input-section">
+    <input
+      class="code-input"
+      type="number"
+      maxlength="6"
+      placeholder="000000"
+      bindinput="onCodeInput"
+      value="{{code}}"
+    />
+  </view>
+
+  <view class="submit-btn">
+    <button class="btn btn-primary btn-block" bindtap="handleJoin">加入圈子</button>
+  </view>
+
+  <view class="tip">
+    <text>加入申请提交后，圈主确认后即可加入</text>
+  </view>
+</view>

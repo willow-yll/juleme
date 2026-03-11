@@ -1,4 +1,4 @@
-<!-- 愿望详情页面 -->
+<!-- 活动详情页面 -->
 <view class="page" wx:if="{{wish}}">
   <!-- 顶部图片区 -->
   <view class="hero-image">
@@ -9,7 +9,7 @@
     </view>
   </view>
 
-  <!-- 愿望信息 -->
+  <!-- 活动信息 -->
   <view class="content">
     <view class="wish-info">
       <text class="wish-title">{{wish.title}}</text>
@@ -25,9 +25,9 @@
       </view>
     </view>
 
-    <!-- 目标日期 -->
+    <!-- 活动日期 -->
     <view class="section date-section">
-      <text class="section-title">目标日期</text>
+      <text class="section-title">活动日期</text>
       <view class="date-card">
         <text class="date-text">{{wish.targetDate}}</text>
         <text class="date-countdown">{{countdownText}}</text>
@@ -45,9 +45,9 @@
       </view>
     </view>
 
-    <!-- 认领列表 -->
+    <!-- 报名列表 -->
     <view class="section claim-section">
-      <text class="section-title">认领情况 ({{wish.claimed.length}}/{{wish.maxClaim}})</text>
+      <text class="section-title">报名情况 ({{wish.claimed.length}}/{{wish.maxClaim}})</text>
       <view class="claim-list">
         <view class="claim-item" wx:for="{{wish.claimed}}" wx:key="index">
           <view class="claimer-info">
@@ -59,7 +59,7 @@
           </view>
         </view>
         <view class="empty-claim" wx:if="{{wish.claimed.length === 0}}">
-          <text>还没有人认领，快去邀请朋友吧！</text>
+          <text>还没有人报名，快去邀请朋友吧！</text>
         </view>
       </view>
     </view>
@@ -67,10 +67,10 @@
     <!-- 操作按钮 -->
     <view class="actions">
       <button class="btn btn-primary" bindtap="handleClaim" wx:if="{{!isClaimed}}">
-        我想去 (+1)
+        我想去
       </button>
-      <button class="btn btn-secondary" bindtap="handleLightUp" wx:if="{{wish.status === 'active'}}">
-        ✨ 点亮此愿望
+      <button class="btn btn-primary" disabled wx:else>
+        已报名
       </button>
       <button class="btn btn-outline" bindtap="handleShare">
         邀请朋友
