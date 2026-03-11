@@ -1,0 +1,220 @@
+/* 档案详情样式 */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding-bottom: 140rpx;
+}
+
+/* 头部 */
+.header {
+  height: 480rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-bg {
+  width: 100%;
+  height: 100%;
+  filter: blur(20rpx);
+}
+
+.header-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40rpx;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.big-avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  border: 6rpx solid #fff;
+  margin-bottom: 16rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.2);
+}
+
+.name {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4rpx;
+}
+
+.breed,
+.age {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 区块 */
+.section {
+  background: #fff;
+  margin: 24rpx;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+/* 性格标签 */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tag {
+  font-size: 26rpx;
+  padding: 12rpx 20rpx;
+  background: linear-gradient(135deg, rgba(155, 125, 237, 0.1), rgba(125, 211, 192, 0.1));
+  color: var(--primary);
+  border-radius: 24rpx;
+}
+
+/* 徽章 */
+.badges-list {
+  display: flex;
+  gap: 16rpx;
+}
+
+.badge-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx;
+  background: var(--bg);
+  border-radius: 16rpx;
+  opacity: 0.5;
+}
+
+.badge-item.unlocked {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(155, 125, 237, 0.1), rgba(255, 171, 118, 0.1));
+}
+
+.badge-icon {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.badge-name {
+  font-size: 24rpx;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.badge-progress {
+  font-size: 22rpx;
+  color: var(--text-muted);
+  margin-top: 4rpx;
+}
+
+/* 里程碑 */
+.milestone-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.milestone-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx;
+  background: var(--bg);
+  border-radius: 12rpx;
+}
+
+.milestone-icon {
+  font-size: 40rpx;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 12rpx;
+}
+
+.milestone-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.milestone-text {
+  font-size: 28rpx;
+  color: var(--text);
+}
+
+.milestone-date {
+  font-size: 22rpx;
+  color: var(--text-muted);
+}
+
+.milestone-empty {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-muted);
+}
+
+/* 统计数据 */
+.stats-grid {
+  display: flex;
+  gap: 16rpx;
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx;
+  background: var(--bg);
+  border-radius: 16rpx;
+}
+
+.stat-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+/* 操作 */
+.actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx;
+  background: #fff;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+  display: flex;
+  gap: 16rpx;
+  z-index: 100;
+}
+
+.actions .btn {
+  flex: 1;
+}

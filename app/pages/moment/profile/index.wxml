@@ -1,0 +1,85 @@
+<!-- 宠物/娃档案 -->
+<view class="page" wx:if="{{item}}">
+  <!-- 头部 -->
+  <view class="header">
+    <image class="header-bg" src="{{item.avatar}}" mode="aspectFill" />
+    <view class="header-overlay">
+      <image class="big-avatar" src="{{item.avatar}}" />
+      <text class="name">{{item.name}}</text>
+      <text class="breed" wx:if="{{item.breed}}">{{item.breed}}</text>
+      <text class="age" wx:if="{{item.age}}">{{item.age}}</text>
+    </view>
+  </view>
+
+  <!-- 性格标签 -->
+  <view class="section personality">
+    <text class="section-title">性格关键词</text>
+    <view class="tags">
+      <text class="tag" wx:for="{{item.personality}}" wx:key="index">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 成就徽章 -->
+  <view class="section badges">
+    <text class="section-title">🏆 成就徽章</text>
+    <view class="badges-list">
+      <view class="badge-item {{item.cans >= 100 ? 'unlocked' : ''}}">
+        <text class="badge-icon">🥫</text>
+        <text class="badge-name">万众宠爱</text>
+        <text class="badge-progress">{{item.cans || 0}}/100</text>
+      </view>
+      <view class="badge-item {{item.hearts >= 500 ? 'unlocked' : ''}}">
+        <text class="badge-icon">❤️</text>
+        <text class="badge-name">超级明星</text>
+        <text class="badge-progress">{{item.hearts || 0}}/500</text>
+      </view>
+      <view class="badge-item {{(item.moments && item.moments.length >= 50) ? 'unlocked' : ''}}">
+        <text class="badge-icon">📸</text>
+        <text class="badge-name">成长记录</text>
+        <text class="badge-progress">{{item.moments ? item.moments.length : 0}}/50</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 里程碑 -->
+  <view class="section milestones">
+    <text class="section-title">🎯 重要里程碑</text>
+    <view class="milestone-list">
+      <view class="milestone-item" wx:for="{{item.milestones}}" wx:key="index">
+        <view class="milestone-icon">{{item.icon}}</view>
+        <view class="milestone-content">
+          <text class="milestone-text">{{item.content}}</text>
+          <text class="milestone-date">{{item.date}}</text>
+        </view>
+      </view>
+      <view class="milestone-empty" wx:if="{{!item.milestones || item.milestones.length === 0}}">
+        <text>还没有里程碑记录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计数据 -->
+  <view class="section stats">
+    <text class="section-title">📊 数据统计</text>
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-num">{{item.cans || 0}}</text>
+        <text class="stat-label">🥫 罐头</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{item.hearts || 0}}</text>
+        <text class="stat-label">❤️ 爱心</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{item.moments ? item.moments.length : 0}}</text>
+        <text class="stat-label">📸 瞬间</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="actions">
+    <button class="btn btn-primary" bindtap="handleFeed">🥫 投喂罐头</button>
+    <button class="btn btn-secondary" bindtap="handleHeart">❤️ 送爱心</button>
+  </view>
+</view>

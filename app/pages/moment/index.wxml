@@ -1,0 +1,117 @@
+<!-- 萌宠/萌娃墙 -->
+<view class="page">
+  <!-- 顶部切换 -->
+  <view class="tabs">
+    <view
+      class="tab {{activeType === 'pet' ? 'active' : ''}}"
+      bindtap="switchType"
+      data-type="pet"
+    >
+      🐱 萌宠
+    </view>
+    <view
+      class="tab {{activeType === 'baby' ? 'active' : ''}}"
+      bindtap="switchType"
+      data-type="baby"
+    >
+      👶 萌娃
+    </view>
+  </view>
+
+  <!-- 档案列表 -->
+  <scroll-view class="profiles" scroll-x wx:if="{{currentItems.length > 0}}">
+    <view class="profile-scroll">
+      <view
+        class="profile-card"
+        wx:for="{{currentItems}}"
+        wx:key="id"
+        bindtap="goToProfile"
+        data-id="{{item.id}}"
+        data-type="{{activeType}}"
+      >
+        <image class="profile-avatar" src="{{item.avatar}}" mode="aspectFill" />
+        <text class="profile-name">{{item.name}}</text>
+        <view class="profile-stats">
+          <text>🥫 {{item.cans}}</text>
+          <text>❤️ {{item.hearts}}</text>
+        </view>
+        <view class="profile-badges" wx:if="{{item.badges && item.badges.length > 0}}">
+          <text class="badge" wx:for="{{item.badges}}" wx:for-item="badge" wx:key="index">{{badge}}</text>
+        </view>
+      </view>
+
+      <!-- 添加按钮 -->
+      <view class="profile-card add-card" bindtap="goToCreate">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加{{activeType === 'pet' ? '宠物' : '宝宝'}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 时光轴 -->
+  <view class="timeline">
+    <view class="timeline-header">
+      <text class="timeline-title">📸 时光轴</text>
+    </view>
+
+    <view class="timeline-list">
+      <block wx:for="{{currentMoments}}" wx:key="id">
+        <view class="moment-card">
+          <!-- 用户信息 -->
+          <view class="moment-header">
+            <image class="moment-avatar" src="{{item.avatar || 'https://picsum.photos/100'}}" />
+            <view class="moment-info">
+              <text class="moment-name">{{item.name || '我'}}</text>
+              <text class="moment-time">{{item.createdAt}}</text>
+            </view>
+            <text class="moment-age" wx:if="{{item.age}}">{{item.age}}</text>
+          </view>
+
+          <!-- 内容 -->
+          <view class="moment-content">
+            <text>{{item.content}}</text>
+          </view>
+
+          <!-- 图片 -->
+          <view class="moment-images" wx:if="{{item.image}}">
+            <image src="{{item.image}}" mode="aspectFill" class="moment-img" />
+          </view>
+          <view class="moment-images grid" wx:if="{{item.images}}">
+            <image
+              wx:for="{{item.images}}"
+              wx:for-item="img"
+              src="{{img}}"
+              mode="aspectFill"
+              class="moment-img"
+              wx:key="index"
+            />
+          </view>
+
+          <!-- 互动 -->
+          <view class="moment-actions">
+            <view class="action-btn" bindtap="handleCans" data-id="{{item.id}}">
+              <text class="action-icon">🥫</text>
+              <text class="action-count">{{item.cans || 0}}</text>
+            </view>
+            <view class="action-btn" bindtap="handleHearts" data-id="{{item.id}}">
+              <text class="action-icon">❤️</text>
+              <text class="action-count">{{item.hearts || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty" wx:if="{{currentMoments.length === 0}}">
+        <text class="empty-icon">{{activeType === 'pet' ? '🐱' : '👶'}}</text>
+        <text class="empty-text">还没有{{activeType === 'pet' ? '萌宠' : '萌娃'}}记录</text>
+        <view class="btn btn-primary mt-20" bindtap="goToCreate">
+          晒出{{activeType === 'pet' ? '萌宠' : '萌娃'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部占位 -->
+  <view class="tabbar-spacer"></view>
+</view>

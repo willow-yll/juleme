@@ -1,0 +1,80 @@
+<!-- 首页 - 动态墙 -->
+<view class="page">
+  <!-- 顶部氛围区 -->
+  <view class="header">
+    <view class="header-gradient">
+      <view class="weather-icon">☀️</view>
+      <view class="date-info">
+        <text class="date-week">{{currentDate.week}}</text>
+        <text class="date-full">{{currentDate.month}}月{{currentDate.day}}日</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 动态卡片流 -->
+  <view class="feed-container">
+    <view class="feed-list">
+      <block wx:for="{{feedItems}}" wx:key="id">
+        <view class="feed-card animate-fadeIn" style="animation-delay: {{index * 0.1}}s">
+          <!-- 用户信息 -->
+          <view class="feed-header">
+            <image class="user-avatar" src="{{item.user.avatar}}" mode="aspectFill" />
+            <view class="user-info">
+              <text class="user-name">{{item.user.name}}</text>
+              <text class="feed-time">{{item.time}}</text>
+            </view>
+            <view class="type-tag tag-{{item.type}}">
+              <text wx:if="{{item.type === 'wish'}}">🎯</text>
+              <text wx:elif="{{item.type === 'moment'}}">🐱</text>
+              <text wx:elif="{{item.type === 'anniversary'}}">💕</text>
+            </view>
+          </view>
+
+          <!-- 内容 -->
+          <view class="feed-content">
+            <text class="feed-action">{{item.content}}</text>
+            <text class="feed-title">{{item.title}}</text>
+          </view>
+
+          <!-- 图片 -->
+          <view class="feed-image" wx:if="{{item.image}}">
+            <image src="{{item.image}}" mode="aspectFill" />
+          </view>
+
+          <!-- 互动区 -->
+          <view class="feed-actions">
+            <view class="action-btn" bindtap="handleLike" data-id="{{item.id}}">
+              <text class="action-icon">{{item.liked ? '❤️' : '🤍'}}</text>
+              <text class="action-count">{{item.likes}}</text>
+            </view>
+            <view class="action-btn" bindtap="handleComment" data-id="{{item.id}}">
+              <text class="action-icon">💬</text>
+              <text class="action-count">{{item.comments.length}}</text>
+            </view>
+          </view>
+
+          <!-- 弹幕评论 -->
+          <view class="barrage-list" wx:if="{{item.comments && item.comments.length > 0}}">
+            <view class="barrage-item" wx:for="{{item.comments}}" wx:for-item="comment" wx:key="index">
+              {{comment}}
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty" wx:if="{{feedItems.length === 0}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无动态，快去发现有趣的内容吧</text>
+    </view>
+  </view>
+
+  <!-- 底部TabBar占位 -->
+  <view class="tabbar-spacer"></view>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab" bindtap="handleCreate">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

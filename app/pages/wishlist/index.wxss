@@ -1,0 +1,229 @@
+/* 愿望清单样式 */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* 筛选标签 */
+.tabs {
+  display: flex;
+  background: #fff;
+  padding: 16rpx 24rpx;
+  gap: 16rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: var(--text-light);
+  border-radius: 24rpx;
+  transition: all 0.3s ease;
+}
+
+.tab.active {
+  background: linear-gradient(135deg, var(--primary), #B794F6);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 愿望列表 */
+.wishlist {
+  height: calc(100vh - 100rpx - 120rpx);
+}
+
+.wish-container {
+  padding: 24rpx;
+}
+
+/* 愿望卡片 */
+.wish-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow);
+}
+
+/* 分类标签 */
+.wish-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.tag-restaurant { background: #FFF3E0; }
+.tag-travel { background: #E3F2FD; }
+.tag-sport { background: #E8F5E9; }
+.tag-other { background: #F3E5F5; }
+
+.category-icon {
+  font-size: 24rpx;
+}
+
+.category-text {
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.tag-restaurant .category-text { color: #FF9800; }
+.tag-travel .category-text { color: #2196F3; }
+.tag-sport .category-text { color: #4CAF50; }
+.tag-other .category-text { color: #9C27B0; }
+
+/* 愿望内容 */
+.wish-content {
+  margin-bottom: 16rpx;
+}
+
+.wish-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.wish-desc {
+  font-size: 26rpx;
+  color: var(--text-light);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 认领状态 */
+.wish-claim {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-top: 1rpx solid var(--border);
+  border-bottom: 1rpx solid var(--border);
+}
+
+.creator {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.avatar-sm {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+}
+
+.creator-name {
+  font-size: 24rpx;
+  color: var(--text-light);
+}
+
+.claimers {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.claim-count {
+  font-size: 24rpx;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* 进度条 */
+.wish-progress {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin: 16rpx 0;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 12rpx;
+  background: var(--bg);
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 22rpx;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* 操作按钮 */
+.wish-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.action-btn-primary,
+.action-btn-secondary {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.action-btn-primary {
+  background: linear-gradient(135deg, var(--primary), #B794F6);
+  color: #fff;
+}
+
+.action-btn-secondary {
+  background: var(--bg);
+  color: var(--text-light);
+}
+
+/* 底部占位 */
+.tabbar-spacer {
+  height: 120rpx;
+}
+
+/* 悬浮按钮 */
+.fab {
+  position: fixed;
+  bottom: 160rpx;
+  right: 32rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #B794F6);
+  box-shadow: 0 8rpx 24rpx rgba(155, 125, 237, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-icon {
+  font-size: 56rpx;
+  color: #fff;
+  font-weight: 300;
+}

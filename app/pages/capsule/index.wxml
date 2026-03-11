@@ -1,0 +1,96 @@
+<!-- 年度报告 -->
+<view class="page">
+  <!-- 封面 -->
+  <view class="cover">
+    <text class="cover-year">2026</text>
+    <text class="cover-title">年度回顾</text>
+    <text class="cover-subtitle">聚了吗</text>
+  </view>
+
+  <!-- 词云 -->
+  <view class="section word-cloud">
+    <text class="section-icon">☁️</text>
+    <text class="section-title">年度热词</text>
+    <view class="words">
+      <text class="word word-lg">火锅</text>
+      <text class="word word-md">旅行</text>
+      <text class="word word-sm">电影</text>
+      <text class="word word-lg">演唱会</text>
+      <text class="word word-md">运动</text>
+      <text class="word word-sm">美食</text>
+      <text class="word word-md">聚会</text>
+      <text class="word word-sm">拍照</text>
+    </view>
+  </view>
+
+  <!-- 勤奋榜 -->
+  <view class="section ranking">
+    <text class="section-icon">🏆</text>
+    <text class="section-title">勤奋榜</text>
+    <view class="ranking-list">
+      <view class="ranking-item">
+        <view class="rank-num">1</view>
+        <image class="rank-avatar" src="https://picsum.photos/101" />
+        <text class="rank-name">小明</text>
+        <view class="rank-badge">🥇</view>
+        <text class="rank-count">52张照片</text>
+      </view>
+      <view class="ranking-item">
+        <view class="rank-num">2</view>
+        <image class="rank-avatar" src="https://picsum.photos/102" />
+        <text class="rank-name">小红</text>
+        <view class="rank-badge">🥈</view>
+        <text class="rank-count">38张照片</text>
+      </view>
+      <view class="ranking-item">
+        <view class="rank-num">3</view>
+        <image class="rank-avatar" src="https://picsum.photos/103" />
+        <text class="rank-name">阿强</text>
+        <view class="rank-badge">🥉</view>
+        <text class="rank-count">25张照片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 陪伴值 -->
+  <view class="section companion">
+    <text class="section-icon">💑</text>
+    <text class="section-title">陪伴值 TOP3</text>
+    <view class="companion-list">
+      <view class="companion-item">
+        <view class="companion-avatars">
+          <image class="avatar" src="https://picsum.photos/104" />
+          <image class="avatar" src="https://picsum.photos/105" />
+        </view>
+        <text class="companion-names">小明 + 小红</text>
+        <text class="companion-value">共同完成 15 个愿望</text>
+      </view>
+      <view class="companion-item">
+        <view class="companion-avatars">
+          <image class="avatar" src="https://picsum.photos/106" />
+          <image class="avatar" src="https://picsum.photos/107" />
+        </view>
+        <text class="companion-names">阿强 + 小美</text>
+        <text class="companion-value">共同完成 8 个愿望</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 随机回忆 -->
+  <view class="section memory">
+    <text class="section-icon">📸</text>
+    <text class="section-title">去年的今天</text>
+    <view class="memory-card">
+      <text class="memory-text">你们一起完成了</text>
+      <text class="memory-title">元旦聚餐</text>
+      <text class="memory-date">2025-01-01</text>
+    </view>
+  </view>
+
+  <!-- 底部 -->
+  <view class="footer">
+    <text class="footer-text">感谢这一年的陪伴</text>
+    <text class="footer-sub">明年也要继续在一起呀</text>
+    <button class="btn btn-primary" bindtap="saveImage">保存分享</button>
+  </view>
+</view>

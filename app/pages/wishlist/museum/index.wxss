@@ -1,0 +1,209 @@
+/* 回忆博物馆样式 */
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #9B7DED 0%, #F8F6FF 30%);
+}
+
+/* 头部 */
+.header {
+  padding: 60rpx 32rpx 40rpx;
+  text-align: center;
+}
+
+.header-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #fff;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.header-subtitle {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 时间轴 */
+.timeline {
+  padding: 24rpx 32rpx 60rpx;
+  position: relative;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 56rpx;
+  top: 0;
+  bottom: 0;
+  width: 4rpx;
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+  border-radius: 2rpx;
+}
+
+/* 时间轴项 */
+.timeline-item {
+  position: relative;
+  padding-left: 80rpx;
+  margin-bottom: 40rpx;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: 40rpx;
+  top: 0;
+  width: 36rpx;
+  height: 36rpx;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(155, 125, 237, 0.3);
+  z-index: 10;
+}
+
+.dot-inner {
+  font-size: 20rpx;
+}
+
+.timeline-date {
+  font-size: 22rpx;
+  color: var(--text-muted);
+  margin-bottom: 12rpx;
+}
+
+/* 记忆卡片 */
+.memory-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  box-shadow: var(--shadow);
+}
+
+.memory-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.category-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.tag-restaurant { background: #FFF3E0; }
+.tag-travel { background: #E3F2FD; }
+.tag-sport { background: #E8F5E9; }
+.tag-other { background: #F3E5F5; }
+
+.memory-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* 照片 */
+.memory-photos {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.photo {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 16rpx;
+}
+
+.memory-no-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  background: var(--bg);
+  border-radius: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.memory-no-photo text:first-child {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.hint {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+/* 参与者 */
+.memory-participants {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.label {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.tag {
+  font-size: 22rpx;
+  padding: 6rpx 14rpx;
+  background: linear-gradient(135deg, rgba(155, 125, 237, 0.1), rgba(255, 171, 118, 0.1));
+  color: var(--primary);
+  border-radius: 16rpx;
+}
+
+/* 感悟 */
+.memory-feeling {
+  padding: 16rpx;
+  background: var(--bg);
+  border-radius: 12rpx;
+}
+
+.feeling-text {
+  font-size: 26rpx;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.empty-hint {
+  font-size: 26rpx;
+  color: var(--text-muted);
+  margin-top: 12rpx;
+}

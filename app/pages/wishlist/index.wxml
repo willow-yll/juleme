@@ -1,0 +1,94 @@
+<!-- 愿望清单页面 -->
+<view class="page">
+  <!-- 筛选标签 -->
+  <view class="tabs">
+    <view
+      class="tab {{activeTab === 'all' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="all"
+    >全部</view>
+    <view
+      class="tab {{activeTab === 'active' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="active"
+    >进行中</view>
+    <view
+      class="tab {{activeTab === 'done' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="done"
+    >已达成</view>
+    <view
+      class="tab {{activeTab === 'museum' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="museum"
+    >博物馆</view>
+  </view>
+
+  <!-- 愿望列表 -->
+  <scroll-view class="wishlist" scroll-y>
+    <view class="wish-container">
+      <!-- 愿望卡片 -->
+      <block wx:for="{{filteredWishes}}" wx:key="id">
+        <view class="wish-card" bindtap="goToDetail" data-id="{{item.id}}">
+          <!-- 分类图标 -->
+          <view class="wish-category tag-{{item.category}}">
+            <text class="category-icon">
+              {{item.category === 'restaurant' ? '🍽️' : item.category === 'travel' ? '✈️' : item.category === 'sport' ? '⚽' : '💫'}}
+            </text>
+            <text class="category-text">{{item.categoryText}}</text>
+          </view>
+
+          <!-- 愿望内容 -->
+          <view class="wish-content">
+            <text class="wish-title">{{item.title}}</text>
+            <text class="wish-desc">{{item.description}}</text>
+          </view>
+
+          <!-- 认领状态 -->
+          <view class="wish-claim">
+            <view class="creator">
+              <image class="avatar-sm" src="{{item.creator.avatar}}" />
+              <text class="creator-name">{{item.creator.name}}</text>
+            </view>
+            <view class="claimers">
+              <text class="claim-count">{{item.claimed.length}}/{{item.maxClaim}} 已认领</text>
+            </view>
+          </view>
+
+          <!-- 进度条 -->
+          <view class="wish-progress">
+            <view class="progress-bar">
+              <view class="progress-fill" style="width: {{getProgress(item)}}%"></view>
+            </view>
+            <text class="progress-text">{{getProgressText(item)}}</text>
+          </view>
+
+          <!-- 操作按钮 -->
+          <view class="wish-actions" catchtap="stopPropagation">
+            <view class="action-btn-primary" bindtap="handleClaim" data-id="{{item.id}}">
+              <text>我想去</text>
+            </view>
+            <view class="action-btn-secondary" bindtap="handleLike" data-id="{{item.id}}">
+              <text>❤️ {{item.likes}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态 -->
+      <view class="empty" wx:if="{{filteredWishes.length === 0}}">
+        <text class="empty-icon">🎯</text>
+        <text class="empty-text">还没有愿望，快去许愿吧</text>
+        <view class="btn btn-primary mt-20" bindtap="goToCreate">许个愿</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部占位 -->
+  <view class="tabbar-spacer"></view>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab" bindtap="goToCreate">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

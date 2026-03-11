@@ -1,0 +1,237 @@
+/* 萌宠/萌娃墙样式 */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* 顶部切换 */
+.tabs {
+  display: flex;
+  background: #fff;
+  padding: 24rpx;
+  gap: 16rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: var(--text-light);
+  border-radius: 24rpx;
+  transition: all 0.3s ease;
+  background: var(--bg);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, var(--accent), #9AE3D6);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 档案滚动 */
+.profiles {
+  background: #fff;
+  padding: 24rpx 0;
+  white-space: nowrap;
+}
+
+.profile-scroll {
+  padding: 0 24rpx;
+  display: flex;
+  gap: 20rpx;
+}
+
+.profile-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180rpx;
+  background: var(--bg);
+  border-radius: 24rpx;
+  padding: 20rpx;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  margin-bottom: 12rpx;
+  border: 4rpx solid #fff;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.profile-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8rpx;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 12rpx;
+  font-size: 22rpx;
+  color: var(--text-muted);
+}
+
+.profile-badges {
+  margin-top: 8rpx;
+}
+
+.badge {
+  font-size: 20rpx;
+  padding: 4rpx 10rpx;
+  background: linear-gradient(135deg, var(--accent), #9AE3D6);
+  color: #fff;
+  border-radius: 12rpx;
+}
+
+/* 添加卡片 */
+.add-card {
+  justify-content: center;
+  border: 2rpx dashed var(--accent);
+  background: transparent;
+}
+
+.add-icon {
+  font-size: 48rpx;
+  color: var(--accent);
+  margin-bottom: 4rpx;
+}
+
+.add-text {
+  font-size: 22rpx;
+  color: var(--accent);
+}
+
+/* 时光轴 */
+.timeline {
+  padding: 24rpx;
+}
+
+.timeline-header {
+  margin-bottom: 20rpx;
+}
+
+.timeline-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+/* 瞬间卡片 */
+.moment-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.moment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.moment-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  margin-right: 12rpx;
+}
+
+.moment-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.moment-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.moment-time {
+  font-size: 22rpx;
+  color: var(--text-muted);
+}
+
+.moment-age {
+  font-size: 22rpx;
+  padding: 6rpx 12rpx;
+  background: var(--bg);
+  color: var(--accent);
+  border-radius: 12rpx;
+}
+
+/* 内容 */
+.moment-content {
+  font-size: 28rpx;
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+}
+
+/* 图片 */
+.moment-images {
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.moment-img {
+  width: 100%;
+  height: 400rpx;
+}
+
+.moment-images.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8rpx;
+}
+
+.moment-images.grid .moment-img {
+  height: 280rpx;
+}
+
+/* 互动 */
+.moment-actions {
+  display: flex;
+  gap: 32rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--border);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.action-icon {
+  font-size: 32rpx;
+}
+
+.action-count {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+/* 底部占位 */
+.tabbar-spacer {
+  height: 120rpx;
+}

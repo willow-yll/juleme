@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/wishlist/index",
+    "pages/wishlist/detail",
+    "pages/wishlist/museum",
+    "pages/anniversary/index",
+    "pages/moment/index",
+    "pages/moment/profile",
+    "pages/capsule/index",
+    "pages/profile/index",
+    "pages/create/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#9B7DED",
+    "navigationBarTitleText": "聚了吗",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F8F6FF"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#9B7DED",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/wishlist/index",
+        "text": "愿望",
+        "iconPath": "assets/icons/wish.png",
+        "selectedIconPath": "assets/icons/wish-active.png"
+      },
+      {
+        "pagePath": "pages/anniversary/index",
+        "text": "纪念日",
+        "iconPath": "assets/icons/heart.png",
+        "selectedIconPath": "assets/icons/heart-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "assets/icons/user.png",
+        "selectedIconPath": "assets/icons/user-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

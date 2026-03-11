@@ -1,0 +1,85 @@
+<!-- 愿望详情页面 -->
+<view class="page" wx:if="{{wish}}">
+  <!-- 顶部图片区 -->
+  <view class="hero-image">
+    <view class="hero-overlay">
+      <view class="category-badge tag-{{wish.category}}">
+        <text>{{wish.categoryText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 愿望信息 -->
+  <view class="content">
+    <view class="wish-info">
+      <text class="wish-title">{{wish.title}}</text>
+      <text class="wish-desc">{{wish.description}}</text>
+    </view>
+
+    <!-- 发起人 -->
+    <view class="section creator-section">
+      <text class="section-title">发起人</text>
+      <view class="creator-card">
+        <image class="avatar" src="{{wish.creator.avatar}}" />
+        <text class="creator-name">{{wish.creator.name}}</text>
+      </view>
+    </view>
+
+    <!-- 目标日期 -->
+    <view class="section date-section">
+      <text class="section-title">目标日期</text>
+      <view class="date-card">
+        <text class="date-text">{{wish.targetDate}}</text>
+        <text class="date-countdown">{{countdownText}}</text>
+      </view>
+    </view>
+
+    <!-- 进度条 -->
+    <view class="section progress-section">
+      <text class="section-title">进度</text>
+      <view class="progress-wrapper">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{progress}}%"></view>
+        </view>
+        <text class="progress-text">{{progress}}%</text>
+      </view>
+    </view>
+
+    <!-- 认领列表 -->
+    <view class="section claim-section">
+      <text class="section-title">认领情况 ({{wish.claimed.length}}/{{wish.maxClaim}})</text>
+      <view class="claim-list">
+        <view class="claim-item" wx:for="{{wish.claimed}}" wx:key="index">
+          <view class="claimer-info">
+            <image class="avatar-sm" src="{{item.user.avatar}}" />
+            <text class="claimer-name">{{item.user.name}}</text>
+          </view>
+          <view class="want-go" wx:if="{{item.wantGo}}">
+            <text>✅ 我想去</text>
+          </view>
+        </view>
+        <view class="empty-claim" wx:if="{{wish.claimed.length === 0}}">
+          <text>还没有人认领，快去邀请朋友吧！</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="actions">
+      <button class="btn btn-primary" bindtap="handleClaim" wx:if="{{!isClaimed}}">
+        我想去 (+1)
+      </button>
+      <button class="btn btn-secondary" bindtap="handleLightUp" wx:if="{{wish.status === 'active'}}">
+        ✨ 点亮此愿望
+      </button>
+      <button class="btn btn-outline" bindtap="handleShare">
+        邀请朋友
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading" wx:else>
+  <view class="loading-spinner"></view>
+</view>

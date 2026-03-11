@@ -1,0 +1,183 @@
+<!-- 创建页面 -->
+<view class="page">
+  <!-- 类型选择 -->
+  <view class="type-selector">
+    <view
+      class="type-item {{type === 'wish' ? 'active' : ''}}"
+      bindtap="switchType"
+      data-type="wish"
+    >
+      <text class="type-icon">🎯</text>
+      <text class="type-name">发愿望</text>
+    </view>
+    <view
+      class="type-item {{type === 'moment' ? 'active' : ''}}"
+      bindtap="switchType"
+      data-type="moment"
+    >
+      <text class="type-icon">📸</text>
+      <text class="type-name">晒萌宠</text>
+    </view>
+    <view
+      class="type-item {{type === 'anniversary' ? 'active' : ''}}"
+      bindtap="switchType"
+      data-type="anniversary"
+    >
+      <text class="type-icon">💕</text>
+      <text class="type-name">设纪念日</text>
+    </view>
+  </view>
+
+  <!-- 愿望表单 -->
+  <view class="form" wx:if="{{type === 'wish'}}">
+    <view class="form-group">
+      <text class="label">愿望标题</text>
+      <input class="input" placeholder="许一个愿望吧~" bindinput="onTitleInput" value="{{form.title}}" />
+    </view>
+
+    <view class="form-group">
+      <text class="label">描述（可选）</text>
+      <textarea class="textarea" placeholder="详细描述一下..." bindinput="onDescInput" value="{{form.description}}" />
+    </view>
+
+    <view class="form-group">
+      <text class="label">分类</text>
+      <view class="category-list">
+        <view
+          class="category-item {{form.category === 'restaurant' ? 'active' : ''}}"
+          bindtap="selectCategory"
+          data-category="restaurant"
+        >
+          <text>🍽️</text>
+          <text>餐厅</text>
+        </view>
+        <view
+          class="category-item {{form.category === 'travel' ? 'active' : ''}}"
+          bindtap="selectCategory"
+          data-category="travel"
+        >
+          <text>✈️</text>
+          <text>旅行</text>
+        </view>
+        <view
+          class="category-item {{form.category === 'sport' ? 'active' : ''}}"
+          bindtap="selectCategory"
+          data-category="sport"
+        >
+          <text>⚽</text>
+          <text>运动</text>
+        </view>
+        <view
+          class="category-item {{form.category === 'other' ? 'active' : ''}}"
+          bindtap="selectCategory"
+          data-category="other"
+        >
+          <text>💫</text>
+          <text>其他</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="label">目标日期</text>
+      <picker mode="date" value="{{form.targetDate}}" bindchange="onDateChange">
+        <view class="picker">
+          <text wx:if="{{form.targetDate}}">{{form.targetDate}}</text>
+          <text wx:else class="placeholder">选择目标日期</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <text class="label">最大认领人数</text>
+      <view class="claim-slider">
+        <slider min="1" max="10" value="{{form.maxClaim}}" bindchange="onMaxClaimChange" activeColor="#9B7DED" block-color="#9B7DED" />
+        <text class="slider-value">{{form.maxClaim}}人</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 萌宠表单 -->
+  <view class="form" wx:if="{{type === 'moment'}}">
+    <view class="form-group" wx:if="{{showPetForm}}">
+      <text class="label">宠物名字</text>
+      <input class="input" placeholder="给Ta起个名字" bindinput="onPetNameInput" value="{{petForm.name}}" />
+    </view>
+
+    <view class="form-group" wx:if="{{showPetForm}}">
+      <text class="label">品种（可选）</text>
+      <input class="input" placeholder="如：中华田园猫" bindinput="onBreedInput" value="{{petForm.breed}}" />
+    </view>
+
+    <view class="form-group">
+      <text class="label">照片</text>
+      <view class="image-uploader" bindtap="chooseImage">
+        <text class="upload-icon">📷</text>
+        <text class="upload-text">点击上传照片</text>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="label">内容</text>
+      <textarea class="textarea" placeholder="记录这一刻..." bindinput="onMomentContentInput" value="{{momentForm.content}}" />
+    </view>
+  </view>
+
+  <!-- 纪念日表单 -->
+  <view class="form" wx:if="{{type === 'anniversary'}}">
+    <view class="form-group">
+      <text class="label">名称</text>
+      <input class="input" placeholder="如：疯狂星期四" bindinput="onAnniversaryNameInput" value="{{anniversaryForm.name}}" />
+    </view>
+
+    <view class="form-group">
+      <text class="label">类型</text>
+      <view class="type-switch">
+        <view
+          class="switch-item {{anniversaryForm.subType === 'fixed' ? 'active' : ''}}"
+          bindtap="switchAnniversaryType"
+          data-type="fixed"
+        >
+          固定日期
+        </view>
+        <view
+          class="switch-item {{anniversaryForm.subType === 'cycle' ? 'active' : ''}}"
+          bindtap="switchAnniversaryType"
+          data-type="cycle"
+        >
+          周期提醒
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group" wx:if="{{anniversaryForm.subType === 'fixed'}}">
+      <text class="label">日期</text>
+      <picker mode="date" value="{{anniversaryForm.date}}" bindchange="onAnniversaryDateChange">
+        <view class="picker">
+          <text wx:if="{{anniversaryForm.date}}">{{anniversaryForm.date}}</text>
+          <text wx:else class="placeholder">选择日期</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-group" wx:if="{{anniversaryForm.subType === 'cycle'}}">
+      <text class="label">周期</text>
+      <picker mode="selector" range="{{weekdays}}" bindchange="onWeekdayChange">
+        <view class="picker">
+          <text wx:if="{{anniversaryForm.weekday !== null}}">{{weekdays[anniversaryForm.weekday]}}</text>
+          <text wx:else class="placeholder">选择星期</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <text class="label">提醒</text>
+      <switch checked="{{anniversaryForm.remind}}" bindchange="onRemindChange" color="#9B7DED" />
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-btn">
+    <button class="btn btn-primary btn-block" bindtap="handleSubmit">发布</button>
+  </view>
+</view>

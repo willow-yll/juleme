@@ -1,0 +1,87 @@
+<!-- 灵动纪念日 -->
+<view class="page">
+  <!-- 标签切换 -->
+  <view class="tabs">
+    <view
+      class="tab {{activeTab === 'fixed' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="fixed"
+    >
+      📅 固定日期
+    </view>
+    <view
+      class="tab {{activeTab === 'cycle' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="cycle"
+    >
+      🔄 周期提醒
+    </view>
+  </view>
+
+  <!-- 固定日期列表 -->
+  <view class="list" wx:if="{{activeTab === 'fixed'}}">
+    <block wx:for="{{fixedAnniversaries}}" wx:key="id">
+      <view class="card date-card">
+        <view class="card-left">
+          <text class="date-icon">🎂</text>
+        </view>
+        <view class="card-content">
+          <text class="date-name">{{item.name}}</text>
+          <text class="date-value">{{item.date}}</text>
+        </view>
+        <view class="card-right">
+          <view class="countdown" wx:if="{{!isPast(item.date)}}">
+            <text class="countdown-num">{{getCountdown(item.date).days}}</text>
+            <text class="countdown-unit">天</text>
+          </view>
+          <view class="countdown passed" wx:else>
+            <text class="countdown-text">已过</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty" wx:if="{{fixedAnniversaries.length === 0}}">
+      <text class="empty-icon">📅</text>
+      <text class="empty-text">还没有设置纪念日</text>
+      <view class="btn btn-primary mt-20" bindtap="goToCreate">添加纪念日</view>
+    </view>
+  </view>
+
+  <!-- 周期提醒列表 -->
+  <view class="list" wx:if="{{activeTab === 'cycle'}}">
+    <block wx:for="{{cycleAnniversaries}}" wx:key="id">
+      <view class="card cycle-card">
+        <view class="card-left">
+          <text class="cycle-icon">{{item.icon}}</text>
+        </view>
+        <view class="card-content">
+          <text class="cycle-name">{{item.name}}</text>
+          <text class="cycle-next">下次: {{item.nextDate}} {{getWeekday(item.cycleValue)}}</text>
+        </view>
+        <view class="card-right">
+          <switch
+            checked="{{item.enabled}}"
+            bindchange="toggleEnabled"
+            data-id="{{item.id}}"
+            color="#9B7DED"
+          />
+        </view>
+      </view>
+    </block>
+
+    <view class="empty" wx:if="{{cycleAnniversaries.length === 0}}">
+      <text class="empty-icon">🔄</text>
+      <text class="empty-text">还没有设置周期提醒</text>
+      <view class="btn btn-primary mt-20" bindtap="goToCreate">添加提醒</view>
+    </view>
+  </view>
+
+  <!-- 底部占位 -->
+  <view class="tabbar-spacer"></view>
+
+  <!-- 悬浮按钮 -->
+  <view class="fab" bindtap="goToCreate">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

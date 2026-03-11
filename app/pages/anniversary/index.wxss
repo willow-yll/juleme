@@ -1,0 +1,146 @@
+/* 灵动纪念日样式 */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* 标签 */
+.tabs {
+  display: flex;
+  background: #fff;
+  padding: 24rpx;
+  gap: 16rpx;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: var(--text-light);
+  border-radius: 24rpx;
+  transition: all 0.3s ease;
+  background: var(--bg);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, var(--primary), #B794F6);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 列表 */
+.list {
+  padding: 24rpx;
+}
+
+/* 卡片 */
+.card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-left {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+}
+
+.date-icon,
+.cycle-icon {
+  font-size: 48rpx;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.date-name,
+.cycle-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.date-value,
+.cycle-next {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+.card-right {
+  margin-left: 20rpx;
+}
+
+/* 倒计时 */
+.countdown {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.countdown-num {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.countdown-unit {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+.countdown.passed {
+  color: var(--text-muted);
+}
+
+.countdown-text {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+/* 底部占位 */
+.tabbar-spacer {
+  height: 120rpx;
+}
+
+/* 悬浮按钮 */
+.fab {
+  position: fixed;
+  bottom: 160rpx;
+  right: 32rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--secondary), #FFCBA4);
+  box-shadow: 0 8rpx 24rpx rgba(255, 171, 118, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.fab:active {
+  transform: scale(0.95);
+}
+
+.fab-icon {
+  font-size: 56rpx;
+  color: #fff;
+  font-weight: 300;
+}

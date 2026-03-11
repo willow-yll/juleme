@@ -1,0 +1,286 @@
+// 聚了吗 - 愿望清单小程序
+const App = {
+  // 全局数据
+  globalData: {
+    userInfo: null,
+    hasLogin: false,
+    // 示例数据 - 实际项目中应从云端获取
+    feedItems: [],
+    wishes: [],
+    anniversaries: [],
+    moments: [],
+    pets: [],
+    babies: [],
+    museum: []
+  },
+
+  onLaunch() {
+    // 小程序启动
+    console.log('聚了吗小程序启动');
+    this.initData();
+  },
+
+  // 初始化示例数据
+  initData() {
+    // 示例动态数据
+    this.globalData.feedItems = [
+      {
+        id: 1,
+        user: { avatar: 'https://picsum.photos/100', name: '小明' },
+        type: 'wish',
+        content: '发起了新愿望',
+        title: '去重庆吃火锅',
+        time: '2小时前',
+        likes: 5,
+        comments: []
+      },
+      {
+        id: 2,
+        user: { avatar: 'https://picsum.photos/101', name: '小红' },
+        type: 'moment',
+        content: '晒出了小橘的可爱瞬间',
+        title: '今天给小橘买了新玩具',
+        image: 'https://picsum.photos/200/200',
+        time: '3小时前',
+        likes: 12,
+        comments: ['太可爱了��', '想撸']
+      },
+      {
+        id: 3,
+        user: { avatar: 'https://picsum.photos/102', name: '阿强' },
+        type: 'anniversary',
+        content: '设置了新纪念日',
+        title: '疯狂星期四',
+        time: '5小时前',
+        likes: 3,
+        comments: []
+      }
+    ];
+
+    // 示例愿望数据
+    this.globalData.wishes = [
+      {
+        id: 1,
+        title: '去重庆吃火锅',
+        description: '想吃正宗的九宫格火锅！',
+        category: 'restaurant',
+        categoryText: '餐厅',
+        creator: { avatar: 'https://picsum.photos/100', name: '小明' },
+        targetDate: '2026-04-15',
+        createdAt: '2026-03-01',
+        status: 'active',
+        claimed: [
+          { user: { avatar: 'https://picsum.photos/101', name: '小红' }, wantGo: true },
+          { user: { avatar: 'https://picsum.photos/102', name: '阿强' }, wantGo: true }
+        ],
+        maxClaim: 5,
+        likes: 8
+      },
+      {
+        id: 2,
+        title: '去西藏旅行',
+        description: '想看布达拉宫和纳木错',
+        category: 'travel',
+        categoryText: '旅行',
+        creator: { avatar: 'https://picsum.photos/103', name: '小华' },
+        targetDate: '2026-07-01',
+        createdAt: '2026-02-15',
+        status: 'active',
+        claimed: [
+          { user: { avatar: 'https://picsum.photos/104', name: '小丽' }, wantGo: true }
+        ],
+        maxClaim: 4,
+        likes: 15
+      },
+      {
+        id: 3,
+        title: '打羽毛球',
+        description: '周末一起去运动吧！',
+        category: 'sport',
+        categoryText: '运动',
+        creator: { avatar: 'https://picsum.photos/105', name: '阿强' },
+        targetDate: '2026-03-20',
+        createdAt: '2026-03-05',
+        status: 'active',
+        claimed: [],
+        maxClaim: 4,
+        likes: 3
+      },
+      {
+        id: 4,
+        title: '看一场演唱会',
+        description: '想去看周杰伦的演唱会',
+        category: 'other',
+        categoryText: '其他',
+        creator: { avatar: 'https://picsum.photos/106', name: '小美' },
+        targetDate: '2026-06-01',
+        createdAt: '2026-01-20',
+        status: 'active',
+        claimed: [
+          { user: { avatar: 'https://picsum.photos/107', name: '小明' }, wantGo: true },
+          { user: { avatar: 'https://picsum.photos/108', name: '小红' }, wantGo: true },
+          { user: { avatar: 'https://picsum.photos/109', name: '阿强' }, wantGo: true }
+        ],
+        maxClaim: 5,
+        likes: 22
+      }
+    ];
+
+    // 示例纪念日数据
+    this.globalData.anniversaries = [
+      {
+        id: 1,
+        name: '疯狂星期四',
+        type: 'cycle',
+        cycleType: 'weekly',
+        cycleValue: 4,
+        nextDate: '2026-03-12',
+        enabled: true,
+        icon: '🍗'
+      },
+      {
+        id: 2,
+        name: '周五电影夜',
+        type: 'cycle',
+        cycleType: 'weekly',
+        cycleValue: 5,
+        nextDate: '2026-03-13',
+        enabled: true,
+        icon: '🎬'
+      },
+      {
+        id: 3,
+        name: '小红生日',
+        type: 'fixed',
+        date: '2026-04-20',
+        isLunar: false,
+        countdown: null
+      },
+      {
+        id: 4,
+        name: '交往纪念日',
+        type: 'fixed',
+        date: '2025-08-15',
+        isLunar: false,
+        countdown: null
+      }
+    ];
+
+    // 示例萌宠数据
+    this.globalData.pets = [
+      {
+        id: 1,
+        name: '小橘',
+        avatar: 'https://picsum.photos/200',
+        breed: '中华田园猫',
+        personality: ['黏人', '贪吃', '软乎乎'],
+        milestones: [
+          { date: '2025-06-01', content: '第一次会爬', icon: '🐾' },
+          { date: '2025-08-15', content: '第一次洗澡', icon: '🛁' }
+        ],
+        cans: 156,
+        hearts: 89,
+        badges: ['小可爱'],
+        moments: [
+          {
+            id: 1,
+            image: 'https://picsum.photos/300/300',
+            content: '今天给小橘买了新玩具',
+            createdAt: '2026-03-10',
+            cans: 5,
+            hearts: 12
+          },
+          {
+            id: 2,
+            image: 'https://picsum.photos/301/301',
+            content: '晒太阳真是太舒服了',
+            createdAt: '2026-03-08',
+            cans: 8,
+            hearts: 20
+          }
+        ]
+      }
+    ];
+
+    // 示例萌娃数据
+    this.globalData.babies = [
+      {
+        id: 1,
+        name: '豆豆',
+        avatar: 'https://picsum.photos/201',
+        age: '1岁6个月',
+        personality: ['活泼', '好奇', '爱笑'],
+        milestones: [
+          { date: '2025-09-01', content: '第一次会爬', icon: '🐾' },
+          { date: '2025-11-15', content: '第一次走路', icon: '🚶' }
+        ],
+        cans: 0,
+        hearts: 234,
+        badges: ['小明星'],
+        moments: [
+          {
+            id: 1,
+            images: ['https://picsum.photos/302/302', 'https://picsum.photos/303/303'],
+            content: '今天学会新技能了！',
+            createdAt: '2026-03-09',
+            age: '1岁6个月',
+            hearts: 15
+          }
+        ]
+      }
+    ];
+
+    // 示例回忆博物馆数据
+    this.globalData.museum = [
+      {
+        id: 1,
+        wish: { title: '元旦聚餐', category: 'restaurant' },
+        images: ['https://picsum.photos/400/400', 'https://picsum.photos/401/401'],
+        participants: ['小明', '小红', '阿强'],
+        feeling: '很开心的一年！',
+        createdAt: '2026-01-01'
+      }
+    ];
+  },
+
+  // 获取用户信息
+  getUserInfo() {
+    return this.globalData.userInfo;
+  },
+
+  // 设置用户信息
+  setUserInfo(userInfo) {
+    this.globalData.userInfo = userInfo;
+    this.globalData.hasLogin = true;
+  },
+
+  // 格式化日期
+  formatDate(date) {
+    const d = new Date(date);
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    return `${month}月${day}日`;
+  },
+
+  // 计算倒计时
+  calculateCountdown(targetDate) {
+    const now = new Date();
+    const target = new Date(targetDate);
+    const diff = target - now;
+
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, finished: true };
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    return { days, hours, minutes, finished: false };
+  },
+
+  // 添加动态
+  addFeedItem(item) {
+    this.globalData.feedItems.unshift(item);
+  }
+};
+
+App(app);

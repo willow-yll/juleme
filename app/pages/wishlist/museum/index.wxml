@@ -1,0 +1,64 @@
+<!-- 回忆博物馆 -->
+<view class="page">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="header-title">✨ 回忆博物馆</text>
+    <text class="header-subtitle">记录每一个达成的愿望</text>
+  </view>
+
+  <!-- 时间轴 -->
+  <view class="timeline">
+    <view class="timeline-line"></view>
+    <block wx:for="{{museum}}" wx:key="id">
+      <view class="timeline-item">
+        <view class="timeline-dot">
+          <text class="dot-inner">✨</text>
+        </view>
+        <view class="timeline-date">{{item.createdAt}}</view>
+        <view class="memory-card">
+          <view class="memory-header">
+            <view class="category-icon tag-{{item.wish.category}}">
+              <text>{{item.wish.category === 'restaurant' ? '🍽️' : item.wish.category === 'travel' ? '✈️' : item.wish.category === 'sport' ? '⚽' : '💫'}}</text>
+            </view>
+            <text class="memory-title">{{item.wish.title}}</text>
+          </view>
+
+          <!-- 照片 -->
+          <view class="memory-photos" wx:if="{{item.images && item.images.length > 0}}">
+            <image
+              wx:for="{{item.images}}"
+              wx:for-item="img"
+              src="{{img}}"
+              mode="aspectFill"
+              class="photo"
+            />
+          </view>
+          <view class="memory-no-photo" wx:else>
+            <text>📷</text>
+            <text class="hint">点亮时没有上传照片</text>
+          </view>
+
+          <!-- 参与者 -->
+          <view class="memory-participants">
+            <text class="label">参与小伙伴：</text>
+            <view class="tags">
+              <text class="tag" wx:for="{{item.participants}}" wx:for-item="name" wx:key="index">{{name}}</text>
+            </view>
+          </view>
+
+          <!-- 感悟 -->
+          <view class="memory-feeling" wx:if="{{item.feeling}}">
+            <text class="feeling-text">{{item.feeling}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view class="empty" wx:if="{{museum.length === 0}}">
+      <text class="empty-icon">🏛️</text>
+      <text class="empty-text">回忆博物馆还是空的</text>
+      <text class="empty-hint">去点亮你的愿望吧！</text>
+    </view>
+  </view>
+</view>
