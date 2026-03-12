@@ -144,7 +144,7 @@ Page({
   // 切换开关
   toggleEnabled(e) {
     const { id } = e.currentTarget.dataset;
-    const { checked } = e.detail;
+    const checked = e.detail.value;
 
     // 更新纪念日启用状态
     const anniversaries = this.data.anniversaries.map(a => {

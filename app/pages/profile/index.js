@@ -19,11 +19,6 @@ Page({
       return;
     }
 
-    if (!app.hasUserProfile()) {
-      wx.navigateTo({ url: '/pages/profile/setup/index' });
-      return;
-    }
-
     this.loadStats();
   },
 

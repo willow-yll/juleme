@@ -70,7 +70,7 @@
         </view>
         <view class="card-right">
           <switch
-            checked="{{item.enabled}}"
+            checked="{{item.enabled !== false}}"
             bindchange="toggleEnabled"
             data-id="{{item.id}}"
             color="#9B7DED"
