@@ -7,6 +7,21 @@ Page({
     errorMsg: ''
   },
 
+  onLoad() {
+    // 检查是否已完善个人资料
+    if (!app.hasUserProfile()) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完善个人资料',
+        showCancel: false,
+        success: () => {
+          wx.redirectTo({ url: '/pages/profile/setup/index' });
+        }
+      });
+      return;
+    }
+  },
+
   onCodeInput(e) {
     this.setData({ code: e.detail.value, errorMsg: '' });
   },
@@ -41,7 +56,7 @@ Page({
     // 检查是否已经有待处理的申请
     if (app.hasPendingRequest(circle.id)) {
       this.setData({ errorMsg: '已有待处理的申请' });
-      wx.showToast({ title: '已有待处理的��请，请耐心等待', icon: 'none' });
+      wx.showToast({ title: '已有待处理的申请，请耐心等待', icon: 'none' });
       return;
     }
 
@@ -52,14 +67,19 @@ Page({
       return;
     }
 
-    // 创建加入申请
+    const profile = app.getUserProfile() || {};
+
+    // 创建加入申请，带入用户资料
     const joinRequest = {
       id: Date.now(),
       circleId: circle.id,
       circleName: circle.name,
       userId: 'me',
-      userName: '我',
-      userAvatar: 'https://picsum.photos/100',
+      userName: profile.nickname || '我',
+      userAvatar: profile.avatar || 'https://picsum.photos/100',
+      userGender: profile.gender || '',
+      userMbti: profile.mbti || '',
+      userConstellation: profile.constellation || '',
       status: 'pending',
       requestedAt: new Date().toISOString()
     };

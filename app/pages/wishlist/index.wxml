@@ -1,4 +1,4 @@
-<!-- 活动页面 -->
+<!-- 活动页面 - 时间轴形式 -->
 <view class="page">
   <!-- 筛选标签 -->
   <view class="tabs">
@@ -6,75 +6,84 @@
       class="tab {{activeTab === 'all' ? 'active' : ''}}"
       bindtap="switchTab"
       data-tab="all"
-    >全部</view>
+    >时间轴</view>
     <view
-      class="tab {{activeTab === 'active' ? 'active' : ''}}"
+      class="tab {{activeTab === 'my' ? 'active' : ''}}"
       bindtap="switchTab"
-      data-tab="active"
-    >进行中</view>
-    <view
-      class="tab {{activeTab === 'done' ? 'active' : ''}}"
-      bindtap="switchTab"
-      data-tab="done"
-    >已结束</view>
+      data-tab="my"
+    >我参加的</view>
   </view>
 
-  <!-- 活动列表 -->
-  <scroll-view class="wishlist" scroll-y>
-    <view class="wish-container">
-      <!-- 活动卡片 -->
-      <block wx:for="{{filteredWishes}}" wx:key="id">
-        <view class="wish-card" bindtap="goToDetail" data-id="{{item.id}}">
-          <!-- 分类图标 -->
-          <view class="wish-category tag-{{item.category}}">
-            <text class="category-icon">
-              {{item.category === 'restaurant' ? '🍽️' : item.category === 'travel' ? '✈️' : item.category === 'sport' ? '⚽' : item.category === 'entertainment' ? '🎉' : '💫'}}
-            </text>
-            <text class="category-text">{{item.categoryText}}</text>
+  <!-- 时间轴列表 -->
+  <scroll-view class="timeline" scroll-y>
+    <view class="timeline-container">
+      <!-- 时间轴项 -->
+      <block wx:for="{{timelineWishes}}" wx:key="id">
+        <view class="timeline-item {{item.isPast ? 'past' : ''}} {{item.isToday ? 'today' : ''}}">
+          <!-- 时间轴线 -->
+          <view class="timeline-line"></view>
+          <view class="timeline-dot {{item.isPast ? 'past' : ''}} {{item.isToday ? 'today' : ''}}"></view>
+
+          <!-- 日期标签 -->
+          <view class="timeline-date">
+            <text>{{item.dateLabel}}</text>
           </view>
 
-          <!-- 活动内容 -->
-          <view class="wish-content">
-            <text class="wish-title">{{item.title}}</text>
-            <text class="wish-desc">{{item.description}}</text>
-          </view>
+          <!-- 活动卡片 -->
+          <view class="wish-card" bindtap="goToDetail" data-id="{{item.id}}">
+            <!-- 分类图标 -->
+            <view class="wish-category tag-{{item.category}}">
+              <text class="category-icon">
+                {{item.category === 'restaurant' ? '🍽️' : item.category === 'travel' ? '✈️' : item.category === 'sport' ? '⚽' : item.category === 'entertainment' ? '🎉' : '💫'}}
+              </text>
+              <text class="category-text">{{item.categoryText}}</text>
+            </view>
 
-          <!-- 发起人 -->
-          <view class="wish-claim">
-            <view class="creator">
-              <image class="avatar-sm" src="{{item.creator.avatar}}" />
-              <text class="creator-name">发起人：{{item.creator.name}}</text>
+            <!-- 活动内容 -->
+            <view class="wish-content">
+              <text class="wish-title">{{item.title}}</text>
+              <text class="wish-desc">{{item.description}}</text>
             </view>
-            <view class="claimers">
-              <text class="claim-count">{{item.claimed.length}}/{{item.maxClaim}} 已报名</text>
-            </view>
-          </view>
 
-          <!-- 进度条 -->
-          <view class="wish-progress">
-            <view class="progress-bar">
-              <view class="progress-fill" style="width: {{getProgress(item)}}%"></view>
+            <!-- 发起人 -->
+            <view class="wish-claim">
+              <view class="creator">
+                <image class="avatar-sm" src="{{item.creator.avatar}}" />
+                <text class="creator-name">{{item.creator.name}}</text>
+              </view>
+              <view class="claimers">
+                <text class="claim-count">{{item.claimed.length}}/{{item.maxClaim}}人</text>
+              </view>
             </view>
-            <text class="progress-text">{{getProgressText(item)}}</text>
-          </view>
 
-          <!-- 操作按钮 -->
-          <view class="wish-actions" catchtap="stopPropagation">
-            <view class="action-btn-primary {{item.hasClaimed ? 'disabled' : ''}}" bindtap="handleClaim" data-id="{{item.id}}">
-              <text>{{item.hasClaimed ? '已报名' : '我想去'}}</text>
-            </view>
-            <view class="action-btn-secondary" bindtap="goToDetail" data-id="{{item.id}}">
-              <text>查看详情</text>
+            <!-- 操作按钮 -->
+            <view class="wish-actions" catchtap="stopPropagation">
+              <block wx:if="{{item.hasClaimed}}">
+                <view class="action-btn-cancel" bindtap="handleCancelClaim" data-id="{{item.id}}">
+                  <text>取消报名</text>
+                </view>
+                <view class="action-btn-secondary" bindtap="goToDetail" data-id="{{item.id}}">
+                  <text>查看详情</text>
+                </view>
+              </block>
+              <block wx:else>
+                <view class="action-btn-primary" bindtap="handleClaim" data-id="{{item.id}}">
+                  <text>我想去</text>
+                </view>
+                <view class="action-btn-secondary" bindtap="goToDetail" data-id="{{item.id}}">
+                  <text>查看详情</text>
+                </view>
+              </block>
             </view>
           </view>
         </view>
       </block>
 
       <!-- 空状态 -->
-      <view class="empty" wx:if="{{filteredWishes.length === 0}}">
-        <text class="empty-icon">🎯</text>
-        <text class="empty-text">还没有活动，快去发起吧</text>
-        <view class="btn btn-primary mt-20" bindtap="goToCreate">发活动</view>
+      <view class="empty" wx:if="{{timelineWishes.length === 0}}">
+        <text class="empty-icon">{{activeTab === 'my' ? '📋' : '🎯'}}</text>
+        <text class="empty-text">{{activeTab === 'my' ? '还没有参加过活动' : '还没有活动，快去发起吧'}}</text>
+        <view class="btn btn-primary mt-20" bindtap="goToCreate" wx:if="{{activeTab === 'all'}}">发活动</view>
       </view>
     </view>
   </scroll-view>
@@ -83,7 +92,7 @@
   <view class="tabbar-spacer"></view>
 
   <!-- 悬浮按钮 -->
-  <view class="fab" bindtap="goToCreate">
+  <view class="fab" bindtap="goToCreate" wx:if="{{activeTab === 'all'}}">
     <text class="fab-icon">+</text>
   </view>
 </view>

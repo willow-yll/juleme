@@ -8,7 +8,7 @@
       data-type="wish"
     >
       <text class="type-icon">🎯</text>
-      <text class="type-name">发愿望</text>
+      <text class="type-name">发起活动</text>
     </view>
     <view
       class="type-item {{type === 'moment' ? 'active' : ''}}"
@@ -16,7 +16,7 @@
       data-type="moment"
     >
       <text class="type-icon">📸</text>
-      <text class="type-name">晒萌宠</text>
+      <text class="type-name">发动态</text>
     </view>
     <view
       class="type-item {{type === 'anniversary' ? 'active' : ''}}"
@@ -43,57 +43,26 @@
     <view class="form-group">
       <text class="label">分类</text>
       <view class="category-list">
-        <view
-          class="category-item {{form.category === 'restaurant' ? 'active' : ''}}"
-          bindtap="selectCategory"
-          data-category="restaurant"
-        >
-          <text>🍽️</text>
-          <text>餐厅</text>
-        </view>
-        <view
-          class="category-item {{form.category === 'travel' ? 'active' : ''}}"
-          bindtap="selectCategory"
-          data-category="travel"
-        >
-          <text>✈️</text>
-          <text>旅行</text>
-        </view>
-        <view
-          class="category-item {{form.category === 'sport' ? 'active' : ''}}"
-          bindtap="selectCategory"
-          data-category="sport"
-        >
-          <text>⚽</text>
-          <text>运动</text>
-        </view>
-        <view
-          class="category-item {{form.category === 'entertainment' ? 'active' : ''}}"
-          bindtap="selectCategory"
-          data-category="entertainment"
-        >
-          <text>🎉</text>
-          <text>娱乐</text>
-        </view>
-        <view
-          class="category-item {{form.category === 'other' ? 'active' : ''}}"
-          bindtap="selectCategory"
-          data-category="other"
-        >
-          <text>💫</text>
-          <text>其他</text>
-        </view>
+        <view class="category-item {{form.category === 'restaurant' ? 'active' : ''}}" bindtap="selectCategory" data-category="restaurant"><text>🍽️</text><text>餐厅</text></view>
+        <view class="category-item {{form.category === 'travel' ? 'active' : ''}}" bindtap="selectCategory" data-category="travel"><text>✈️</text><text>旅行</text></view>
+        <view class="category-item {{form.category === 'sport' ? 'active' : ''}}" bindtap="selectCategory" data-category="sport"><text>⚽</text><text>运动</text></view>
+        <view class="category-item {{form.category === 'entertainment' ? 'active' : ''}}" bindtap="selectCategory" data-category="entertainment"><text>🎉</text><text>娱乐</text></view>
+        <view class="category-item {{form.category === 'other' ? 'active' : ''}}" bindtap="selectCategory" data-category="other"><text>💫</text><text>其他</text></view>
       </view>
     </view>
 
     <view class="form-group">
       <text class="label">活动日期</text>
-      <picker mode="date" value="{{form.targetDate}}" bindchange="onDateChange">
-        <view class="picker">
+      <picker mode="date" value="{{form.targetDate}}" bindchange="onDateChange" disabled="{{form.dateUndecided}}">
+        <view class="picker {{form.dateUndecided ? 'disabled' : ''}}">
           <text wx:if="{{form.targetDate}}">{{form.targetDate}}</text>
           <text wx:else class="placeholder">选择活动日期</text>
         </view>
       </picker>
+      <view class="date-undecided-row">
+        <text class="undecided-label">日期未确定</text>
+        <switch checked="{{form.dateUndecided}}" bindchange="onDateUndecidedChange" color="#9B7DED" />
+      </view>
     </view>
 
     <view class="form-group">
@@ -105,7 +74,7 @@
     </view>
   </view>
 
-  <!-- 萌宠表单 -->
+  <!-- 动态表单 -->
   <view class="form" wx:if="{{type === 'moment'}}">
     <view class="form-group" wx:if="{{showPetForm}}">
       <text class="label">宠物名字</text>
@@ -127,7 +96,7 @@
 
     <view class="form-group">
       <text class="label">内容</text>
-      <textarea class="textarea" placeholder="记录这一刻..." bindinput="onMomentContentInput" value="{{momentForm.content}}" />
+      <textarea class="textarea" placeholder="分享此刻发生了什么..." bindinput="onMomentContentInput" value="{{momentForm.content}}" />
     </view>
   </view>
 
@@ -141,20 +110,8 @@
     <view class="form-group">
       <text class="label">类型</text>
       <view class="type-switch">
-        <view
-          class="switch-item {{anniversaryForm.subType === 'fixed' ? 'active' : ''}}"
-          bindtap="switchAnniversaryType"
-          data-type="fixed"
-        >
-          固定日期
-        </view>
-        <view
-          class="switch-item {{anniversaryForm.subType === 'cycle' ? 'active' : ''}}"
-          bindtap="switchAnniversaryType"
-          data-type="cycle"
-        >
-          周期提醒
-        </view>
+        <view class="switch-item {{anniversaryForm.subType === 'fixed' ? 'active' : ''}}" bindtap="switchAnniversaryType" data-type="fixed">固定日期</view>
+        <view class="switch-item {{anniversaryForm.subType === 'cycle' ? 'active' : ''}}" bindtap="switchAnniversaryType" data-type="cycle">周期提醒</view>
       </view>
     </view>
 
@@ -184,7 +141,6 @@
     </view>
   </view>
 
-  <!-- 提交按钮 -->
   <view class="submit-btn">
     <button class="btn btn-primary btn-block" bindtap="handleSubmit">发布</button>
   </view>

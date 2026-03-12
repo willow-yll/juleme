@@ -1,4 +1,4 @@
-/* 愿望清单样式 */
+/* 活动页面样式 - 时间轴形式 */
 
 .page {
   min-height: 100vh;
@@ -33,22 +33,103 @@
   font-weight: 600;
 }
 
-/* 愿望列表 */
-.wishlist {
+/* 时间轴 */
+.timeline {
   height: calc(100vh - 100rpx - 120rpx);
 }
 
-.wish-container {
+.timeline-container {
   padding: 24rpx;
+  padding-left: 48rpx;
 }
 
-/* 愿望卡片 */
+.timeline-item {
+  position: relative;
+  padding-bottom: 32rpx;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item:last-child .timeline-line {
+  display: none;
+}
+
+/* 时间轴线 */
+.timeline-line {
+  position: absolute;
+  left: -24rpx;
+  top: 20rpx;
+  bottom: -32rpx;
+  width: 2rpx;
+  background: #e0e0e0;
+}
+
+.timeline-item.past .timeline-line {
+  background: #ccc;
+}
+
+/* 时间轴点 */
+.timeline-dot {
+  position: absolute;
+  left: -32rpx;
+  top: 12rpx;
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 4rpx solid #fff;
+  box-shadow: 0 0 0 2rpx var(--primary);
+}
+
+.timeline-dot.past {
+  background: #ccc;
+  box-shadow: 0 0 0 2rpx #ccc;
+}
+
+.timeline-dot.today {
+  background: #FF6B6B;
+  box-shadow: 0 0 0 4rpx rgba(255, 107, 107, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 4rpx rgba(255, 107, 107, 0.3); }
+  50% { box-shadow: 0 0 0 8rpx rgba(255, 107, 107, 0.1); }
+  100% { box-shadow: 0 0 0 4rpx rgba(255, 107, 107, 0.3); }
+}
+
+/* 日期标签 */
+.timeline-date {
+  margin-bottom: 12rpx;
+  padding-left: 8rpx;
+}
+
+.timeline-date text {
+  font-size: 24rpx;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.timeline-item.past .timeline-date text {
+  color: var(--text-muted);
+}
+
+.timeline-item.today .timeline-date text {
+  color: #FF6B6B;
+}
+
+/* 活动卡片 */
 .wish-card {
   background: #fff;
   border-radius: 24rpx;
   padding: 24rpx;
-  margin-bottom: 20rpx;
   box-shadow: var(--shadow);
+}
+
+.timeline-item.past .wish-card {
+  opacity: 0.7;
 }
 
 /* 分类标签 */
@@ -82,7 +163,7 @@
 .tag-entertainment .category-text { color: #E91E63; }
 .tag-other .category-text { color: #9C27B0; }
 
-/* 愿望内容 */
+/* 活动内容 */
 .wish-content {
   margin-bottom: 16rpx;
 }
@@ -104,7 +185,7 @@
   white-space: nowrap;
 }
 
-/* 认领状态 */
+/* 发起人 */
 .wish-claim {
   display: flex;
   align-items: center;
@@ -143,35 +224,6 @@
   font-weight: 500;
 }
 
-/* 进度条 */
-.wish-progress {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  margin: 16rpx 0;
-}
-
-.progress-bar {
-  flex: 1;
-  height: 12rpx;
-  background: var(--bg);
-  border-radius: 6rpx;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  border-radius: 6rpx;
-  transition: width 0.3s ease;
-}
-
-.progress-text {
-  font-size: 22rpx;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
 /* 操作按钮 */
 .wish-actions {
   display: flex;
@@ -180,7 +232,8 @@
 }
 
 .action-btn-primary,
-.action-btn-secondary {
+.action-btn-secondary,
+.action-btn-cancel {
   flex: 1;
   text-align: center;
   padding: 16rpx 0;
@@ -197,6 +250,12 @@
 .action-btn-secondary {
   background: var(--bg);
   color: var(--text-light);
+}
+
+.action-btn-cancel {
+  background: #fff;
+  color: #FF6B6B;
+  border: 2rpx solid #FF6B6B;
 }
 
 .action-btn-primary.disabled {
@@ -233,4 +292,39 @@
   font-size: 56rpx;
   color: #fff;
   font-weight: 300;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--text-muted);
+}
+
+.btn {
+  padding: 20rpx 48rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), #B794F6);
+  color: #fff;
+}
+
+.mt-20 {
+  margin-top: 20rpx;
 }

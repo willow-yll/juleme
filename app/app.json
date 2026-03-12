@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/circle/index",
+    "pages/circle/home/index",
     "pages/circle/create/index",
     "pages/circle/join/index",
     "pages/index/index",
@@ -11,6 +12,7 @@
     "pages/moment/profile/index",
     "pages/capsule/index",
     "pages/profile/index",
+    "pages/profile/setup/index",
     "pages/create/index"
   ],
   "window": {
@@ -27,8 +29,8 @@
     "borderStyle": "white",
     "list": [
       {
-        "pagePath": "pages/index/index",
-        "text": "动态",
+        "pagePath": "pages/circle/home/index",
+        "text": "圈子",
         "iconPath": "assets/icons/home.png",
         "selectedIconPath": "assets/icons/home-active.png"
       },

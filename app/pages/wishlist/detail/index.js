@@ -131,6 +131,38 @@ Page({
     wx.showToast({ title: '报名成功！', icon: 'success' });
   },
 
+  // 取消报名
+  handleCancelClaim() {
+    const { wish } = this.data;
+    if (!wish || !this.data.isClaimed) return;
+
+    wx.showModal({
+      title: '确认取消',
+      content: '确定要取消报名该活动吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const newClaimed = wish.claimed.filter(c => c.user.name !== '我');
+
+          // 更新当前圈子的数据
+          const circleData = app.getCurrentCircleData();
+          if (circleData) {
+            const wishIndex = circleData.wishes.findIndex(w => w.id === wish.id);
+            if (wishIndex > -1) {
+              circleData.wishes[wishIndex].claimed = newClaimed;
+            }
+          }
+
+          this.setData({
+            wish: { ...wish, claimed: newClaimed },
+            isClaimed: false
+          });
+
+          wx.showToast({ title: '已取消报名', icon: 'success' });
+        }
+      }
+    });
+  },
+
   // 分享
   handleShare() {
     wx.showToast({ title: '点击右上角分享', icon: 'none' });

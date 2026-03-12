@@ -100,9 +100,9 @@ Page({
 
       wx.showToast({ title: `进入${circle.name}`, icon: 'success' });
 
-      // 跳转到动态页
+      // 跳转到圈子主页
       setTimeout(() => {
-        wx.switchTab({ url: '/pages/index/index' });
+        wx.switchTab({ url: '/pages/circle/home/index' });
       }, 1000);
     }
   },

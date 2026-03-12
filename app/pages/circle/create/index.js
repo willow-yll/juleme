@@ -1,4 +1,6 @@
 // 创建圈子页面
+const app = getApp();
+
 Page({
   data: {
     name: '',
@@ -9,12 +11,23 @@ Page({
   },
 
   onLoad() {
+    // 检查是否已完善个人资料
+    if (!app.hasUserProfile()) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完善个人资料',
+        showCancel: false,
+        success: () => {
+          wx.redirectTo({ url: '/pages/profile/setup/index' });
+        }
+      });
+      return;
+    }
     this.generateCode();
   },
 
   // 生成圈子号码
   generateCode() {
-    const app = getApp();
     const code = app.generateJoinCode();
     this.setData({ code });
   },
@@ -40,8 +53,8 @@ Page({
       return;
     }
 
-    const app = getApp();
     const newCircleId = Date.now();
+    const profile = app.getUserProfile() || {};
 
     const newCircle = {
       id: newCircleId,
@@ -50,9 +63,17 @@ Page({
       color: color,
       code: code,
       ownerId: 'me',
-      // 圈主自动加入成员列表
+      // 圈主自动加入成员列表，带入个人资料
       members: [
-        { id: 'me', avatar: 'https://picsum.photos/100', name: '我', role: 'owner' }
+        {
+          id: 'me',
+          avatar: profile.avatar || 'https://picsum.photos/100',
+          name: profile.nickname || '我',
+          role: 'owner',
+          gender: profile.gender || '',
+          mbti: profile.mbti || '',
+          constellation: profile.constellation || ''
+        }
       ],
       memberCount: 1,
       // 初始化加入申请列表
@@ -74,7 +95,7 @@ Page({
     wx.showToast({ title: '创建成功！', icon: 'success' });
 
     setTimeout(() => {
-      wx.switchTab({ url: '/pages/index/index' });
+      wx.switchTab({ url: '/pages/circle/home/index' });
     }, 1500);
   }
 });

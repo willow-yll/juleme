@@ -3,6 +3,8 @@ App({
   globalData: {
     userInfo: null,
     hasLogin: false,
+    // 用户个人资料
+    userProfile: null,
     // 圈子相关
     circles: [],
     currentCircleId: null,
@@ -10,6 +12,55 @@ App({
     // 按圈子存储的数据
     circleData: {}
   },
+
+  // 性别选项（最全分类）
+  GENDER_OPTIONS: [
+    { value: 'male', label: '男' },
+    { value: 'female', label: '女' },
+    { value: 'transgender_male', label: '跨性别男性' },
+    { value: 'transgender_female', label: '跨性别女性' },
+    { value: 'non_binary', label: '非二元性别' },
+    { value: 'gender_fluid', label: '性别流动' },
+    { value: 'agender', label: '无性别' },
+    { value: 'other', label: '其他' },
+    { value: 'prefer_not_to_say', label: '不愿透露' }
+  ],
+
+  // MBTI 选项
+  MBTI_OPTIONS: [
+    { value: 'INTJ', label: 'INTJ - 建筑师' },
+    { value: 'INTP', label: 'INTP - 逻辑学家' },
+    { value: 'ENTJ', label: 'ENTJ - 指挥官' },
+    { value: 'ENTP', label: 'ENTP - 辩论家' },
+    { value: 'INFJ', label: 'INFJ - 提倡者' },
+    { value: 'INFP', label: 'INFP - 调停者' },
+    { value: 'ENFJ', label: 'ENFJ - 主人公' },
+    { value: 'ENFP', label: 'ENFP - 竞选者' },
+    { value: 'ISTJ', label: 'ISTJ - 物流师' },
+    { value: 'ISFJ', label: 'ISFJ - 守卫者' },
+    { value: 'ESTJ', label: 'ESTJ - 总经理' },
+    { value: 'ESFJ', label: 'ESFJ - 执政官' },
+    { value: 'ISTP', label: 'ISTP - 鉴赏家' },
+    { value: 'ISFP', label: 'ISFP - 探险家' },
+    { value: 'ESTP', label: 'ESTP - 企业家' },
+    { value: 'ESFP', label: 'ESFP - 表演者' }
+  ],
+
+  // 星座选项
+  CONSTELLATION_OPTIONS: [
+    { value: 'aries', label: '白羊座 (3.21-4.19)' },
+    { value: 'taurus', label: '金牛座 (4.20-5.20)' },
+    { value: 'gemini', label: '双子座 (5.21-6.21)' },
+    { value: 'cancer', label: '巨蟹座 (6.22-7.22)' },
+    { value: 'leo', label: '狮子座 (7.23-8.22)' },
+    { value: 'virgo', label: '处女座 (8.23-9.22)' },
+    { value: 'libra', label: '天秤座 (9.23-10.23)' },
+    { value: 'scorpio', label: '天蝎座 (10.24-11.22)' },
+    { value: 'sagittarius', label: '射手座 (11.23-12.21)' },
+    { value: 'capricorn', label: '摩羯座 (12.22-1.19)' },
+    { value: 'aquarius', label: '水瓶座 (1.20-2.18)' },
+    { value: 'pisces', label: '双鱼座 (2.19-3.20)' }
+  ],
 
   onLaunch() {
     // 小程序启动
@@ -374,6 +425,32 @@ App({
     const circle = this.findCircleById(circleId);
     if (!circle || !circle.joinRequests) return false;
     return circle.joinRequests.some(r => r.userId === 'me' && r.status === 'pending');
+  },
+
+  // 检查用户是否已完善个人资料
+  hasUserProfile() {
+    return this.globalData.userProfile && this.globalData.userProfile.nickname;
+  },
+
+  // 设置用户资料
+  setUserProfile(profile) {
+    this.globalData.userProfile = profile;
+  },
+
+  // 获取用户资料
+  getUserProfile() {
+    return this.globalData.userProfile;
+  },
+
+  // 更新当前用户在圈子成员中的资料
+  updateMemberProfile(circleId, profile) {
+    const circle = this.findCircleById(circleId);
+    if (circle && circle.members) {
+      const member = circle.members.find(m => m.id === 'me');
+      if (member) {
+        Object.assign(member, profile);
+      }
+    }
   },
 
   // 获取用户信息

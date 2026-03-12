@@ -66,12 +66,16 @@
 
     <!-- 操作按钮 -->
     <view class="actions">
-      <button class="btn btn-primary" bindtap="handleClaim" wx:if="{{!isClaimed}}">
-        我想去
-      </button>
-      <button class="btn btn-primary" disabled wx:else>
-        已报名
-      </button>
+      <block wx:if="{{!isClaimed}}">
+        <button class="btn btn-primary" bindtap="handleClaim">
+          我想去
+        </button>
+      </block>
+      <block wx:else>
+        <button class="btn btn-cancel" bindtap="handleCancelClaim">
+          取消报名
+        </button>
+      </block>
       <button class="btn btn-outline" bindtap="handleShare">
         邀请朋友
       </button>

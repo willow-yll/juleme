@@ -1,0 +1,78 @@
+<!-- 圈子主页 -->
+<view class="page" wx:if="{{circle}}">
+  <view class="header" style="background: linear-gradient(135deg, {{circle.color}} 0%, {{circle.color}}CC 100%)">
+    <view class="circle-info">
+      <view class="circle-avatar">{{circle.name[0]}}</view>
+      <text class="circle-name">{{circle.name}}</text>
+      <text class="member-count">{{members.length}} 位圈友</text>
+    </view>
+  </view>
+
+  <view class="top-actions">
+    <view class="action-card" bindtap="goToCircleList">
+      <text class="action-icon">👥</text>
+      <text class="action-text">切换圈子</text>
+    </view>
+    <view class="action-card" bindtap="goToCreate">
+      <text class="action-icon">➕</text>
+      <text class="action-text">去发布</text>
+    </view>
+  </view>
+
+  <view class="section-tabs">
+    <view class="section-tab {{activeSection === 'members' ? 'active' : ''}}" bindtap="switchSection" data-section="members">全部成员</view>
+    <view class="section-tab {{activeSection === 'analysis' ? 'active' : ''}}" bindtap="switchSection" data-section="analysis">圈友报告</view>
+  </view>
+
+  <view class="section" wx:if="{{activeSection === 'members'}}">
+    <view class="member-list">
+      <view class="member-card" wx:for="{{members}}" wx:key="id">
+        <image class="member-avatar" src="{{item.avatar}}" mode="aspectFill" />
+        <view class="member-info">
+          <view class="member-name-row">
+            <text class="member-name">{{item.name}}</text>
+            <text class="member-role" wx:if="{{item.role === 'owner'}}">圈主</text>
+          </view>
+          <view class="member-meta">
+            <text wx:if="{{item.gender}}">{{item.gender}}</text>
+            <text wx:if="{{item.mbti}}">{{item.mbti}}</text>
+            <text wx:if="{{item.constellation}}">{{item.constellation}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{activeSection === 'analysis'}}">
+    <view class="analysis-card">
+      <text class="analysis-title">性别分布</text>
+      <view class="analysis-bar-item" wx:for="{{analysis.gender}}" wx:key="name">
+        <view class="bar-label">
+          <text>{{item.name}}</text>
+          <text>{{item.count}}人 · {{item.percentage}}%</text>
+        </view>
+        <view class="bar-track">
+          <view class="bar-fill gender" style="width: {{item.percentage}}%;"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="analysis-card">
+      <text class="analysis-title">MBTI 分布</text>
+      <view class="tag-list" wx:if="{{analysis.mbti.length}}">
+        <view class="report-tag" wx:for="{{analysis.mbti}}" wx:key="name">{{item.name}} · {{item.count}}人</view>
+      </view>
+      <text class="empty-text" wx:else>暂无 MBTI 数据</text>
+    </view>
+
+    <view class="analysis-card">
+      <text class="analysis-title">星座分布</text>
+      <view class="tag-list" wx:if="{{analysis.constellation.length}}">
+        <view class="report-tag" wx:for="{{analysis.constellation}}" wx:key="name">{{item.name}} · {{item.count}}人</view>
+      </view>
+      <text class="empty-text" wx:else>暂无星座数据</text>
+    </view>
+  </view>
+
+  <view class="tabbar-spacer"></view>
+</view>

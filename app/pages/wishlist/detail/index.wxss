@@ -202,6 +202,12 @@
   flex: 1;
 }
 
+.btn-cancel {
+  background: #fff !important;
+  color: #FF6B6B !important;
+  border: 2rpx solid #FF6B6B !important;
+}
+
 /* 加载 */
 .loading {
   display: flex;

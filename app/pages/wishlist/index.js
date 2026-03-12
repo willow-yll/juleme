@@ -1,11 +1,12 @@
-// 活动页面
+// 活动页面 - 时间轴形式
 const app = getApp();
 
 Page({
   data: {
     wishes: [],
     filteredWishes: [],
-    activeTab: 'all'
+    activeTab: 'all',
+    timelineWishes: []
   },
 
   onLoad() {
@@ -39,7 +40,8 @@ Page({
     // 标记当前用户是否已报名
     const wishesWithClaim = wishes.map(w => ({
       ...w,
-      hasClaimed: w.claimed && w.claimed.some(c => c.user && c.user.name === '我')
+      hasClaimed: w.claimed && w.claimed.some(c => c.user && c.user.name === '我'),
+      isEnded: w.targetDate && new Date(w.targetDate) < new Date()
     }));
 
     this.setData({ wishes: wishesWithClaim });
@@ -53,38 +55,71 @@ Page({
     this.filterWishes();
   },
 
-  // 过滤活动
+  // 过滤活动 - 时间轴形式
   filterWishes() {
     const { wishes, activeTab } = this.data;
 
     let filtered = [];
     switch (activeTab) {
       case 'all':
-        filtered = wishes;
+        // 全部 - 按时间排序（未来的在前，过期的在后）
+        filtered = [...wishes].sort((a, b) => {
+          if (!a.targetDate) return 1;
+          if (!b.targetDate) return -1;
+          return new Date(a.targetDate) - new Date(b.targetDate);
+        });
         break;
-      case 'active':
-        filtered = wishes.filter(w => w.status === 'active');
-        break;
-      case 'done':
-        filtered = wishes.filter(w => w.status === 'done');
+      case 'my':
+        // 我参加的 - 我报名的活动，包括已结束的
+        filtered = wishes.filter(w => w.hasClaimed).sort((a, b) => {
+          if (!a.targetDate) return 1;
+          if (!b.targetDate) return -1;
+          return new Date(a.targetDate) - new Date(b.targetDate);
+        });
         break;
     }
 
-    this.setData({ filteredWishes: filtered });
+    // 转换为时间轴格式
+    const timelineWishes = this.buildTimeline(filtered);
+
+    this.setData({ filteredWishes: filtered, timelineWishes });
   },
 
-  // 获取进度百分比
-  getProgress(item) {
-    if (!item.targetDate) return 0;
-    const now = new Date();
-    const created = new Date(item.createdAt);
-    const target = new Date(item.targetDate);
+  // 构建时间轴
+  buildTimeline(wishes) {
+    const timeline = [];
+    wishes.forEach((wish, index) => {
+      const date = wish.targetDate ? new Date(wish.targetDate) : null;
+      let dateLabel = '待定';
 
-    const total = target - created;
-    const current = now - created;
+      if (date) {
+        const now = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const diff = date - now;
+        const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-    if (current >= total) return 100;
-    return Math.min(Math.round((current / total) * 100), 100);
+        if (days < 0) {
+          dateLabel = `${year}年${month}月${day}日 (已结束)`;
+        } else if (days === 0) {
+          dateLabel = '今天';
+        } else if (days <= 7) {
+          dateLabel = `${days}天后`;
+        } else {
+          dateLabel = `${month}月${day}日`;
+        }
+      }
+
+      timeline.push({
+        ...wish,
+        dateLabel,
+        isPast: wish.isEnded,
+        isToday: wish.targetDate && new Date(wish.targetDate).toDateString() === new Date().toDateString()
+      });
+    });
+
+    return timeline;
   },
 
   // 获取进度文本
@@ -105,7 +140,7 @@ Page({
   goToDetail(e) {
     const { id } = e.currentTarget.dataset;
     wx.navigateTo({
-      url: `/pages/wishlist/detail?id=${id}`
+      url: `/pages/wishlist/detail/index?id=${id}`
     });
   },
 
@@ -162,6 +197,41 @@ Page({
     });
 
     wx.showToast({ title: '报名成功！', icon: 'success' });
+  },
+
+  // 取消报名
+  handleCancelClaim(e) {
+    const { id } = e.currentTarget.dataset;
+    const wish = this.data.wishes.find(w => w.id === id);
+
+    if (!wish || !wish.hasClaimed) return;
+
+    wx.showModal({
+      title: '确认取消',
+      content: '确定要取消报名该活动吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const newClaimed = wish.claimed.filter(c => c.user.name !== '我');
+          const newWishes = this.data.wishes.map(w =>
+            w.id === id ? { ...w, claimed: newClaimed, hasClaimed: false } : w
+          );
+
+          this.setData({ wishes: newWishes });
+          this.filterWishes();
+
+          // 更新当前圈子的数据
+          const circleData = app.getCurrentCircleData();
+          if (circleData) {
+            const wishIndex = circleData.wishes.findIndex(w => w.id === id);
+            if (wishIndex > -1) {
+              circleData.wishes[wishIndex].claimed = newClaimed;
+            }
+          }
+
+          wx.showToast({ title: '已取消报名', icon: 'success' });
+        }
+      }
+    });
   },
 
   // 阻止冒泡

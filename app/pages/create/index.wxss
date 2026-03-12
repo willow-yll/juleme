@@ -130,6 +130,25 @@
   font-size: 28rpx;
 }
 
+.picker.disabled {
+  opacity: 0.5;
+}
+
+.date-undecided-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+}
+
+.undecided-label {
+  font-size: 26rpx;
+  color: var(--text-light);
+}
+
 .placeholder {
   color: var(--text-muted);
 }

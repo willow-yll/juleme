@@ -10,6 +10,7 @@ Page({
       description: '',
       category: 'restaurant',
       targetDate: '',
+      dateUndecided: false,
       maxClaim: 5
     },
     petForm: {
@@ -67,7 +68,18 @@ Page({
   },
 
   onDateChange(e) {
-    this.setData({ 'form.targetDate': e.detail.value });
+    this.setData({
+      'form.targetDate': e.detail.value,
+      'form.dateUndecided': false
+    });
+  },
+
+  onDateUndecidedChange(e) {
+    const checked = e.detail.value;
+    this.setData({
+      'form.dateUndecided': checked,
+      'form.targetDate': checked ? '' : this.data.form.targetDate
+    });
   },
 
   onMaxClaimChange(e) {
@@ -141,7 +153,7 @@ Page({
     const { form } = this.data;
 
     if (!form.title) {
-      wx.showToast({ title: '请输入愿望标题', icon: 'none' });
+      wx.showToast({ title: '请输入活动标题', icon: 'none' });
       return;
     }
 
@@ -160,7 +172,7 @@ Page({
       category: form.category,
       categoryText: categoryMap[form.category],
       creator: { avatar: 'https://picsum.photos/100', name: '我' },
-      targetDate: form.targetDate,
+      targetDate: form.dateUndecided ? '' : form.targetDate,
       createdAt: new Date().toISOString().split('T')[0],
       status: 'active',
       claimed: [],
@@ -176,14 +188,14 @@ Page({
       id: Date.now(),
       user: { avatar: 'https://picsum.photos/100', name: '我' },
       type: 'wish',
-      content: '发起了新愿望',
+      content: '发起了新活动',
       title: form.title,
       time: '刚刚',
       likes: 0,
       comments: []
     });
 
-    wx.showToast({ title: '愿望发布成功！', icon: 'success' });
+    wx.showToast({ title: '活动发布成功！', icon: 'success' });
 
     setTimeout(() => {
       wx.switchTab({ url: '/pages/wishlist/index' });
@@ -242,7 +254,7 @@ Page({
       id: Date.now(),
       user: { avatar: 'https://picsum.photos/100', name: '我' },
       type: 'moment',
-      content: '晒出了可爱瞬间',
+      content: '发布了一条动态',
       title: momentForm.content,
       image: momentForm.image,
       time: '刚刚',
