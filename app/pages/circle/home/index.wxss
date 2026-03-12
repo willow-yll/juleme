@@ -139,6 +139,98 @@
   padding: 0 var(--spacing-lg) var(--spacing-lg);
 }
 
+.pending-review-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-md);
+  overflow: hidden;
+}
+
+.pending-review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  border-bottom: 1rpx solid var(--border);
+}
+
+.pending-review-title {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.pending-review-count {
+  font-size: var(--text-tiny);
+  color: var(--text-muted);
+}
+
+.pending-review-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-lg);
+  border-bottom: 1rpx solid var(--border);
+}
+
+.pending-review-item:last-child {
+  border-bottom: none;
+}
+
+.pending-review-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--radius-circle);
+  margin-right: var(--spacing-md);
+}
+
+.pending-review-info {
+  flex: 1;
+}
+
+.pending-review-name {
+  display: block;
+  font-size: var(--text-secondary);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.pending-review-desc {
+  display: block;
+  margin-top: 6rpx;
+  font-size: var(--text-tiny);
+  color: var(--text-muted);
+}
+
+.pending-review-actions {
+  display: flex;
+  gap: 12rpx;
+  margin-left: var(--spacing-md);
+}
+
+.pending-btn {
+  margin: 0;
+  padding: 0 20rpx;
+  line-height: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  font-size: var(--text-tiny);
+}
+
+.pending-btn::after {
+  border: none;
+}
+
+.pending-btn-accept {
+  background: var(--primary);
+  color: #fff;
+}
+
+.pending-btn-reject {
+  background: #F5F5F5;
+  color: var(--text-light);
+}
+
 .member-list,
 .analysis-card {
   background: #fff;

@@ -36,6 +36,26 @@
   </view>
 
   <view class="section" wx:if="{{activeSection === 'members'}}">
+    <view class="pending-review-card" wx:if="{{isOwner && pendingRequests.length > 0}}">
+      <view class="pending-review-header">
+        <text class="pending-review-title">待处理加入申请</text>
+        <text class="pending-review-count">{{pendingRequests.length}} 条</text>
+      </view>
+      <block wx:for="{{pendingRequests}}" wx:key="id">
+        <view class="pending-review-item">
+          <image class="pending-review-avatar" src="{{item.userAvatar}}" mode="aspectFill" />
+          <view class="pending-review-info">
+            <text class="pending-review-name">{{item.userName}}</text>
+            <text class="pending-review-desc">申请加入当前圈子</text>
+          </view>
+          <view class="pending-review-actions">
+            <button class="pending-btn pending-btn-accept" bindtap="acceptRequest" data-id="{{item.id}}">同意</button>
+            <button class="pending-btn pending-btn-reject" bindtap="rejectRequest" data-id="{{item.id}}">拒绝</button>
+          </view>
+        </view>
+      </block>
+    </view>
+
     <view class="member-list">
       <view class="member-card" wx:for="{{members}}" wx:key="id">
         <image class="member-avatar" src="{{item.avatar}}" mode="aspectFill" />

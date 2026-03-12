@@ -5,6 +5,7 @@ Page({
   data: {
     circle: null,
     members: [],
+    pendingRequests: [],
     activeSection: 'members',
     isOwner: false,
     analysis: {
@@ -50,6 +51,9 @@ Page({
       const wishes = circleData ? circleData.wishes || [] : [];
       const currentUserId = app.getCurrentUserId();
       const isOwner = !!(circle && circle.ownerId === currentUserId);
+      const pendingRequests = isOwner
+        ? await this.loadPendingRequests(circle ? circle._id : '')
+        : [];
 
       const genderMap = {};
       const mbtiMap = {};
@@ -69,6 +73,7 @@ Page({
       this.setData({
         circle,
         members,
+        pendingRequests,
         isOwner,
         analysis: {
           gender: Object.entries(genderMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 })),
@@ -82,6 +87,72 @@ Page({
     } catch (error) {
       wx.showToast({ title: error.message || '加载圈子失败', icon: 'none' });
     }
+  },
+
+  async loadPendingRequests(circleId) {
+    if (!circleId) {
+      return [];
+    }
+    const result = await app.loadCircleList();
+    const pendingRequests = Array.isArray(result && result.pendingRequests) ? result.pendingRequests : [];
+    return pendingRequests
+      .filter((item) => item.circleId === circleId)
+      .map((item) => ({
+        id: item._id,
+        circleId: item.circleId,
+        userName: item.applicantName,
+        userAvatar: item.applicantAvatar,
+        circleName: item.circleName,
+        status: item.status
+      }));
+  },
+
+  async acceptRequest(e) {
+    const { id } = e.currentTarget.dataset;
+    const request = this.data.pendingRequests.find((item) => item.id === id);
+    if (!request) {
+      wx.showToast({ title: '申请不存在', icon: 'none' });
+      return;
+    }
+
+    wx.showModal({
+      title: '确认同意',
+      content: `同意「${request.userName}」加入圈子？`,
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await app.reviewJoinRequest({ circleId: request.circleId, requestId: id, status: 'approved' });
+          await this.loadData();
+          wx.showToast({ title: '已同意加入', icon: 'success' });
+        } catch (error) {
+          wx.showToast({ title: error.message || '处理失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
+  async rejectRequest(e) {
+    const { id } = e.currentTarget.dataset;
+    const request = this.data.pendingRequests.find((item) => item.id === id);
+    if (!request) {
+      wx.showToast({ title: '申请不存在', icon: 'none' });
+      return;
+    }
+
+    wx.showModal({
+      title: '确认拒绝',
+      content: `拒绝「${request.userName}」加入圈子？`,
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await app.reviewJoinRequest({ circleId: request.circleId, requestId: id, status: 'rejected' });
+          await this.loadData();
+          wx.showToast({ title: '已拒绝', icon: 'none' });
+        } catch (error) {
+          wx.showToast({ title: error.message || '处理失败', icon: 'none' });
+        }
+      }
+    });
   },
 
   calculateLeaderboard(members, wishes) {

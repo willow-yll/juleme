@@ -49,23 +49,6 @@
     </block>
   </view>
 
-  <!-- 待确认的加入申请（圈主可见） -->
-  <view class="pending-section" wx:if="{{pendingRequests.length > 0}}">
-    <text class="section-title">👀 待确认</text>
-    <block wx:for="{{pendingRequests}}" wx:key="id">
-      <view class="pending-card">
-        <view class="pending-info">
-          <text class="pending-name">{{item.userName}}</text>
-          <text class="pending-circle">申请加入：{{item.circleName}}</text>
-        </view>
-        <view class="pending-actions">
-          <button class="btn-accept" bindtap="acceptRequest" data-id="{{item.id}}">同意</button>
-          <button class="btn-reject" bindtap="rejectRequest" data-id="{{item.id}}">拒绝</button>
-        </view>
-      </view>
-    </block>
-  </view>
-
   <!-- 底部占位 -->
   <view class="tabbar-spacer"></view>
 

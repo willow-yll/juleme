@@ -45,13 +45,22 @@ Page({
           }))
         : [];
 
+      const currentCircleId = app.getCurrentCircleId();
+      const normalizedCircles = circles.map((item) => ({ ...item, id: item._id }));
+
       this.setData({
-        circles: circles.map((item) => ({ ...item, id: item._id })),
+        circles: normalizedCircles,
         myPendingRequests,
         pendingRequests,
-        currentCircleId: app.getCurrentCircleId(),
+        currentCircleId,
         loading: false
       });
+
+      const pages = getCurrentPages();
+      const shouldAutoEnter = pages.length === 1 && !!currentCircleId && normalizedCircles.some((item) => item.id === currentCircleId);
+      if (shouldAutoEnter) {
+        wx.switchTab({ url: '/pages/circle/home/index' });
+      }
     } catch (error) {
       this.setData({ loading: false });
       wx.showToast({ title: error.message || '加载圈子失败', icon: 'none' });
