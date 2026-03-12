@@ -45,6 +45,18 @@ Page({
     const { name, description, color, submitting } = this.data;
     if (submitting) return;
 
+    if (!app.hasUserProfile()) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完善个人资料',
+        showCancel: false,
+        success: () => {
+          wx.redirectTo({ url: '/pages/profile/setup/index' });
+        }
+      });
+      return;
+    }
+
     if (!name || !name.trim()) {
       wx.showToast({ title: '请输入圈子名称', icon: 'none' });
       return;

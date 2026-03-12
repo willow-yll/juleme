@@ -20,7 +20,6 @@ function getContext() {
 
 function normalizeUserProfile(doc = {}, openid = '') {
   return {
-    _id: doc._id || openid,
     openid: doc.openid || openid,
     nickname: doc.nickname || '',
     gender: doc.gender || '',
@@ -52,7 +51,6 @@ async function ensureUser(openid) {
   }
 
   const userProfile = normalizeUserProfile({
-    _id: openid,
     openid
   }, openid);
 

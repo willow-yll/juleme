@@ -11,7 +11,6 @@ exports.main = async (event) => {
   const existing = await ensureUser(OPENID);
   const updatedAt = nowIso();
   const userProfile = {
-    _id: OPENID,
     openid: OPENID,
     nickname: trimmedNickname,
     gender,

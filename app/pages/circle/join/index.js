@@ -34,6 +34,18 @@ Page({
     const { code, submitting } = this.data;
     if (submitting) return;
 
+    if (!app.hasUserProfile()) {
+      wx.showModal({
+        title: '提示',
+        content: '请先完善个人资料',
+        showCancel: false,
+        success: () => {
+          wx.redirectTo({ url: '/pages/profile/setup/index' });
+        }
+      });
+      return;
+    }
+
     if (!code || code.length !== 6) {
       this.setData({ errorMsg: '请输入6位圈子号码' });
       wx.showToast({ title: '请输入6位圈子号码', icon: 'none' });
