@@ -81,13 +81,13 @@ Page({
   // 跳转到创建圈子
   goToCreateCircle() {
     this.setData({ showFabMenu: false });
-    wx.navigateTo({ url: '/pages/circle/create' });
+    wx.navigateTo({ url: '/pages/circle/create/index' });
   },
 
   // 跳转到加入圈子
   goToJoinCircle() {
     this.setData({ showFabMenu: false });
-    wx.navigateTo({ url: '/pages/circle/join' });
+    wx.navigateTo({ url: '/pages/circle/join/index' });
   },
 
   // 进入圈子
