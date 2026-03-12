@@ -45,8 +45,14 @@ Page({
           }))
         : [];
 
-      const currentCircleId = app.getCurrentCircleId();
       const normalizedCircles = circles.map((item) => ({ ...item, id: item._id }));
+      let currentCircleId = app.getCurrentCircleId();
+      const hasProfile = app.hasUserProfile();
+
+      if (!currentCircleId && normalizedCircles.length > 0) {
+        currentCircleId = normalizedCircles[0].id;
+        app.setCurrentCircle(currentCircleId, { syncOnly: true });
+      }
 
       this.setData({
         circles: normalizedCircles,
@@ -57,7 +63,7 @@ Page({
       });
 
       const pages = getCurrentPages();
-      const shouldAutoEnter = pages.length === 1 && !!currentCircleId && normalizedCircles.some((item) => item.id === currentCircleId);
+      const shouldAutoEnter = pages.length === 1 && hasProfile && !!currentCircleId && normalizedCircles.some((item) => item.id === currentCircleId);
       if (shouldAutoEnter) {
         wx.switchTab({ url: '/pages/circle/home/index' });
       }

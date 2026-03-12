@@ -39,8 +39,13 @@ Page({
   async loadData() {
     try {
       await app.ensureBootstrap();
+      const hasProfile = app.hasUserProfile();
       const circleId = await app.ensureCurrentCircleSelected();
       if (!circleId) {
+        if (!hasProfile) {
+          wx.redirectTo({ url: '/pages/profile/setup/index' });
+          return;
+        }
         wx.redirectTo({ url: '/pages/circle/index' });
         return;
       }

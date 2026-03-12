@@ -33,6 +33,13 @@ Page({
         });
         return false;
       }
+
+      const circleId = await app.ensureCurrentCircleSelected();
+      if (circleId) {
+        wx.switchTab({ url: '/pages/circle/home/index' });
+        return false;
+      }
+
       return true;
     } catch (error) {
       console.error('创建圈子页初始化失败', error);
