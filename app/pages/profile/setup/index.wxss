@@ -6,8 +6,8 @@
 }
 
 .header {
-  background: linear-gradient(135deg, #9B7DED 0%, #B794F6 100%);
-  padding: 60rpx 32rpx 40rpx;
+  background: linear-gradient(135deg, var(--primary), #B794F6);
+  padding: 60rpx var(--spacing-lg) 40rpx;
 }
 
 .title {
@@ -20,14 +20,14 @@
 .subtitle {
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.8);
-  margin-top: 8rpx;
+  margin-top: var(--spacing-xs);
 }
 
 .form {
   background: #fff;
-  margin: 24rpx;
-  border-radius: 24rpx;
-  padding: 0 24rpx;
+  margin: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  padding: 0 var(--spacing-lg);
   box-shadow: var(--shadow-sm);
 }
 
@@ -35,7 +35,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 32rpx 0;
+  padding: var(--spacing-lg) 0;
   border-bottom: 1rpx solid #f0f0f0;
 }
 
@@ -54,7 +54,7 @@
   text-align: right;
   font-size: 30rpx;
   color: var(--text);
-  margin-left: 24rpx;
+  margin-left: var(--spacing-lg);
 }
 
 .picker-value {
@@ -67,11 +67,12 @@
 .arrow {
   font-size: 32rpx;
   color: #ccc;
-  margin-left: 8rpx;
+  margin-left: var(--spacing-xs);
+  line-height: 1;
 }
 
 .save-btn {
-  margin: 48rpx 24rpx;
+  margin: 48rpx var(--spacing-lg);
   background: linear-gradient(135deg, var(--primary), #B794F6);
   color: #fff;
   font-size: 32rpx;
@@ -114,7 +115,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32rpx;
+  padding: var(--spacing-lg);
   border-bottom: 1rpx solid #f0f0f0;
 }
 
@@ -127,7 +128,7 @@
 .picker-close {
   font-size: 40rpx;
   color: #999;
-  padding: 8rpx;
+  padding: var(--spacing-xs);
 }
 
 .picker-view {

@@ -7,7 +7,9 @@
       bindtap="switchType"
       data-type="wish"
     >
-      <text class="type-icon">🎯</text>
+      <view class="type-icon-wrap">
+        <text class="type-icon">🎯</text>
+      </view>
       <text class="type-name">发起活动</text>
     </view>
     <view
@@ -15,7 +17,9 @@
       bindtap="switchType"
       data-type="moment"
     >
-      <text class="type-icon">📸</text>
+      <view class="type-icon-wrap">
+        <text class="type-icon">📸</text>
+      </view>
       <text class="type-name">发动态</text>
     </view>
     <view
@@ -23,7 +27,9 @@
       bindtap="switchType"
       data-type="anniversary"
     >
-      <text class="type-icon">💕</text>
+      <view class="type-icon-wrap">
+        <text class="type-icon">💕</text>
+      </view>
       <text class="type-name">设纪念日</text>
     </view>
   </view>
@@ -43,11 +49,26 @@
     <view class="form-group">
       <text class="label">分类</text>
       <view class="category-list">
-        <view class="category-item {{form.category === 'restaurant' ? 'active' : ''}}" bindtap="selectCategory" data-category="restaurant"><text>🍽️</text><text>餐厅</text></view>
-        <view class="category-item {{form.category === 'travel' ? 'active' : ''}}" bindtap="selectCategory" data-category="travel"><text>✈️</text><text>旅行</text></view>
-        <view class="category-item {{form.category === 'sport' ? 'active' : ''}}" bindtap="selectCategory" data-category="sport"><text>⚽</text><text>运动</text></view>
-        <view class="category-item {{form.category === 'entertainment' ? 'active' : ''}}" bindtap="selectCategory" data-category="entertainment"><text>🎉</text><text>娱乐</text></view>
-        <view class="category-item {{form.category === 'other' ? 'active' : ''}}" bindtap="selectCategory" data-category="other"><text>💫</text><text>其他</text></view>
+        <view class="category-item {{form.category === 'restaurant' ? 'active' : ''}}" bindtap="selectCategory" data-category="restaurant">
+          <view class="category-item-icon"><text>🍽️</text></view>
+          <text class="category-item-name">餐厅</text>
+        </view>
+        <view class="category-item {{form.category === 'travel' ? 'active' : ''}}" bindtap="selectCategory" data-category="travel">
+          <view class="category-item-icon"><text>✈️</text></view>
+          <text class="category-item-name">旅行</text>
+        </view>
+        <view class="category-item {{form.category === 'sport' ? 'active' : ''}}" bindtap="selectCategory" data-category="sport">
+          <view class="category-item-icon"><text>⚽</text></view>
+          <text class="category-item-name">运动</text>
+        </view>
+        <view class="category-item {{form.category === 'entertainment' ? 'active' : ''}}" bindtap="selectCategory" data-category="entertainment">
+          <view class="category-item-icon"><text>🎉</text></view>
+          <text class="category-item-name">娱乐</text>
+        </view>
+        <view class="category-item {{form.category === 'other' ? 'active' : ''}}" bindtap="selectCategory" data-category="other">
+          <view class="category-item-icon"><text>💫</text></view>
+          <text class="category-item-name">其他</text>
+        </view>
       </view>
     </view>
 
@@ -89,7 +110,9 @@
     <view class="form-group">
       <text class="label">照片</text>
       <view class="image-uploader" bindtap="chooseImage">
-        <text class="upload-icon">📷</text>
+        <view class="upload-icon-wrap">
+          <text class="upload-icon">📷</text>
+        </view>
         <text class="upload-text">点击上传照片</text>
       </view>
     </view>

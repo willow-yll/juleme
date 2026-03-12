@@ -9,21 +9,21 @@
 .tabs {
   display: flex;
   background: #fff;
-  padding: 24rpx;
-  gap: 16rpx;
+  padding: var(--spacing-lg);
+  gap: var(--spacing-md);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .tab {
   flex: 1;
   text-align: center;
   padding: 20rpx 0;
-  font-size: 28rpx;
+  font-size: var(--text-body);
   color: var(--text-light);
-  border-radius: 24rpx;
+  border-radius: var(--radius-lg);
   transition: all 0.3s ease;
   background: var(--bg);
 }
@@ -36,7 +36,7 @@
 
 /* 列表 */
 .list {
-  padding: 24rpx;
+  padding: var(--spacing-lg);
 }
 
 /* 卡片 */
@@ -44,9 +44,9 @@
   display: flex;
   align-items: center;
   background: #fff;
-  border-radius: 24rpx;
-  padding: 24rpx;
-  margin-bottom: 16rpx;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   box-shadow: var(--shadow-sm);
 }
 
@@ -62,6 +62,7 @@
 .date-icon,
 .cycle-icon {
   font-size: 48rpx;
+  line-height: 1;
 }
 
 .card-content {
@@ -79,7 +80,7 @@
 
 .date-value,
 .cycle-next {
-  font-size: 24rpx;
+  font-size: var(--text-small);
   color: var(--text-muted);
 }
 
@@ -101,7 +102,7 @@
 }
 
 .countdown-unit {
-  font-size: 24rpx;
+  font-size: var(--text-small);
   color: var(--text-muted);
 }
 
@@ -110,7 +111,7 @@
 }
 
 .countdown-text {
-  font-size: 24rpx;
+  font-size: var(--text-small);
   color: var(--text-muted);
 }
 
@@ -123,10 +124,10 @@
 .fab {
   position: fixed;
   bottom: 160rpx;
-  right: 32rpx;
+  right: var(--spacing-lg);
   width: 100rpx;
   height: 100rpx;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: linear-gradient(135deg, var(--secondary), #FFCBA4);
   box-shadow: 0 8rpx 24rpx rgba(255, 171, 118, 0.4);
   display: flex;
@@ -143,4 +144,5 @@
   font-size: 56rpx;
   color: #fff;
   font-weight: 300;
+  line-height: 1;
 }

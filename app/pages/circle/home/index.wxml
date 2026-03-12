@@ -10,11 +10,15 @@
 
   <view class="top-actions">
     <view class="action-card" bindtap="goToCircleList">
-      <text class="action-icon">👥</text>
+      <view class="action-icon-wrap">
+        <text class="action-icon">👥</text>
+      </view>
       <text class="action-text">切换圈子</text>
     </view>
     <view class="action-card" bindtap="goToCreate">
-      <text class="action-icon">➕</text>
+      <view class="action-icon-wrap">
+        <text class="action-icon">➕</text>
+      </view>
       <text class="action-text">去发布</text>
     </view>
   </view>

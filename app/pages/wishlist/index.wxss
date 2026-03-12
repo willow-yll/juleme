@@ -9,21 +9,21 @@
 .tabs {
   display: flex;
   background: #fff;
-  padding: 16rpx 24rpx;
-  gap: 16rpx;
+  padding: var(--spacing-md) var(--spacing-lg);
+  gap: var(--spacing-md);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .tab {
   flex: 1;
   text-align: center;
   padding: 16rpx 0;
-  font-size: 26rpx;
+  font-size: var(--text-secondary);
   color: var(--text-light);
-  border-radius: 24rpx;
+  border-radius: var(--radius-lg);
   transition: all 0.3s ease;
 }
 
@@ -39,13 +39,13 @@
 }
 
 .timeline-container {
-  padding: 24rpx;
+  padding: var(--spacing-lg);
   padding-left: 48rpx;
 }
 
 .timeline-item {
   position: relative;
-  padding-bottom: 32rpx;
+  padding-bottom: var(--spacing-lg);
 }
 
 .timeline-item:last-child {
@@ -56,11 +56,11 @@
   display: none;
 }
 
-/* 时间轴线 */
+/* 时间轴线 - 修正对齐 */
 .timeline-line {
   position: absolute;
-  left: -24rpx;
-  top: 20rpx;
+  left: -25rpx;
+  top: 16rpx;
   bottom: -32rpx;
   width: 2rpx;
   background: #e0e0e0;
@@ -70,14 +70,14 @@
   background: #ccc;
 }
 
-/* 时间轴点 */
+/* 时间轴点 - 修正对齐 */
 .timeline-dot {
   position: absolute;
-  left: -32rpx;
-  top: 12rpx;
+  left: -33rpx;
+  top: 10rpx;
   width: 20rpx;
   height: 20rpx;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--primary);
   border: 4rpx solid #fff;
   box-shadow: 0 0 0 2rpx var(--primary);
@@ -102,12 +102,12 @@
 
 /* 日期标签 */
 .timeline-date {
-  margin-bottom: 12rpx;
+  margin-bottom: var(--spacing-sm);
   padding-left: 8rpx;
 }
 
 .timeline-date text {
-  font-size: 24rpx;
+  font-size: var(--text-small);
   color: var(--primary);
   font-weight: 500;
 }
@@ -123,8 +123,8 @@
 /* 活动卡片 */
 .wish-card {
   background: #fff;
-  border-radius: 24rpx;
-  padding: 24rpx;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
   box-shadow: var(--shadow);
 }
 
@@ -136,10 +136,10 @@
 .wish-category {
   display: inline-flex;
   align-items: center;
-  gap: 8rpx;
-  padding: 8rpx 16rpx;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
   border-radius: 20rpx;
-  margin-bottom: 16rpx;
+  margin-bottom: var(--spacing-md);
 }
 
 .tag-restaurant { background: #FFF3E0; }
@@ -149,11 +149,11 @@
 .tag-other { background: #F3E5F5; }
 
 .category-icon {
-  font-size: 24rpx;
+  font-size: var(--text-small);
 }
 
 .category-text {
-  font-size: 22rpx;
+  font-size: var(--text-tiny);
   font-weight: 500;
 }
 
@@ -165,7 +165,7 @@
 
 /* 活动内容 */
 .wish-content {
-  margin-bottom: 16rpx;
+  margin-bottom: var(--spacing-md);
 }
 
 .wish-title {
@@ -173,11 +173,11 @@
   font-weight: 600;
   color: var(--text);
   display: block;
-  margin-bottom: 8rpx;
+  margin-bottom: var(--spacing-xs);
 }
 
 .wish-desc {
-  font-size: 26rpx;
+  font-size: var(--text-secondary);
   color: var(--text-light);
   display: block;
   overflow: hidden;
@@ -190,7 +190,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16rpx 0;
+  padding: var(--spacing-md) 0;
   border-top: 1rpx solid var(--border);
   border-bottom: 1rpx solid var(--border);
 }
@@ -198,48 +198,52 @@
 .creator {
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: var(--spacing-sm);
 }
 
 .avatar-sm {
   width: 48rpx;
   height: 48rpx;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 }
 
 .creator-name {
-  font-size: 24rpx;
+  font-size: var(--text-small);
   color: var(--text-light);
 }
 
 .claimers {
   display: flex;
   align-items: center;
-  gap: 8rpx;
+  gap: var(--spacing-xs);
 }
 
 .claim-count {
-  font-size: 24rpx;
+  font-size: var(--text-small);
   color: var(--primary);
   font-weight: 500;
 }
 
-/* 操作按钮 */
+/* 操作按钮 - 统一高度与居中 */
 .wish-actions {
   display: flex;
-  gap: 16rpx;
-  margin-top: 16rpx;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
 }
 
 .action-btn-primary,
 .action-btn-secondary,
 .action-btn-cancel {
   flex: 1;
-  text-align: center;
-  padding: 16rpx 0;
-  border-radius: 24rpx;
-  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-secondary);
   font-weight: 500;
+  min-height: 72rpx;
+  line-height: 1;
 }
 
 .action-btn-primary {
@@ -268,16 +272,16 @@
   height: 120rpx;
 }
 
-/* 悬浮按钮 */
+/* 悬浮按钮 - 统一使用全局样式 */
 .fab {
   position: fixed;
   bottom: 160rpx;
-  right: 32rpx;
+  right: var(--spacing-lg);
   width: 100rpx;
   height: 100rpx;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: linear-gradient(135deg, var(--primary), #B794F6);
-  box-shadow: 0 8rpx 24rpx rgba(155, 125, 237, 0.4);
+  box-shadow: var(--shadow-fab);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -292,9 +296,10 @@
   font-size: 56rpx;
   color: #fff;
   font-weight: 300;
+  line-height: 1;
 }
 
-/* 空状态 */
+/* 空状态 - 统一使用全局样式 */
 .empty {
   display: flex;
   flex-direction: column;
@@ -305,18 +310,19 @@
 
 .empty-icon {
   font-size: 120rpx;
-  margin-bottom: 20rpx;
+  margin-bottom: var(--spacing-md);
+  line-height: 1;
 }
 
 .empty-text {
-  font-size: 28rpx;
+  font-size: var(--text-body);
   color: var(--text-muted);
 }
 
 .btn {
   padding: 20rpx 48rpx;
-  border-radius: 40rpx;
-  font-size: 28rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--text-body);
   font-weight: 500;
 }
 
@@ -326,5 +332,30 @@
 }
 
 .mt-20 {
-  margin-top: 20rpx;
+  margin-top: var(--spacing-md);
+}
+
+/* 按钮文字居中 */
+.btn-text {
+  line-height: 1;
+}
+
+/* 空状态使用全局类 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon-center {
+  font-size: 120rpx;
+  margin-bottom: var(--spacing-md);
+  line-height: 1;
+}
+
+.empty-text-center {
+  font-size: var(--text-body);
+  color: var(--text-muted);
 }
