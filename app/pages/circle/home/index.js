@@ -1,11 +1,13 @@
 // 圈子主页
 const app = getApp();
+const { generateCircleInterpretation } = require('../../../utils/bailian');
 
 Page({
   data: {
     circle: null,
     members: [],
     activeSection: 'members',
+    isOwner: false,
     analysis: {
       gender: [],
       mbti: [],
@@ -22,7 +24,10 @@ Page({
       totalGatherings: 0,   // 共聚会次数
       totalDishes: 0,       // 一起吃了多少道菜
       totalCities: 0        // 足迹多少个城市
-    }
+    },
+    llmInterpretation: '',
+    llmLoading: false,
+    llmError: ''
   },
 
   onLoad() {
@@ -44,6 +49,7 @@ Page({
     const members = circle.members || [];
     const circleData = app.getCurrentCircleData();
     const wishes = circleData ? circleData.wishes : [];
+    const isOwner = circle.ownerId === 'me';
 
     const genderMap = {};
     const mbtiMap = {};
@@ -72,6 +78,7 @@ Page({
     this.setData({
       circle,
       members,
+      isOwner,
       analysis: {
         gender: Object.entries(genderMap).map(([name, count]) => ({
           name,
@@ -90,7 +97,9 @@ Page({
         }))
       },
       leaderboard,
-      stats
+      stats,
+      llmError: '',
+      llmLoading: false
     });
   },
 
@@ -204,8 +213,77 @@ Page({
     wx.navigateTo({ url: '/pages/circle/index' });
   },
 
+  goToRenameCircle() {
+    if (!this.data.isOwner) {
+      wx.showToast({ title: '只有圈主可以改名', icon: 'none' });
+      return;
+    }
+    wx.navigateTo({ url: '/pages/circle/rename/index' });
+  },
+
   goToCreate() {
     wx.navigateTo({ url: '/pages/create/index' });
+  },
+
+  buildLlmPayload() {
+    const { circle, members, analysis, leaderboard, stats } = this.data;
+    return {
+      circleName: circle ? circle.name : '未命名圈子',
+      memberCount: members.length,
+      analysis,
+      leaderboard: {
+        partyKing: leaderboard.partyKing ? {
+          name: leaderboard.partyKing.name,
+          eventsJoined: leaderboard.partyKing.eventsJoined
+        } : null,
+        foodKing: leaderboard.foodKing ? {
+          name: leaderboard.foodKing.name,
+          diningCount: leaderboard.foodKing.diningCount
+        } : null,
+        organizerKing: leaderboard.organizerKing ? {
+          name: leaderboard.organizerKing.name,
+          eventsCreated: leaderboard.organizerKing.eventsCreated
+        } : null
+      },
+      stats
+    };
+  },
+
+  handleGenerateInterpretation() {
+    const { circle, members, llmLoading } = this.data;
+    if (llmLoading) {
+      return;
+    }
+
+    if (!circle || !members.length) {
+      this.setData({
+        llmInterpretation: '',
+        llmError: '当前圈子还没有圈友数据，先邀请成员加入后再试试。'
+      });
+      return;
+    }
+
+    this.setData({
+      llmLoading: true,
+      llmError: '',
+      llmInterpretation: ''
+    });
+
+    generateCircleInterpretation(this.buildLlmPayload())
+      .then((text) => {
+        this.setData({
+          llmInterpretation: text,
+          llmLoading: false,
+          llmError: ''
+        });
+      })
+      .catch((error) => {
+        this.setData({
+          llmInterpretation: '',
+          llmLoading: false,
+          llmError: error && error.message ? error.message : '生成失败，请稍后重试。'
+        });
+      });
   },
 
   onShareAppMessage() {

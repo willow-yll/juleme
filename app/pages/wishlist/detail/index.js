@@ -9,7 +9,9 @@ Page({
     progress: 0,
     countdownText: '',
     isClaimed: false,
-    isCreator: false
+    isCreator: false,
+    isCircleOwner: false,
+    canDelete: false
   },
 
   onLoad(options) {
@@ -55,8 +57,19 @@ Page({
       const countdownText = this.getCountdownText(wish.targetDate);
       const isClaimed = wish.claimed && wish.claimed.some(c => c.user && c.user.id === CURRENT_USER.id);
       const isCreator = !!(wish.creator && wish.creator.id === CURRENT_USER.id);
+      const currentCircle = app.globalData.currentCircle || {};
+      const isCircleOwner = currentCircle.ownerId === CURRENT_USER.id;
+      const canDelete = isCreator || isCircleOwner;
 
-      this.setData({ wish, progress, countdownText, isClaimed, isCreator });
+      this.setData({
+        wish,
+        progress,
+        countdownText,
+        isClaimed,
+        isCreator,
+        isCircleOwner,
+        canDelete
+      });
     } else {
       wx.showToast({ title: '活动不存在', icon: 'none' });
       setTimeout(() => {
@@ -187,8 +200,8 @@ Page({
   },
 
   handleDelete() {
-    const { wish, isCreator } = this.data;
-    if (!wish || !isCreator) return;
+    const { wish, canDelete } = this.data;
+    if (!wish || !canDelete) return;
 
     wx.showModal({
       title: '删除活动',

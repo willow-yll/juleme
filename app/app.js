@@ -317,6 +317,31 @@ App({
     return true;
   },
 
+  // 更新圈子信息
+  updateCircleById(circleId, patch) {
+    const circles = this.globalData.circles || [];
+    const circle = circles.find(item => item.id === circleId);
+    if (!circle) {
+      return null;
+    }
+
+    Object.assign(circle, patch);
+
+    if (this.globalData.currentCircleId === circleId) {
+      this.globalData.currentCircle = circle;
+    }
+
+    return circle;
+  },
+
+  // 修改当前圈子名称
+  renameCurrentCircle(name) {
+    if (!this.globalData.currentCircleId) {
+      return null;
+    }
+    return this.updateCircleById(this.globalData.currentCircleId, { name });
+  },
+
   // 通过圈子号码查找圈子
   findCircleByCode(code) {
     return this.globalData.circles.find(c => c.code === code);

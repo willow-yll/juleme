@@ -16,6 +16,12 @@
       </view>
       <text class="action-text">切换圈子</text>
     </view>
+    <view class="action-card" wx:if="{{isOwner}}" bindtap="goToRenameCircle">
+      <view class="action-icon-wrap">
+        <text class="action-icon">✏️</text>
+      </view>
+      <text class="action-text">修改圈名</text>
+    </view>
     <view class="action-card" bindtap="goToCreate">
       <view class="action-icon-wrap">
         <text class="action-icon">➕</text>
@@ -114,6 +120,21 @@
           </view>
         </view>
       </view>
+    </view>
+
+    <view class="analysis-card">
+      <text class="analysis-title">AI 解读</text>
+      <text class="ai-description">基于当前圈友画像、荣誉榜和活动统计生成圈子属性解读。</text>
+      <button class="btn btn-primary ai-button" loading="{{llmLoading}}" bindtap="handleGenerateInterpretation">
+        {{llmLoading ? '解读生成中...' : 'AI 解读圈子属性'}}
+      </button>
+      <view class="ai-result" wx:if="{{llmInterpretation}}">
+        <text class="ai-result-text">{{llmInterpretation}}</text>
+      </view>
+      <view class="ai-error" wx:if="{{llmError}}">
+        <text class="ai-error-text">{{llmError}}</text>
+      </view>
+      <text class="empty-text" wx:if="{{!llmInterpretation && !llmError && !llmLoading}}">点击按钮后即可生成 AI 解读</text>
     </view>
 
     <!-- 性别分布 -->

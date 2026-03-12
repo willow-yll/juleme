@@ -1,0 +1,12 @@
+<view class="page">
+  <view class="form">
+    <view class="form-group">
+      <text class="label">圈子名称</text>
+      <input class="input" placeholder="给你的圈子起个名字" bindinput="onNameInput" value="{{name}}" />
+    </view>
+  </view>
+
+  <view class="submit-btn">
+    <button class="btn btn-primary btn-block" bindtap="handleRename">保存圈名</button>
+  </view>
+</view>

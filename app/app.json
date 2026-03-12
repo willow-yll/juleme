@@ -3,6 +3,7 @@
     "pages/circle/index",
     "pages/circle/home/index",
     "pages/circle/create/index",
+    "pages/circle/rename/index",
     "pages/circle/join/index",
     "pages/index/index",
     "pages/wishlist/index",
