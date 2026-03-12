@@ -5,6 +5,7 @@
       <view class="circle-avatar">{{circle.name[0]}}</view>
       <text class="circle-name">{{circle.name}}</text>
       <text class="member-count">{{members.length}} 位圈友</text>
+      <text class="member-count">圈子代码：{{circle.code}}</text>
     </view>
   </view>
 

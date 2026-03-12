@@ -79,6 +79,9 @@
       <button class="btn btn-outline" bindtap="handleShare">
         邀请朋友
       </button>
+      <button class="btn btn-delete" wx:if="{{isCreator}}" bindtap="handleDelete">
+        删除活动
+      </button>
     </view>
   </view>
 </view>

@@ -2,11 +2,10 @@
 <view class="page">
   <!-- 用户信息 -->
   <view class="user-section">
-    <image class="user-bg" src="https://picsum.photos/400/200" mode="aspectFill" />
     <view class="user-info">
-      <image class="user-avatar" src="https://picsum.photos/100" />
-      <text class="user-name">我</text>
-      <text class="user-bio">记录生活中的美好</text>
+      <view class="user-avatar" style="background: {{avatarBgColor}};">{{avatarText}}</view>
+      <text class="user-name">{{userProfile.nickname || '我'}}</text>
+      <text class="user-bio">圈子代码：{{currentCircle.code}}</text>
     </view>
   </view>
 

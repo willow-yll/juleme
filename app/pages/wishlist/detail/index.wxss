@@ -196,6 +196,7 @@
   display: flex;
   gap: var(--spacing-md);
   z-index: 100;
+  flex-wrap: wrap;
 }
 
 .actions .btn {
@@ -206,6 +207,12 @@
   background: #fff !important;
   color: #FF6B6B !important;
   border: 2rpx solid #FF6B6B !important;
+}
+
+.btn-delete {
+  background: #fff !important;
+  color: #D32F2F !important;
+  border: 2rpx solid #D32F2F !important;
 }
 
 /* 加载 */

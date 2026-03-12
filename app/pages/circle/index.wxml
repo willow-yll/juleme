@@ -16,6 +16,7 @@
         <view class="circle-info">
           <text class="circle-name">{{item.name}}</text>
           <text class="circle-desc">{{item.memberCount}}位成员</text>
+          <text class="circle-desc">圈子代码：{{item.code}}</text>
         </view>
         <view class="circle-role" wx:if="{{item.role === 'owner'}}">
           <text>圈主</text>

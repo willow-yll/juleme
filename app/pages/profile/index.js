@@ -1,6 +1,8 @@
 // 个人中心
 const app = getApp();
 
+const AVATAR_COLORS = ['#FF8A65', '#4DB6AC', '#9575CD', '#5C6BC0', '#26A69A', '#EC407A'];
+
 Page({
   data: {
     stats: {
@@ -9,7 +11,10 @@ Page({
       circles: 0,
       friends: 0
     },
-    currentCircle: null
+    currentCircle: null,
+    userProfile: null,
+    avatarText: '我',
+    avatarBgColor: AVATAR_COLORS[0]
   },
 
   onShow() {
@@ -22,10 +27,23 @@ Page({
     this.loadStats();
   },
 
+  getAvatarText(nickname) {
+    const text = (nickname || '我').trim();
+    return text ? text[0] : '我';
+  },
+
+  getAvatarBgColor(nickname) {
+    const seed = nickname || 'me';
+    const hash = Array.from(seed).reduce((total, char) => total + char.charCodeAt(0), 0);
+    return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+  },
+
   // 加载统计数据 - 基于当前圈子
   loadStats() {
     const circleData = app.getCurrentCircleData();
     const currentCircle = app.globalData.currentCircle;
+    const userProfile = app.getUserProfile() || {};
+    const nickname = userProfile.nickname || '我';
 
     const wishes = circleData ? circleData.wishes.length : 0;
     const anniversaries = circleData ? (circleData.anniversaries || []).length : 0;
@@ -39,6 +57,9 @@ Page({
 
     this.setData({
       currentCircle,
+      userProfile,
+      avatarText: this.getAvatarText(nickname),
+      avatarBgColor: this.getAvatarBgColor(nickname),
       stats: {
         wishes,
         anniversaries,

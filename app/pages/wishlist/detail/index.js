@@ -1,12 +1,15 @@
 // 活动详情页面
 const app = getApp();
 
+const CURRENT_USER = { id: 'me', avatar: 'https://picsum.photos/100' };
+
 Page({
   data: {
     wish: null,
     progress: 0,
     countdownText: '',
-    isClaimed: false
+    isClaimed: false,
+    isCreator: false
   },
 
   onLoad(options) {
@@ -22,6 +25,19 @@ Page({
       wx.redirectTo({ url: '/pages/circle/index' });
       return;
     }
+
+    const { wish } = this.data;
+    if (wish && wish.id) {
+      this.loadWish(wish.id);
+    }
+  },
+
+  getCurrentUser() {
+    const userProfile = app.getUserProfile() || {};
+    return {
+      ...CURRENT_USER,
+      name: userProfile.nickname || '我'
+    };
   },
 
   // 加载活动 - 从当前圈子获取
@@ -37,13 +53,19 @@ Page({
     if (wish) {
       const progress = this.calculateProgress(wish);
       const countdownText = this.getCountdownText(wish.targetDate);
-      const isClaimed = wish.claimed && wish.claimed.some(c => c.user && c.user.name === '我');
+      const isClaimed = wish.claimed && wish.claimed.some(c => c.user && c.user.id === CURRENT_USER.id);
+      const isCreator = !!(wish.creator && wish.creator.id === CURRENT_USER.id);
 
-      this.setData({ wish, progress, countdownText, isClaimed });
+      this.setData({ wish, progress, countdownText, isClaimed, isCreator });
     } else {
       wx.showToast({ title: '活动不存在', icon: 'none' });
       setTimeout(() => {
-        wx.navigateBack();
+        const pages = getCurrentPages();
+        if (pages.length > 1) {
+          wx.navigateBack();
+          return;
+        }
+        wx.switchTab({ url: '/pages/wishlist/index' });
       }, 1500);
     }
   },
@@ -86,7 +108,7 @@ Page({
       wish.claimed = [];
     }
 
-    const alreadyClaimed = wish.claimed.some(c => c.user && c.user.name === '我');
+    const alreadyClaimed = wish.claimed.some(c => c.user && c.user.id === CURRENT_USER.id);
     if (alreadyClaimed) {
       wx.showToast({ title: '已经报名过了', icon: 'none' });
       return;
@@ -97,8 +119,9 @@ Page({
       return;
     }
 
+    const currentUser = this.getCurrentUser();
     const newClaimed = [...wish.claimed, {
-      user: { avatar: 'https://picsum.photos/100', name: '我' },
+      user: currentUser,
       wantGo: true
     }];
 
@@ -119,7 +142,7 @@ Page({
     // 添加动态到当前圈子
     app.addFeedItemToCurrentCircle({
       id: Date.now(),
-      user: { avatar: 'https://picsum.photos/100', name: '我' },
+      user: { avatar: currentUser.avatar, name: currentUser.name },
       type: 'wish',
       content: '报名了活动',
       title: wish.title,
@@ -141,7 +164,7 @@ Page({
       content: '确定要取消报名该活动吗？',
       success: (res) => {
         if (res.confirm) {
-          const newClaimed = wish.claimed.filter(c => c.user.name !== '我');
+          const newClaimed = wish.claimed.filter(c => c.user.id !== CURRENT_USER.id);
 
           // 更新当前圈子的数据
           const circleData = app.getCurrentCircleData();
@@ -159,6 +182,32 @@ Page({
 
           wx.showToast({ title: '已取消报名', icon: 'success' });
         }
+      }
+    });
+  },
+
+  handleDelete() {
+    const { wish, isCreator } = this.data;
+    if (!wish || !isCreator) return;
+
+    wx.showModal({
+      title: '删除活动',
+      content: '确定要删除这个活动吗？删除后不可恢复。',
+      success: (res) => {
+        if (!res.confirm) {
+          return;
+        }
+
+        const removed = app.removeWishFromCurrentCircle(wish.id);
+        if (!removed) {
+          wx.showToast({ title: '活动不存在', icon: 'none' });
+          return;
+        }
+
+        wx.showToast({ title: '活动已删除', icon: 'success' });
+        setTimeout(() => {
+          wx.switchTab({ url: '/pages/wishlist/index' });
+        }, 1200);
       }
     });
   },

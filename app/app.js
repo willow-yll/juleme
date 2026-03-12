@@ -120,13 +120,13 @@ App({
         description: '想吃正宗的九宫格火锅！',
         category: 'restaurant',
         categoryText: '餐厅',
-        creator: { avatar: 'https://picsum.photos/100', name: '小明' },
+        creator: { id: 'u_xiaoming', avatar: 'https://picsum.photos/100', name: '小明' },
         targetDate: '2026-04-15',
         createdAt: '2026-03-01',
         status: 'active',
         claimed: [
-          { user: { avatar: 'https://picsum.photos/101', name: '小红' }, wantGo: true },
-          { user: { avatar: 'https://picsum.photos/102', name: '阿强' }, wantGo: true }
+          { user: { id: 'u_xiaohong', avatar: 'https://picsum.photos/101', name: '小红' }, wantGo: true },
+          { user: { id: 'u_aqiang', avatar: 'https://picsum.photos/102', name: '阿强' }, wantGo: true }
         ],
         maxClaim: 5,
         likes: 8
@@ -137,12 +137,12 @@ App({
         description: '想看布达拉宫和纳木错',
         category: 'travel',
         categoryText: '旅行',
-        creator: { avatar: 'https://picsum.photos/103', name: '小华' },
+        creator: { id: 'u_xiaohua', avatar: 'https://picsum.photos/103', name: '小华' },
         targetDate: '2026-07-01',
         createdAt: '2026-02-15',
         status: 'active',
         claimed: [
-          { user: { avatar: 'https://picsum.photos/104', name: '小丽' }, wantGo: true }
+          { user: { id: 'u_xiaoli', avatar: 'https://picsum.photos/104', name: '小丽' }, wantGo: true }
         ],
         maxClaim: 4,
         likes: 15
@@ -153,7 +153,7 @@ App({
         description: '周末一起去运动吧！',
         category: 'sport',
         categoryText: '运动',
-        creator: { avatar: 'https://picsum.photos/105', name: '阿强' },
+        creator: { id: 'u_aqiang', avatar: 'https://picsum.photos/105', name: '阿强' },
         targetDate: '2026-03-20',
         createdAt: '2026-03-05',
         status: 'active',
@@ -167,14 +167,14 @@ App({
         description: '想去看周杰伦的演唱会',
         category: 'other',
         categoryText: '其他',
-        creator: { avatar: 'https://picsum.photos/106', name: '小美' },
+        creator: { id: 'u_xiaomei', avatar: 'https://picsum.photos/106', name: '小美' },
         targetDate: '2026-06-01',
         createdAt: '2026-01-20',
         status: 'active',
         claimed: [
-          { user: { avatar: 'https://picsum.photos/107', name: '小明' }, wantGo: true },
-          { user: { avatar: 'https://picsum.photos/108', name: '小红' }, wantGo: true },
-          { user: { avatar: 'https://picsum.photos/109', name: '阿强' }, wantGo: true }
+          { user: { id: 'u_xiaoming', avatar: 'https://picsum.photos/107', name: '小明' }, wantGo: true },
+          { user: { id: 'u_xiaohong', avatar: 'https://picsum.photos/108', name: '小红' }, wantGo: true },
+          { user: { id: 'u_aqiang', avatar: 'https://picsum.photos/109', name: '阿强' }, wantGo: true }
         ],
         maxClaim: 5,
         likes: 22
@@ -299,6 +299,21 @@ App({
     }
     const circleData = this.ensureCircleData(this.globalData.currentCircleId);
     circleData.anniversaries.unshift(anniversary);
+    return true;
+  },
+
+  // 删除当前圈子的活动
+  removeWishFromCurrentCircle(wishId) {
+    if (!this.globalData.currentCircleId) {
+      console.warn('No current circle selected');
+      return false;
+    }
+    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
+    const wishIndex = circleData.wishes.findIndex(w => w.id === wishId);
+    if (wishIndex === -1) {
+      return false;
+    }
+    circleData.wishes.splice(wishIndex, 1);
     return true;
   },
 

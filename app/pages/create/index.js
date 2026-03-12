@@ -113,6 +113,8 @@ Page({
   // 提交愿望 - 写入当前圈子
   submitWish() {
     const { form } = this.data;
+    const userProfile = app.getUserProfile() || {};
+    const creatorName = userProfile.nickname || '我';
 
     if (!form.title) {
       wx.showToast({ title: '请输入活动标题', icon: 'none' });
@@ -133,7 +135,7 @@ Page({
       description: form.description,
       category: form.category,
       categoryText: categoryMap[form.category],
-      creator: { avatar: 'https://picsum.photos/100', name: '我' },
+      creator: { id: 'me', avatar: 'https://picsum.photos/100', name: creatorName },
       targetDate: form.dateUndecided ? '' : form.targetDate,
       createdAt: new Date().toISOString().split('T')[0],
       status: 'active',
@@ -148,7 +150,7 @@ Page({
     // 添加动态到当前圈子
     app.addFeedItemToCurrentCircle({
       id: Date.now(),
-      user: { avatar: 'https://picsum.photos/100', name: '我' },
+      user: { avatar: 'https://picsum.photos/100', name: creatorName },
       type: 'wish',
       content: '发起了新活动',
       title: form.title,

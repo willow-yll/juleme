@@ -1,6 +1,8 @@
 // 活动页面 - 时间轴形式
 const app = getApp();
 
+const CURRENT_USER = { id: 'me', avatar: 'https://picsum.photos/100' };
+
 Page({
   data: {
     wishes: [],
@@ -31,6 +33,14 @@ Page({
     }, 1000);
   },
 
+  getCurrentUser() {
+    const userProfile = app.getUserProfile() || {};
+    return {
+      ...CURRENT_USER,
+      name: userProfile.nickname || '我'
+    };
+  },
+
   // 加载活动数据 - 从当前圈子获取
   loadWishes() {
     const circleData = app.getCurrentCircleData();
@@ -40,7 +50,7 @@ Page({
     // 标记当前用户是否已报名
     const wishesWithClaim = wishes.map(w => ({
       ...w,
-      hasClaimed: w.claimed && w.claimed.some(c => c.user && c.user.name === '我'),
+      hasClaimed: w.claimed && w.claimed.some(c => c.user && c.user.id === CURRENT_USER.id),
       isEnded: w.targetDate && new Date(w.targetDate) < new Date()
     }));
 
@@ -166,8 +176,10 @@ Page({
       return;
     }
 
+    const currentUser = this.getCurrentUser();
+
     // 报名
-    const newClaimed = [...wish.claimed, { user: { avatar: 'https://picsum.photos/100', name: '我' }, wantGo: true }];
+    const newClaimed = [...wish.claimed, { user: currentUser, wantGo: true }];
     const newWishes = this.data.wishes.map(w =>
       w.id === id ? { ...w, claimed: newClaimed, hasClaimed: true } : w
     );
@@ -187,7 +199,7 @@ Page({
     // 添加动态到当前圈子
     app.addFeedItemToCurrentCircle({
       id: Date.now(),
-      user: { avatar: 'https://picsum.photos/100', name: '我' },
+      user: { avatar: currentUser.avatar, name: currentUser.name },
       type: 'wish',
       content: '报名了活动',
       title: wish.title,
@@ -211,7 +223,7 @@ Page({
       content: '确定要取消报名该活动吗？',
       success: (res) => {
         if (res.confirm) {
-          const newClaimed = wish.claimed.filter(c => c.user.name !== '我');
+          const newClaimed = wish.claimed.filter(c => c.user.id !== CURRENT_USER.id);
           const newWishes = this.data.wishes.map(w =>
             w.id === id ? { ...w, claimed: newClaimed, hasClaimed: false } : w
           );
