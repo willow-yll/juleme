@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/circle/index",
     "pages/circle/home/index",
+    "pages/circle/index",
     "pages/circle/create/index",
     "pages/circle/rename/index",
     "pages/circle/join/index",

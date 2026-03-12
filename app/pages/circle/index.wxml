@@ -29,7 +29,7 @@
     <view class="empty" wx:if="{{circles.length === 0}}">
       <text class="empty-icon">👥</text>
       <text class="empty-text">还没有加入任何圈子</text>
-      <text class="empty-hint">点击右下角+创建或加入圈子</text>
+      <text class="empty-hint">把每一次相聚，变成可以回看的专属记忆。</text>
     </view>
   </view>
 
