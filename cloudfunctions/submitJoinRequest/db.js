@@ -18,6 +18,13 @@ function getContext() {
   return cloud.getWXContext();
 }
 
+function requireOpenId(openid) {
+  if (typeof openid !== 'string' || !openid.trim()) {
+    throw new Error('未获取到用户身份，请从小程序端调用云函数，不要直接在云函数测试面板里运行需要 openid 的函数。');
+  }
+  return openid;
+}
+
 function normalizeUserProfile(doc = {}, openid = '') {
   return {
     openid: doc.openid || openid,
@@ -44,23 +51,25 @@ function toMemberSnapshot(userProfile = {}, role = 'member') {
 }
 
 async function ensureUser(openid) {
+  const safeOpenId = requireOpenId(openid);
   const userCollection = db.collection(COLLECTIONS.USERS);
-  const existing = await userCollection.doc(openid).get().catch(() => null);
+  const existing = await userCollection.doc(safeOpenId).get().catch(() => null);
   if (existing && existing.data) {
-    return normalizeUserProfile(existing.data, openid);
+    return normalizeUserProfile(existing.data, safeOpenId);
   }
 
   const userProfile = normalizeUserProfile({
-    openid
-  }, openid);
+    openid: safeOpenId
+  }, safeOpenId);
 
-  await userCollection.doc(openid).set({ data: userProfile });
+  await userCollection.doc(safeOpenId).set({ data: userProfile });
   return userProfile;
 }
 
 async function getUser(openid) {
-  const result = await db.collection(COLLECTIONS.USERS).doc(openid).get().catch(() => null);
-  return result && result.data ? normalizeUserProfile(result.data, openid) : null;
+  const safeOpenId = requireOpenId(openid);
+  const result = await db.collection(COLLECTIONS.USERS).doc(safeOpenId).get().catch(() => null);
+  return result && result.data ? normalizeUserProfile(result.data, safeOpenId) : null;
 }
 
 async function requireUser(openid) {
@@ -328,6 +337,7 @@ module.exports = {
   now,
   nowIso,
   getContext,
+  requireOpenId,
   normalizeUserProfile,
   toMemberSnapshot,
   ensureUser,
