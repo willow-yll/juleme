@@ -35,6 +35,6 @@
   </view>
 
   <view class="submit-btn">
-    <button class="btn btn-primary btn-block" bindtap="handleCreate">创建圈子</button>
+    <button class="btn btn-primary btn-block" bindtap="handleCreate" loading="{{submitting}}" disabled="{{submitting}}">{{submitting ? '创建中...' : '创建圈子'}}</button>
   </view>
 </view>

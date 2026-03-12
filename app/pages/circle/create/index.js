@@ -55,8 +55,12 @@ Page({
   },
 
   async handleCreate() {
+    console.log('handleCreate triggered', this.data);
     const { name, description, color, submitting } = this.data;
-    if (submitting) return;
+    if (submitting) {
+      console.log('create circle ignored because submitting');
+      return;
+    }
 
     const ready = await this.ensureProfileReady();
     if (!ready) {
