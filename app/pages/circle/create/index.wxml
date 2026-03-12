@@ -28,7 +28,7 @@
     <view class="form-group">
       <text class="label">圈子号码</text>
       <view class="code-display">
-        <text class="code">{{code}}</text>
+        <text class="code">{{codePreview}}</text>
         <text class="code-hint">分享给朋友，让他们输入号码加入</text>
       </view>
     </view>
