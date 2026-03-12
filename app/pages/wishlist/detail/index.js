@@ -138,14 +138,7 @@ Page({
       wantGo: true
     }];
 
-    // 更新当前圈子的数据
-    const circleData = app.getCurrentCircleData();
-    if (circleData) {
-      const wishIndex = circleData.wishes.findIndex(w => w.id === wish.id);
-      if (wishIndex > -1) {
-        circleData.wishes[wishIndex].claimed = newClaimed;
-      }
-    }
+    app.updateWishClaimsInCurrentCircle(wish.id, newClaimed);
 
     this.setData({
       wish: { ...wish, claimed: newClaimed },
@@ -179,14 +172,7 @@ Page({
         if (res.confirm) {
           const newClaimed = wish.claimed.filter(c => c.user.id !== CURRENT_USER.id);
 
-          // 更新当前圈子的数据
-          const circleData = app.getCurrentCircleData();
-          if (circleData) {
-            const wishIndex = circleData.wishes.findIndex(w => w.id === wish.id);
-            if (wishIndex > -1) {
-              circleData.wishes[wishIndex].claimed = newClaimed;
-            }
-          }
+          app.updateWishClaimsInCurrentCircle(wish.id, newClaimed);
 
           this.setData({
             wish: { ...wish, claimed: newClaimed },

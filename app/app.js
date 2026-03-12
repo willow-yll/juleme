@@ -1,19 +1,19 @@
 App({
-  // 全局数据
+  CURRENT_CIRCLE_STORAGE_KEY: 'ju_le_ma_current_circle_id',
+
   globalData: {
     userInfo: null,
     hasLogin: false,
-    // 用户个人资料
     userProfile: null,
-    // 圈子相关
-    circles: [],
+    currentUserId: '',
     currentCircleId: null,
     currentCircle: null,
-    // 按圈子存储的数据
-    circleData: {}
+    circles: [],
+    currentCircleData: null,
+    cloudReady: false,
+    bootstrapped: false
   },
 
-  // 性别选项（最全分类）
   GENDER_OPTIONS: [
     { value: 'male', label: '男' },
     { value: 'female', label: '女' },
@@ -26,7 +26,6 @@ App({
     { value: 'prefer_not_to_say', label: '不愿透露' }
   ],
 
-  // MBTI 选项
   MBTI_OPTIONS: [
     { value: 'INTJ', label: 'INTJ - 建筑师' },
     { value: 'INTP', label: 'INTP - 逻辑学家' },
@@ -46,7 +45,6 @@ App({
     { value: 'ESFP', label: 'ESFP - 表演者' }
   ],
 
-  // 星座选项
   CONSTELLATION_OPTIONS: [
     { value: 'aries', label: '白羊座 (3.21-4.19)' },
     { value: 'taurus', label: '金牛座 (4.20-5.20)' },
@@ -63,347 +61,403 @@ App({
   ],
 
   onLaunch() {
-    // 小程序启动
     console.log('聚了吗小程序启动');
-    this.initData();
-    console.log('数据初始化完成, circles:', this.globalData.circles.length);
+    this.bootstrapPromise = this.bootstrap().catch((error) => {
+      console.error('应用启动失败', error);
+      throw error;
+    });
   },
 
-  // 初始化示例数据
-  initData() {
-    // 创建默认圈子，将示例数据放入该圈子
-    const defaultCircleId = 1;
-    const defaultCircle = {
-      id: defaultCircleId,
-      name: '我的第一个圈子',
-      description: '欢迎来到聚了吗！这是您的专属圈子',
-      color: '#1890ff',
-      code: this.generateJoinCode(),
-      ownerId: 'me',
-      members: [
-        { id: 'me', avatar: 'https://picsum.photos/100', name: '我', role: 'owner' }
-      ],
-      memberCount: 1,
-      joinRequests: [],
-      createdAt: new Date().toISOString()
+  async bootstrap() {
+    this.initCloud();
+    this.globalData.currentCircleId = this.getStoredCurrentCircleId();
+
+    const result = await this.callCloud('bootstrapUser');
+    const userProfile = result && result.userProfile ? result.userProfile : null;
+    const circles = Array.isArray(result && result.circles) ? result.circles : [];
+
+    this.globalData.currentUserId = result && result.openid ? result.openid : '';
+    this.globalData.userProfile = userProfile;
+    this.globalData.circles = circles;
+    this.globalData.bootstrapped = true;
+
+    if (this.globalData.currentCircleId) {
+      const matchedCircle = circles.find((item) => item._id === this.globalData.currentCircleId);
+      if (!matchedCircle) {
+        this.clearCurrentCircle();
+      } else {
+        this.globalData.currentCircle = matchedCircle;
+      }
+    }
+
+    if (!this.globalData.currentCircleId && circles.length) {
+      this.setCurrentCircle(circles[0]._id, { syncOnly: true });
+    }
+
+    if (this.globalData.currentCircleId) {
+      await this.loadCurrentCircleData({ silent: true });
+    }
+
+    return {
+      openid: this.globalData.currentUserId,
+      userProfile: this.globalData.userProfile,
+      circles: this.globalData.circles
     };
-
-    // 示例动态数据
-    const feedItems = [
-      {
-        id: 1,
-        user: { avatar: 'https://picsum.photos/100', name: '小明' },
-        type: 'wish',
-        content: '发起了新愿望',
-        title: '去重庆吃火锅',
-        time: '2小时前',
-        likes: 5,
-        comments: []
-      },
-      {
-        id: 2,
-        user: { avatar: 'https://picsum.photos/102', name: '阿强' },
-        type: 'anniversary',
-        content: '设置了新纪念日',
-        title: '疯狂星期四',
-        time: '5小时前',
-        likes: 3,
-        comments: []
-      }
-    ];
-
-    // 示例愿望数据
-    const wishes = [
-      {
-        id: 1,
-        title: '去重庆吃火锅',
-        description: '想吃正宗的九宫格火锅！',
-        category: 'restaurant',
-        categoryText: '餐厅',
-        creator: { id: 'u_xiaoming', avatar: 'https://picsum.photos/100', name: '小明' },
-        targetDate: '2026-04-15',
-        createdAt: '2026-03-01',
-        status: 'active',
-        claimed: [
-          { user: { id: 'u_xiaohong', avatar: 'https://picsum.photos/101', name: '小红' }, wantGo: true },
-          { user: { id: 'u_aqiang', avatar: 'https://picsum.photos/102', name: '阿强' }, wantGo: true }
-        ],
-        maxClaim: 5,
-        likes: 8
-      },
-      {
-        id: 2,
-        title: '去西藏旅行',
-        description: '想看布达拉宫和纳木错',
-        category: 'travel',
-        categoryText: '旅行',
-        creator: { id: 'u_xiaohua', avatar: 'https://picsum.photos/103', name: '小华' },
-        targetDate: '2026-07-01',
-        createdAt: '2026-02-15',
-        status: 'active',
-        claimed: [
-          { user: { id: 'u_xiaoli', avatar: 'https://picsum.photos/104', name: '小丽' }, wantGo: true }
-        ],
-        maxClaim: 4,
-        likes: 15
-      },
-      {
-        id: 3,
-        title: '打羽毛球',
-        description: '周末一起去运动吧！',
-        category: 'sport',
-        categoryText: '运动',
-        creator: { id: 'u_aqiang', avatar: 'https://picsum.photos/105', name: '阿强' },
-        targetDate: '2026-03-20',
-        createdAt: '2026-03-05',
-        status: 'active',
-        claimed: [],
-        maxClaim: 4,
-        likes: 3
-      },
-      {
-        id: 4,
-        title: '看一场演唱会',
-        description: '想去看周杰伦的演唱会',
-        category: 'other',
-        categoryText: '其他',
-        creator: { id: 'u_xiaomei', avatar: 'https://picsum.photos/106', name: '小美' },
-        targetDate: '2026-06-01',
-        createdAt: '2026-01-20',
-        status: 'active',
-        claimed: [
-          { user: { id: 'u_xiaoming', avatar: 'https://picsum.photos/107', name: '小明' }, wantGo: true },
-          { user: { id: 'u_xiaohong', avatar: 'https://picsum.photos/108', name: '小红' }, wantGo: true },
-          { user: { id: 'u_aqiang', avatar: 'https://picsum.photos/109', name: '阿强' }, wantGo: true }
-        ],
-        maxClaim: 5,
-        likes: 22
-      }
-    ];
-
-    // 示例纪念日数据
-    const anniversaries = [
-      {
-        id: 1,
-        name: '疯狂星期四',
-        type: 'cycle',
-        cycleType: 'weekly',
-        cycleValue: 4,
-        nextDate: '2026-03-12',
-        enabled: true,
-        icon: '🍗'
-      },
-      {
-        id: 2,
-        name: '周五电影夜',
-        type: 'cycle',
-        cycleType: 'weekly',
-        cycleValue: 5,
-        nextDate: '2026-03-13',
-        enabled: true,
-        icon: '🎬'
-      },
-      {
-        id: 3,
-        name: '小红生日',
-        type: 'fixed',
-        date: '2026-04-20',
-        isLunar: false,
-        countdown: null
-      },
-      {
-        id: 4,
-        name: '交往纪念日',
-        type: 'fixed',
-        date: '2025-08-15',
-        isLunar: false,
-        countdown: null
-      }
-    ];
-
-    // 将所有数据放入默认圈子的 circleData 中
-    this.globalData.circleData[defaultCircleId] = {
-      feedItems,
-      wishes,
-      anniversaries
-    };
-
-    // 添加默认圈子到 circles 列表
-    this.globalData.circles.push(defaultCircle);
-
-    // 设置当前圈子
-    this.globalData.currentCircleId = defaultCircleId;
-    this.globalData.currentCircle = defaultCircle;
   },
 
-  // 生成6位圈子号码
-  generateJoinCode() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  },
-
-  // 确保圈子数据容器存在
-  ensureCircleData(circleId) {
-    if (!this.globalData.circleData[circleId]) {
-      this.globalData.circleData[circleId] = {
-        feedItems: [],
-        wishes: [],
-        anniversaries: []
-      };
+  initCloud() {
+    if (this.globalData.cloudReady) {
+      return;
     }
-    return this.globalData.circleData[circleId];
+
+    if (!wx.cloud) {
+      throw new Error('当前基础库不支持云开发，请升级微信开发者工具和基础库。');
+    }
+
+    wx.cloud.init({
+      env: wx.cloud.DYNAMIC_CURRENT_ENV,
+      traceUser: true
+    });
+
+    this.globalData.cloudReady = true;
   },
 
-  // 获取当前圈子的数据
-  getCurrentCircleData() {
-    if (!this.globalData.currentCircleId) {
+  async ensureBootstrap() {
+    if (!this.bootstrapPromise) {
+      this.bootstrapPromise = this.bootstrap();
+    }
+    return this.bootstrapPromise;
+  },
+
+  getStoredCurrentCircleId() {
+    try {
+      return wx.getStorageSync(this.CURRENT_CIRCLE_STORAGE_KEY) || null;
+    } catch (error) {
+      console.warn('读取当前圈子缓存失败', error);
       return null;
     }
-    return this.globalData.circleData[this.globalData.currentCircleId] || null;
   },
 
-  // 设置当前圈子
-  setCurrentCircle(circle) {
-    this.globalData.currentCircleId = circle.id;
-    this.globalData.currentCircle = circle;
-    // 确保该圈子的数据容器存在
-    this.ensureCircleData(circle.id);
-  },
-
-  // 添加动态到当前圈子
-  addFeedItemToCurrentCircle(item) {
-    if (!this.globalData.currentCircleId) {
-      console.warn('No current circle selected');
-      return false;
+  persistCurrentCircleId(circleId) {
+    try {
+      if (circleId) {
+        wx.setStorageSync(this.CURRENT_CIRCLE_STORAGE_KEY, circleId);
+      } else {
+        wx.removeStorageSync(this.CURRENT_CIRCLE_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.warn('保存当前圈子缓存失败', error);
     }
-    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
-    circleData.feedItems.unshift(item);
-    return true;
   },
 
-  // 添加愿望到当前圈子
-  addWishToCurrentCircle(wish) {
-    if (!this.globalData.currentCircleId) {
-      console.warn('No current circle selected');
-      return false;
+  clearCurrentCircle() {
+    this.globalData.currentCircleId = null;
+    this.globalData.currentCircle = null;
+    this.globalData.currentCircleData = null;
+    this.persistCurrentCircleId('');
+  },
+
+  async callCloud(name, data = {}) {
+    await this.ensureBootstrapReadyForCall();
+    const result = await wx.cloud.callFunction({ name, data });
+    return result && result.result ? result.result : null;
+  },
+
+  async ensureBootstrapReadyForCall() {
+    if (!this.globalData.cloudReady) {
+      this.initCloud();
     }
-    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
-    circleData.wishes.unshift(wish);
-    return true;
-  },
-
-  // 添加纪念日到当前圈子
-  addAnniversaryToCurrentCircle(anniversary) {
-    if (!this.globalData.currentCircleId) {
-      console.warn('No current circle selected');
-      return false;
+    if (this.globalData.bootstrapped || this.bootstrapInFlightGuard) {
+      return;
     }
-    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
-    circleData.anniversaries.unshift(anniversary);
-    return true;
   },
 
-  // 删除当前圈子的活动
-  removeWishFromCurrentCircle(wishId) {
-    if (!this.globalData.currentCircleId) {
-      console.warn('No current circle selected');
-      return false;
-    }
-    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
-    const wishIndex = circleData.wishes.findIndex(w => w.id === wishId);
-    if (wishIndex === -1) {
-      return false;
-    }
-    circleData.wishes.splice(wishIndex, 1);
-    return true;
+  getCurrentUserId() {
+    return this.globalData.currentUserId;
   },
 
-  // 更新圈子信息
-  updateCircleById(circleId, patch) {
-    const circles = this.globalData.circles || [];
-    const circle = circles.find(item => item.id === circleId);
-    if (!circle) {
-      return null;
-    }
-
-    Object.assign(circle, patch);
-
-    if (this.globalData.currentCircleId === circleId) {
-      this.globalData.currentCircle = circle;
-    }
-
-    return circle;
-  },
-
-  // 修改当前圈子名称
-  renameCurrentCircle(name) {
-    if (!this.globalData.currentCircleId) {
-      return null;
-    }
-    return this.updateCircleById(this.globalData.currentCircleId, { name });
-  },
-
-  // 通过圈子号码查找圈子
-  findCircleByCode(code) {
-    return this.globalData.circles.find(c => c.code === code);
-  },
-
-  // 通过圈子ID查找圈子
-  findCircleById(id) {
-    return this.globalData.circles.find(c => c.id === id);
-  },
-
-  // 检查当前用户是否已经是圈子成员
-  isCircleMember(circleId) {
-    const circle = this.findCircleById(circleId);
-    if (!circle || !circle.members) return false;
-    return circle.members.some(m => m.id === 'me');
-  },
-
-  // 检查当前用户是否已经有待处理的加入申请
-  hasPendingRequest(circleId) {
-    const circle = this.findCircleById(circleId);
-    if (!circle || !circle.joinRequests) return false;
-    return circle.joinRequests.some(r => r.userId === 'me' && r.status === 'pending');
-  },
-
-  // 检查用户是否已完善个人资料
   hasUserProfile() {
-    return this.globalData.userProfile && this.globalData.userProfile.nickname;
+    return !!(this.globalData.userProfile && this.globalData.userProfile.nickname);
   },
 
-  // 设置用户资料
-  setUserProfile(profile) {
-    this.globalData.userProfile = profile;
-  },
-
-  // 获取用户资料
   getUserProfile() {
     return this.globalData.userProfile;
   },
 
-  // 更新当前用户在圈子成员中的资料
-  updateMemberProfile(circleId, profile) {
-    const circle = this.findCircleById(circleId);
-    if (circle && circle.members) {
-      const member = circle.members.find(m => m.id === 'me');
-      if (member) {
-        Object.assign(member, profile);
-      }
-    }
+  getCurrentCircleId() {
+    return this.globalData.currentCircleId;
   },
 
-  // 获取用户信息
+  getCurrentCircle() {
+    return this.globalData.currentCircle;
+  },
+
+  getCurrentCircleData() {
+    return this.globalData.currentCircleData;
+  },
+
+  async refreshBootstrap() {
+    const result = await this.callCloud('bootstrapUser');
+    this.globalData.currentUserId = result && result.openid ? result.openid : this.globalData.currentUserId;
+    this.globalData.userProfile = result && result.userProfile ? result.userProfile : null;
+    this.globalData.circles = Array.isArray(result && result.circles) ? result.circles : [];
+
+    if (this.globalData.currentCircleId) {
+      const currentCircle = this.globalData.circles.find((item) => item._id === this.globalData.currentCircleId);
+      if (!currentCircle) {
+        this.clearCurrentCircle();
+      } else {
+        this.globalData.currentCircle = currentCircle;
+      }
+    }
+
+    if (!this.globalData.currentCircleId && this.globalData.circles.length) {
+      this.setCurrentCircle(this.globalData.circles[0]._id, { syncOnly: true });
+    }
+
+    return {
+      circles: this.globalData.circles,
+      userProfile: this.globalData.userProfile,
+      openid: this.globalData.currentUserId
+    };
+  },
+
+  async loadCircleList() {
+    await this.ensureBootstrap();
+    const result = await this.callCloud('getCircleListData');
+    const circles = Array.isArray(result && result.circles) ? result.circles : [];
+    this.globalData.circles = circles;
+
+    if (this.globalData.currentCircleId) {
+      const currentCircle = circles.find((item) => item._id === this.globalData.currentCircleId);
+      if (currentCircle) {
+        this.globalData.currentCircle = currentCircle;
+      }
+    }
+
+    return result;
+  },
+
+  setCurrentCircle(circleOrId, options = {}) {
+    const circleId = typeof circleOrId === 'string'
+      ? circleOrId
+      : circleOrId && circleOrId._id
+        ? circleOrId._id
+        : null;
+
+    if (!circleId) {
+      this.clearCurrentCircle();
+      return null;
+    }
+
+    this.globalData.currentCircleId = circleId;
+    this.persistCurrentCircleId(circleId);
+
+    const currentCircle = typeof circleOrId === 'object'
+      ? circleOrId
+      : (this.globalData.circles || []).find((item) => item._id === circleId) || null;
+
+    this.globalData.currentCircle = currentCircle;
+    if (!options.syncOnly) {
+      this.globalData.currentCircleData = null;
+    }
+    return currentCircle;
+  },
+
+  async loadCurrentCircleData(options = {}) {
+    await this.ensureBootstrap();
+    if (!this.globalData.currentCircleId) {
+      this.globalData.currentCircleData = null;
+      return null;
+    }
+
+    const result = await this.callCloud('getCircleContent', {
+      circleId: this.globalData.currentCircleId
+    });
+
+    const circle = result && result.circle ? result.circle : null;
+    const content = result ? {
+      circle,
+      members: Array.isArray(result.members) ? result.members : [],
+      wishes: Array.isArray(result.wishes) ? result.wishes : [],
+      anniversaries: Array.isArray(result.anniversaries) ? result.anniversaries : [],
+      feedItems: Array.isArray(result.feedItems) ? result.feedItems : [],
+      pets: Array.isArray(result.pets) ? result.pets : [],
+      babies: Array.isArray(result.babies) ? result.babies : []
+    } : null;
+
+    if (!circle) {
+      this.clearCurrentCircle();
+      if (!options.silent) {
+        throw new Error('圈子不存在或无权访问');
+      }
+      return null;
+    }
+
+    this.globalData.currentCircle = circle;
+    this.globalData.currentCircleData = content;
+
+    const circleExists = (this.globalData.circles || []).some((item) => item._id === circle._id);
+    if (!circleExists) {
+      this.globalData.circles = [circle].concat(this.globalData.circles || []);
+    } else {
+      this.globalData.circles = (this.globalData.circles || []).map((item) => item._id === circle._id ? circle : item);
+    }
+
+    return content;
+  },
+
+  async ensureCurrentCircleSelected() {
+    await this.ensureBootstrap();
+    if (this.globalData.currentCircleId) {
+      return this.globalData.currentCircleId;
+    }
+
+    const circles = this.globalData.circles || [];
+    if (circles.length) {
+      this.setCurrentCircle(circles[0]._id, { syncOnly: true });
+      return this.globalData.currentCircleId;
+    }
+
+    return null;
+  },
+
+  async createCircle(payload) {
+    await this.ensureBootstrap();
+    const result = await this.callCloud('createCircle', payload);
+    await this.refreshBootstrap();
+    if (result && result.circle && result.circle._id) {
+      this.setCurrentCircle(result.circle._id, { syncOnly: true });
+      await this.loadCurrentCircleData({ silent: true });
+    }
+    return result;
+  },
+
+  async submitJoinRequest(payload) {
+    await this.ensureBootstrap();
+    return this.callCloud('submitJoinRequest', payload);
+  },
+
+  async reviewJoinRequest(payload) {
+    await this.ensureBootstrap();
+    const result = await this.callCloud('reviewJoinRequest', payload);
+    await this.loadCircleList();
+    if (this.globalData.currentCircleId === payload.circleId) {
+      await this.loadCurrentCircleData({ silent: true });
+    }
+    return result;
+  },
+
+  async renameCurrentCircle(name) {
+    await this.ensureBootstrap();
+    if (!this.globalData.currentCircleId) {
+      throw new Error('请先选择圈子');
+    }
+    const result = await this.callCloud('renameCircle', {
+      circleId: this.globalData.currentCircleId,
+      name
+    });
+    await this.loadCircleList();
+    await this.loadCurrentCircleData({ silent: true });
+    return result;
+  },
+
+  async createWish(payload) {
+    await this.ensureBootstrap();
+    if (!this.globalData.currentCircleId) {
+      throw new Error('请先选择圈子');
+    }
+    const result = await this.callCloud('createWish', {
+      circleId: this.globalData.currentCircleId,
+      ...payload
+    });
+    await this.loadCurrentCircleData({ silent: true });
+    return result;
+  },
+
+  async toggleWishClaim(wishId, action) {
+    await this.ensureBootstrap();
+    if (!this.globalData.currentCircleId) {
+      throw new Error('请先选择圈子');
+    }
+    const result = await this.callCloud('toggleWishClaim', {
+      circleId: this.globalData.currentCircleId,
+      wishId,
+      action
+    });
+    await this.loadCurrentCircleData({ silent: true });
+    return result;
+  },
+
+  async deleteWish(wishId) {
+    await this.ensureBootstrap();
+    if (!this.globalData.currentCircleId) {
+      throw new Error('请先选择圈子');
+    }
+    const result = await this.callCloud('deleteWish', {
+      circleId: this.globalData.currentCircleId,
+      wishId
+    });
+    await this.loadCurrentCircleData({ silent: true });
+    return result;
+  },
+
+  async saveUserProfile(profile) {
+    await this.ensureBootstrap();
+    const result = await this.callCloud('saveUserProfile', profile);
+    this.globalData.userProfile = result && result.userProfile ? result.userProfile : profile;
+    await this.loadCircleList();
+    if (this.globalData.currentCircleId) {
+      await this.loadCurrentCircleData({ silent: true });
+    }
+    return result;
+  },
+
+  async createAnniversary(payload) {
+    await this.ensureBootstrap();
+    if (!this.globalData.currentCircleId) {
+      throw new Error('请先选择圈子');
+    }
+    const result = await this.callCloud('createAnniversary', {
+      circleId: this.globalData.currentCircleId,
+      ...payload
+    });
+    await this.loadCurrentCircleData({ silent: true });
+    return result;
+  },
+
+  async updateAnniversaryEnabled(anniversaryId, enabled) {
+    await this.ensureBootstrap();
+    if (!this.globalData.currentCircleId) {
+      throw new Error('请先选择圈子');
+    }
+    const result = await this.callCloud('updateAnniversaryEnabled', {
+      circleId: this.globalData.currentCircleId,
+      anniversaryId,
+      enabled
+    });
+    await this.loadCurrentCircleData({ silent: true });
+    return result;
+  },
+
+  async generateCircleInterpretation(circleId) {
+    await this.ensureBootstrap();
+    const targetCircleId = circleId || this.globalData.currentCircleId;
+    if (!targetCircleId) {
+      throw new Error('请先选择圈子');
+    }
+    return this.callCloud('generateCircleInterpretation', { circleId: targetCircleId });
+  },
+
   getUserInfo() {
     return this.globalData.userInfo;
   },
 
-  // 设置用户信息
   setUserInfo(userInfo) {
     this.globalData.userInfo = userInfo;
     this.globalData.hasLogin = true;
   },
 
-  // 格式化日期
   formatDate(date) {
     const d = new Date(date);
     const month = d.getMonth() + 1;
@@ -411,7 +465,6 @@ App({
     return `${month}月${day}日`;
   },
 
-  // 计算倒计时
   calculateCountdown(targetDate) {
     const now = new Date();
     const target = new Date(targetDate);
@@ -424,10 +477,5 @@ App({
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
     return { days, hours, minutes, finished: false };
-  },
-
-  // 添加动态（兼容旧接口）
-  addFeedItem(item) {
-    return this.addFeedItemToCurrentCircle(item);
   }
 });

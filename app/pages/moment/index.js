@@ -86,11 +86,7 @@ Page({
       });
       this.setData({ pets: newPets });
 
-      // 更新当前圈子的数据
-      const circleData = app.getCurrentCircleData();
-      if (circleData) {
-        circleData.pets = newPets;
-      }
+      app.updateCurrentCircleCollection('pets', newPets);
     } else {
       const newBabies = babies.map(b => {
         const moment = b.moments && b.moments.find(m => m.id === id);
@@ -102,11 +98,7 @@ Page({
       });
       this.setData({ babies: newBabies });
 
-      // 更新当前圈子的数据
-      const circleData = app.getCurrentCircleData();
-      if (circleData) {
-        circleData.babies = newBabies;
-      }
+      app.updateCurrentCircleCollection('babies', newBabies);
     }
 
     wx.showToast({ title: '投喂成功！🥫', icon: 'success' });
@@ -129,11 +121,7 @@ Page({
       });
       this.setData({ pets: newPets });
 
-      // 更新当前圈子的数据
-      const circleData = app.getCurrentCircleData();
-      if (circleData) {
-        circleData.pets = newPets;
-      }
+      app.updateCurrentCircleCollection('pets', newPets);
     } else {
       const newBabies = babies.map(b => {
         const moment = b.moments && b.moments.find(m => m.id === id);
@@ -145,11 +133,7 @@ Page({
       });
       this.setData({ babies: newBabies });
 
-      // 更新当前圈子的数据
-      const circleData = app.getCurrentCircleData();
-      if (circleData) {
-        circleData.babies = newBabies;
-      }
+      app.updateCurrentCircleCollection('babies', newBabies);
     }
 
     wx.showToast({ title: '点赞成功！❤️', icon: 'success' });

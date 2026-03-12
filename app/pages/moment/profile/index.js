@@ -65,7 +65,7 @@ Page({
         }
         return p;
       });
-      circleData.pets = newPets;
+      app.updateCurrentCircleCollection('pets', newPets);
       this.setData({ item: { ...item, cans: (item.cans || 0) + 1 } });
     } else {
       const newBabies = circleData.babies.map(b => {
@@ -74,7 +74,7 @@ Page({
         }
         return b;
       });
-      circleData.babies = newBabies;
+      app.updateCurrentCircleCollection('babies', newBabies);
       this.setData({ item: { ...item, cans: (item.cans || 0) + 1 } });
     }
 
@@ -96,7 +96,7 @@ Page({
         }
         return p;
       });
-      circleData.pets = newPets;
+      app.updateCurrentCircleCollection('pets', newPets);
       this.setData({ item: { ...item, hearts: (item.hearts || 0) + 1 } });
     } else {
       const newBabies = circleData.babies.map(b => {
@@ -105,7 +105,7 @@ Page({
         }
         return b;
       });
-      circleData.babies = newBabies;
+      app.updateCurrentCircleCollection('babies', newBabies);
       this.setData({ item: { ...item, hearts: (item.hearts || 0) + 1 } });
     }
 

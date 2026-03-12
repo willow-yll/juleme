@@ -4,21 +4,25 @@ const app = getApp();
 Page({
   data: {
     code: '',
-    errorMsg: ''
+    errorMsg: '',
+    submitting: false
   },
 
-  onLoad() {
-    // 检查是否已完善个人资料
-    if (!app.hasUserProfile()) {
-      wx.showModal({
-        title: '提示',
-        content: '请先完善个人资料',
-        showCancel: false,
-        success: () => {
-          wx.redirectTo({ url: '/pages/profile/setup/index' });
-        }
-      });
-      return;
+  async onLoad() {
+    try {
+      await app.ensureBootstrap();
+      if (!app.hasUserProfile()) {
+        wx.showModal({
+          title: '提示',
+          content: '请先完善个人资料',
+          showCancel: false,
+          success: () => {
+            wx.redirectTo({ url: '/pages/profile/setup/index' });
+          }
+        });
+      }
+    } catch (error) {
+      wx.showToast({ title: error.message || '初始化失败', icon: 'none' });
     }
   },
 
@@ -26,8 +30,9 @@ Page({
     this.setData({ code: e.detail.value, errorMsg: '' });
   },
 
-  handleJoin() {
-    const { code } = this.data;
+  async handleJoin() {
+    const { code, submitting } = this.data;
+    if (submitting) return;
 
     if (!code || code.length !== 6) {
       this.setData({ errorMsg: '请输入6位圈子号码' });
@@ -35,71 +40,20 @@ Page({
       return;
     }
 
-    const circles = app.globalData.circles || [];
-
-    // 查找圈子
-    const circle = circles.find(c => c.code === code);
-
-    if (!circle) {
-      this.setData({ errorMsg: '圈子不存在' });
-      wx.showToast({ title: '圈子不存在', icon: 'none' });
-      return;
+    this.setData({ submitting: true, errorMsg: '' });
+    try {
+      const result = await app.submitJoinRequest({ code });
+      wx.showModal({
+        title: '申请已提交',
+        content: `已向圈主发送加入「${result.circleName}」的申请，请耐心等待确认`,
+        showCancel: false,
+        success: () => {
+          wx.navigateBack();
+        }
+      });
+    } catch (error) {
+      this.setData({ submitting: false, errorMsg: error.message || '提交失败' });
+      wx.showToast({ title: error.message || '提交失败', icon: 'none' });
     }
-
-    // 检查是否已经是成员
-    if (app.isCircleMember(circle.id)) {
-      this.setData({ errorMsg: '你已加入该圈子' });
-      wx.showToast({ title: '你已加入该圈子', icon: 'none' });
-      return;
-    }
-
-    // 检查是否已经有待处理的申请
-    if (app.hasPendingRequest(circle.id)) {
-      this.setData({ errorMsg: '已有待处理的申请' });
-      wx.showToast({ title: '已有待处理的申请，请耐心等待', icon: 'none' });
-      return;
-    }
-
-    // 检查是否是自己创建的圈子
-    if (circle.ownerId === 'me') {
-      this.setData({ errorMsg: '这是你自己的圈子' });
-      wx.showToast({ title: '这是你自己的圈子', icon: 'none' });
-      return;
-    }
-
-    const profile = app.getUserProfile() || {};
-
-    // 创建加入申请，带入用户资料
-    const joinRequest = {
-      id: Date.now(),
-      circleId: circle.id,
-      circleName: circle.name,
-      userId: 'me',
-      userName: profile.nickname || '我',
-      userAvatar: profile.avatar || 'https://picsum.photos/100',
-      userGender: profile.gender || '',
-      userMbti: profile.mbti || '',
-      userConstellation: profile.constellation || '',
-      status: 'pending',
-      requestedAt: new Date().toISOString()
-    };
-
-    // 将申请添加到圈子的 joinRequests 中
-    if (!circle.joinRequests) {
-      circle.joinRequests = [];
-    }
-    circle.joinRequests.push(joinRequest);
-
-    // 更新 globalData
-    app.globalData.circles = circles;
-
-    wx.showModal({
-      title: '申请已提交',
-      content: `已向圈主发送加入「${circle.name}」的申请，请耐心等待确认`,
-      showCancel: false,
-      success: () => {
-        wx.navigateBack();
-      }
-    });
   }
 });

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check /home/openclaw/claude/app/app.js && node --check /home/openclaw/claude/app/pages/profile/setup/index.js && node --check /home/openclaw/claude/app/pages/circle/create/index.js && node --check /home/openclaw/claude/app/pages/circle/join/index.js && node --check /home/openclaw/claude/app/pages/circle/index.js && node --check /home/openclaw/claude/app/pages/wishlist/index.js && node --check /home/openclaw/claude/app/pages/wishlist/detail/index.js && node --check /home/openclaw/claude/app/pages/anniversary/index.js && node --check /home/openclaw/claude/app/pages/moment/index.js && node --check /home/openclaw/claude/app/pages/moment/profile/index.js)"
+    ]
+  }
+}
