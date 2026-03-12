@@ -12,10 +12,12 @@ Page({
     constellationOptions: [],
     genderIndex: -1,
     mbtiIndex: -1,
-    constellationIndex: -1
+    constellationIndex: -1,
+    saving: false
   },
 
-  onLoad() {
+  async onLoad() {
+    await app.ensureBootstrap().catch(() => null);
     const genderOptions = app.GENDER_OPTIONS || [];
     const mbtiOptions = app.MBTI_OPTIONS || [];
     const constellationOptions = app.CONSTELLATION_OPTIONS || [];
@@ -29,9 +31,9 @@ Page({
       gender: profile.gender || '',
       mbti: profile.mbti || '',
       constellation: profile.constellation || '',
-      genderIndex: genderOptions.findIndex(item => item.value === profile.gender),
-      mbtiIndex: mbtiOptions.findIndex(item => item.value === profile.mbti),
-      constellationIndex: constellationOptions.findIndex(item => item.value === profile.constellation)
+      genderIndex: genderOptions.findIndex((item) => item.value === profile.gender),
+      mbtiIndex: mbtiOptions.findIndex((item) => item.value === profile.mbti),
+      constellationIndex: constellationOptions.findIndex((item) => item.value === profile.constellation)
     });
   },
 
@@ -66,8 +68,9 @@ Page({
     });
   },
 
-  handleSave() {
-    const { nickname, gender, mbti, constellation } = this.data;
+  async handleSave() {
+    const { nickname, gender, mbti, constellation, saving } = this.data;
+    if (saving) return;
 
     if (!nickname || !nickname.trim()) {
       wx.showToast({ title: '请输入昵称', icon: 'none' });
@@ -82,26 +85,26 @@ Page({
       avatar: 'https://picsum.photos/100'
     };
 
-    app.setUserProfile(profile);
+    this.setData({ saving: true });
 
-    if (app.globalData.currentCircleId) {
-      app.updateMemberProfile(app.globalData.currentCircleId, {
-        name: profile.nickname,
-        gender: profile.gender,
-        mbti: profile.mbti,
-        constellation: profile.constellation,
-        avatar: profile.avatar
-      });
+    try {
+      await app.saveUserProfile(profile);
+      wx.showToast({ title: '保存成功', icon: 'success' });
+      setTimeout(() => {
+        const pages = getCurrentPages();
+        if (pages.length > 1) {
+          wx.navigateBack();
+        } else {
+          if (app.getCurrentCircleId()) {
+            wx.switchTab({ url: '/pages/circle/home/index' });
+          } else {
+            wx.redirectTo({ url: '/pages/circle/index' });
+          }
+        }
+      }, 800);
+    } catch (error) {
+      this.setData({ saving: false });
+      wx.showToast({ title: error.message || '保存失败', icon: 'none' });
     }
-
-    wx.showToast({ title: '保存成功', icon: 'success' });
-    setTimeout(() => {
-      const pages = getCurrentPages();
-      if (pages.length > 1) {
-        wx.navigateBack();
-      } else {
-        wx.switchTab({ url: '/pages/circle/home/index' });
-      }
-    }, 1200);
   }
 });
