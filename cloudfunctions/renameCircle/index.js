@@ -1,4 +1,4 @@
-const { db, nowIso, getContext, ensureUser, requireCircleOwner, COLLECTIONS } = require('../common/db');
+const { db, nowIso, getContext, ensureUser, requireCircleOwner, COLLECTIONS } = require('./db');
 
 exports.main = async (event) => {
   const { circleId, name } = event;

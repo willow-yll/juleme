@@ -1,4 +1,4 @@
-const { db, nowIso, getContext, ensureUser, requireMembership, addFeedEvent, getCategoryText, COLLECTIONS } = require('../common/db');
+const { db, nowIso, getContext, ensureUser, requireMembership, addFeedEvent, getCategoryText, COLLECTIONS } = require('./db');
 
 exports.main = async (event) => {
   const { circleId, title, description = '', category = 'other', targetDate = '', maxClaim = 5 } = event;

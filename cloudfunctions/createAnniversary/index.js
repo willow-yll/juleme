@@ -1,4 +1,4 @@
-const { db, nowIso, getContext, ensureUser, requireMembership, addFeedEvent, COLLECTIONS } = require('../common/db');
+const { db, nowIso, getContext, ensureUser, requireMembership, addFeedEvent, COLLECTIONS } = require('./db');
 
 exports.main = async (event) => {
   const { circleId, name, type, date = '', cycleType = 'weekly', cycleValue = null, nextDate = '', enabled = true, icon = '🎉' } = event;

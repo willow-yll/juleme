@@ -1,4 +1,4 @@
-const { db, nowIso, getContext, ensureUser, requireMembership, requireCircle, COLLECTIONS } = require('../common/db');
+const { db, nowIso, getContext, ensureUser, requireMembership, requireCircle, COLLECTIONS } = require('./db');
 
 exports.main = async (event) => {
   const { circleId, wishId, action } = event;

@@ -1,4 +1,4 @@
-const { buildCircleContent, ensureUser, getContext } = require('../common/db');
+const { buildCircleContent, ensureUser, getContext } = require('./db');
 
 exports.main = async (event) => {
   const { circleId } = event;

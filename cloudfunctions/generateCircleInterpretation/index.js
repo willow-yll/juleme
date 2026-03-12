@@ -1,4 +1,4 @@
-const { db, getContext, ensureUser, requireMembership, buildCircleContent, CIRCLE_REPORT_PROMPT, COLLECTIONS } = require('../common/db');
+const { db, getContext, ensureUser, requireMembership, buildCircleContent, CIRCLE_REPORT_PROMPT, COLLECTIONS } = require('./db');
 
 function buildUserPrompt(payload) {
   return [

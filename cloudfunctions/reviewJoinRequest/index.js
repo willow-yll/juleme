@@ -1,4 +1,4 @@
-const { db, nowIso, getContext, ensureUser, requireCircleOwner, getPendingJoinRequest, requireCircle, toMemberSnapshot, COLLECTIONS } = require('../common/db');
+const { db, nowIso, getContext, ensureUser, requireCircleOwner, getPendingJoinRequest, requireCircle, toMemberSnapshot, COLLECTIONS } = require('./db');
 
 exports.main = async (event) => {
   const { circleId, requestId, status } = event;

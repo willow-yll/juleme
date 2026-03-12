@@ -72,7 +72,7 @@ App({
     this.initCloud();
     this.globalData.currentCircleId = this.getStoredCurrentCircleId();
 
-    const result = await this.callCloud('bootstrapUser');
+    const result = await this.invokeCloudFunction('bootstrapUser');
     const userProfile = result && result.userProfile ? result.userProfile : null;
     const circles = Array.isArray(result && result.circles) ? result.circles : [];
 
@@ -115,7 +115,7 @@ App({
     }
 
     wx.cloud.init({
-      env: wx.cloud.DYNAMIC_CURRENT_ENV,
+      env: 'cloud1-7gdommuw5f27ff59',
       traceUser: true
     });
 
@@ -157,19 +157,14 @@ App({
     this.persistCurrentCircleId('');
   },
 
-  async callCloud(name, data = {}) {
-    await this.ensureBootstrapReadyForCall();
+  async invokeCloudFunction(name, data = {}) {
     const result = await wx.cloud.callFunction({ name, data });
     return result && result.result ? result.result : null;
   },
 
-  async ensureBootstrapReadyForCall() {
-    if (!this.globalData.cloudReady) {
-      this.initCloud();
-    }
-    if (this.globalData.bootstrapped || this.bootstrapInFlightGuard) {
-      return;
-    }
+  async callCloud(name, data = {}) {
+    await this.ensureBootstrap();
+    return this.invokeCloudFunction(name, data);
   },
 
   getCurrentUserId() {

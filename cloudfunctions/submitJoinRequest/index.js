@@ -1,4 +1,4 @@
-const { db, nowIso, getContext, ensureUser, getMembership, getPendingJoinRequest, COLLECTIONS, requireCircle } = require('../common/db');
+const { db, nowIso, getContext, ensureUser, getMembership, getPendingJoinRequest, COLLECTIONS, requireCircle } = require('./db');
 
 exports.main = async (event) => {
   const code = String(event.code || '').trim();

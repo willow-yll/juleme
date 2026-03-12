@@ -1,4 +1,4 @@
-const { db, nowIso, getContext, ensureUser, toMemberSnapshot, generateUniqueCircleCode, COLLECTIONS } = require('../common/db');
+const { db, nowIso, getContext, ensureUser, toMemberSnapshot, generateUniqueCircleCode, COLLECTIONS } = require('./db');
 
 exports.main = async (event) => {
   const { name, description = '', color = '#9B7DED' } = event;

@@ -1,4 +1,4 @@
-const { db, nowIso, getContext, ensureUser, COLLECTIONS } = require('../common/db');
+const { db, nowIso, getContext, ensureUser, COLLECTIONS } = require('./db');
 
 exports.main = async (event) => {
   const { nickname, gender = '', mbti = '', constellation = '', avatar = '' } = event;

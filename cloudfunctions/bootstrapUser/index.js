@@ -1,4 +1,4 @@
-const { ensureUser, getContext, listMyCircles } = require('../common/db');
+const { ensureUser, getContext, listMyCircles } = require('./db');
 
 exports.main = async () => {
   const { OPENID } = getContext();
