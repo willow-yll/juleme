@@ -1,14 +1,14 @@
 {
   "pages": [
     "pages/circle/index",
-    "pages/circle/create",
-    "pages/circle/join",
+    "pages/circle/create/index",
+    "pages/circle/join/index",
     "pages/index/index",
     "pages/wishlist/index",
-    "pages/wishlist/detail",
+    "pages/wishlist/detail/index",
     "pages/anniversary/index",
     "pages/moment/index",
-    "pages/moment/profile",
+    "pages/moment/profile/index",
     "pages/capsule/index",
     "pages/profile/index",
     "pages/create/index"
