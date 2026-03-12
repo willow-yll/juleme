@@ -14,7 +14,8 @@ Page({
 
   // 生成圈子号码
   generateCode() {
-    const code = Math.random().toString().slice(2, 8);
+    const app = getApp();
+    const code = app.generateJoinCode();
     this.setData({ code });
   },
 
@@ -40,23 +41,35 @@ Page({
     }
 
     const app = getApp();
+    const newCircleId = Date.now();
+
     const newCircle = {
-      id: Date.now(),
+      id: newCircleId,
       name: name,
       description: description,
       color: color,
       code: code,
       ownerId: 'me',
+      // 圈主自动加入成员列表
+      members: [
+        { id: 'me', avatar: 'https://picsum.photos/100', name: '我', role: 'owner' }
+      ],
       memberCount: 1,
-      createdAt: new Date().toISOString().split('T')[0]
+      // 初始化加入申请列表
+      joinRequests: [],
+      createdAt: new Date().toISOString()
     };
 
     if (!app.globalData.circles) {
       app.globalData.circles = [];
     }
     app.globalData.circles.push(newCircle);
-    app.globalData.currentCircleId = newCircle.id;
-    app.globalData.currentCircle = newCircle;
+
+    // 初始化该圈子的数据容器
+    app.ensureCircleData(newCircleId);
+
+    // 设置为当前圈子
+    app.setCurrentCircle(newCircle);
 
     wx.showToast({ title: '创建成功！', icon: 'success' });
 

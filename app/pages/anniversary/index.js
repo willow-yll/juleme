@@ -14,6 +14,7 @@ Page({
   },
 
   onShow() {
+    // 页面守卫：检查是否选择了圈子
     if (!app.globalData.currentCircleId) {
       wx.redirectTo({ url: '/pages/circle/index' });
       return;
@@ -21,9 +22,10 @@ Page({
     this.loadAnniversaries();
   },
 
-  // 加载纪念日数据
+  // 加载纪念日数据 - 从当前圈子获取
   loadAnniversaries() {
-    const anniversaries = app.globalData.anniversaries || [];
+    const circleData = app.getCurrentCircleData();
+    const anniversaries = circleData ? circleData.anniversaries : [];
     const fixed = anniversaries.filter(a => a.type === 'fixed');
     const cycle = anniversaries.filter(a => a.type === 'cycle');
 
@@ -87,7 +89,13 @@ Page({
       return a;
     });
 
-    app.globalData.anniversaries = anniversaries;
+    // 更新当前圈子的数据
+    const circleData = app.getCurrentCircleData();
+    if (circleData) {
+      circleData.anniversaries = anniversaries;
+    }
+
+    this.setData({ anniversaries });
     this.loadAnniversaries();
 
     wx.showToast({

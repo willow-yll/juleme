@@ -19,7 +19,8 @@ Page({
   },
 
   onShow() {
-    console.log('首页显示, app.globalData:', app.globalData);
+    console.log('首页显示');
+    // 页面守卫：检查是否选择了圈子
     if (!app.globalData.currentCircleId) {
       wx.redirectTo({ url: '/pages/circle/index' });
       return;
@@ -48,9 +49,10 @@ Page({
     });
   },
 
-  // 加载动态数据
+  // 加载动态数据 - 从当前圈子获取
   loadFeedData() {
-    const feedItems = app.globalData.feedItems || [];
+    const circleData = app.getCurrentCircleData();
+    const feedItems = circleData ? circleData.feedItems : [];
     console.log('加载动态数据:', feedItems.length, '条');
     // 格式化数据
     this.setData({

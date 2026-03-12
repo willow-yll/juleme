@@ -15,13 +15,19 @@ Page({
   },
 
   onShow() {
+    // 页面守卫：检查是否选择了圈子
+    if (!app.globalData.currentCircleId) {
+      wx.redirectTo({ url: '/pages/circle/index' });
+      return;
+    }
     this.loadData();
   },
 
-  // 加载数据
+  // 加载数据 - 从当前圈子获取
   loadData() {
-    const pets = app.globalData.pets || [];
-    const babies = app.globalData.babies || [];
+    const circleData = app.getCurrentCircleData();
+    const pets = circleData ? circleData.pets : [];
+    const babies = circleData ? circleData.babies : [];
 
     this.setData({ pets, babies });
     this.updateCurrentData();
@@ -79,7 +85,12 @@ Page({
         return p;
       });
       this.setData({ pets: newPets });
-      app.globalData.pets = newPets;
+
+      // 更新当前圈子的数据
+      const circleData = app.getCurrentCircleData();
+      if (circleData) {
+        circleData.pets = newPets;
+      }
     } else {
       const newBabies = babies.map(b => {
         const moment = b.moments && b.moments.find(m => m.id === id);
@@ -90,7 +101,12 @@ Page({
         return b;
       });
       this.setData({ babies: newBabies });
-      app.globalData.babies = newBabies;
+
+      // 更新当前圈子的数据
+      const circleData = app.getCurrentCircleData();
+      if (circleData) {
+        circleData.babies = newBabies;
+      }
     }
 
     wx.showToast({ title: '投喂成功！🥫', icon: 'success' });
@@ -112,7 +128,12 @@ Page({
         return p;
       });
       this.setData({ pets: newPets });
-      app.globalData.pets = newPets;
+
+      // 更新当前圈子的数据
+      const circleData = app.getCurrentCircleData();
+      if (circleData) {
+        circleData.pets = newPets;
+      }
     } else {
       const newBabies = babies.map(b => {
         const moment = b.moments && b.moments.find(m => m.id === id);
@@ -123,7 +144,12 @@ Page({
         return b;
       });
       this.setData({ babies: newBabies });
-      app.globalData.babies = newBabies;
+
+      // 更新当前圈子的数据
+      const circleData = app.getCurrentCircleData();
+      if (circleData) {
+        circleData.babies = newBabies;
+      }
     }
 
     wx.showToast({ title: '点赞成功！❤️', icon: 'success' });

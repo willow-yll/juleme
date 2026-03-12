@@ -110,6 +110,36 @@
   border: 2rpx solid #ffe4b3;
 }
 
+.my-request-card {
+  background: #e6f7ff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 12rpx;
+  border: 2rpx solid #91d5ff;
+}
+
+.request-info {
+  flex: 1;
+}
+
+.request-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text);
+  display: block;
+}
+
+.request-status {
+  font-size: 24rpx;
+  color: #1890ff;
+}
+
+.request-code {
+  font-size: 24rpx;
+  color: var(--text-muted);
+  margin-top: 8rpx;
+}
+
 .pending-info {
   flex: 1;
 }

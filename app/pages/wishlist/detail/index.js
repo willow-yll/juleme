@@ -16,16 +16,35 @@ Page({
     }
   },
 
-  // 加载活动
+  onShow() {
+    // 页面守卫：检查是否选择了圈子
+    if (!app.globalData.currentCircleId) {
+      wx.redirectTo({ url: '/pages/circle/index' });
+      return;
+    }
+  },
+
+  // 加载活动 - 从当前圈子获取
   loadWish(id) {
-    const wish = app.globalData.wishes.find(w => w.id == id);
+    const circleData = app.getCurrentCircleData();
+    if (!circleData) {
+      wx.showToast({ title: '请先选择圈子', icon: 'none' });
+      return;
+    }
+
+    const wish = circleData.wishes.find(w => w.id == id);
 
     if (wish) {
       const progress = this.calculateProgress(wish);
       const countdownText = this.getCountdownText(wish.targetDate);
-      const isClaimed = wish.claimed.some(c => c.user.name === '我');
+      const isClaimed = wish.claimed && wish.claimed.some(c => c.user && c.user.name === '我');
 
       this.setData({ wish, progress, countdownText, isClaimed });
+    } else {
+      wx.showToast({ title: '活动不存在', icon: 'none' });
+      setTimeout(() => {
+        wx.navigateBack();
+      }, 1500);
     }
   },
 
@@ -63,7 +82,11 @@ Page({
     const { wish } = this.data;
     if (!wish) return;
 
-    const alreadyClaimed = wish.claimed.some(c => c.user.name === '我');
+    if (!wish.claimed) {
+      wish.claimed = [];
+    }
+
+    const alreadyClaimed = wish.claimed.some(c => c.user && c.user.name === '我');
     if (alreadyClaimed) {
       wx.showToast({ title: '已经报名过了', icon: 'none' });
       return;
@@ -79,15 +102,30 @@ Page({
       wantGo: true
     }];
 
-    const newWishes = app.globalData.wishes.map(w =>
-      w.id === wish.id ? { ...w, claimed: newClaimed } : w
-    );
-
-    app.globalData.wishes = newWishes;
+    // 更新当前圈子的数据
+    const circleData = app.getCurrentCircleData();
+    if (circleData) {
+      const wishIndex = circleData.wishes.findIndex(w => w.id === wish.id);
+      if (wishIndex > -1) {
+        circleData.wishes[wishIndex].claimed = newClaimed;
+      }
+    }
 
     this.setData({
       wish: { ...wish, claimed: newClaimed },
       isClaimed: true
+    });
+
+    // 添加动态到当前圈子
+    app.addFeedItemToCurrentCircle({
+      id: Date.now(),
+      user: { avatar: 'https://picsum.photos/100', name: '我' },
+      type: 'wish',
+      content: '报名了活动',
+      title: wish.title,
+      time: '刚刚',
+      likes: 0,
+      comments: []
     });
 
     wx.showToast({ title: '报名成功！', icon: 'success' });
@@ -101,7 +139,7 @@ Page({
   onShareAppMessage() {
     const { wish } = this.data;
     return {
-      title: wish ? `一起参加“${wish.title}”吧！` : '聚了吗 - 活动',
+      title: wish ? `一起参加"${wish.title}"吧！` : '聚了吗 - 活动',
       path: `/pages/wishlist/detail?id=${wish?.id}`
     };
   }

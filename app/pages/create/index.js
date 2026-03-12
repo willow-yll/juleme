@@ -31,6 +31,12 @@ Page({
   },
 
   onLoad(options) {
+    // 页面守卫：检查是否选择了圈子
+    if (!app.globalData.currentCircleId) {
+      wx.redirectTo({ url: '/pages/circle/index' });
+      return;
+    }
+
     const { type, subType } = options;
     if (type) {
       this.setData({ type });
@@ -130,7 +136,7 @@ Page({
     }
   },
 
-  // 提交愿望
+  // 提交愿望 - 写入当前圈子
   submitWish() {
     const { form } = this.data;
 
@@ -162,10 +168,11 @@ Page({
       likes: 0
     };
 
-    app.globalData.wishes.unshift(newWish);
+    // 写入当前圈子
+    app.addWishToCurrentCircle(newWish);
 
-    // 添加动态
-    app.globalData.feedItems.unshift({
+    // 添加动态到当前圈子
+    app.addFeedItemToCurrentCircle({
       id: Date.now(),
       user: { avatar: 'https://picsum.photos/100', name: '我' },
       type: 'wish',
@@ -183,7 +190,7 @@ Page({
     }, 1500);
   },
 
-  // 提交萌宠
+  // 提交萌宠/萌娃瞬间 - 写入当前圈子
   submitMoment() {
     const { momentForm, petForm, showPetForm, type } = this.data;
 
@@ -191,6 +198,9 @@ Page({
       wx.showToast({ title: '请输入内容或上传图片', icon: 'none' });
       return;
     }
+
+    const circleData = app.getCurrentCircleData();
+    if (!circleData) return;
 
     // 如果是新增宠物
     if (showPetForm && petForm.name) {
@@ -206,7 +216,7 @@ Page({
         badges: [],
         moments: []
       };
-      app.globalData.pets.unshift(newPet);
+      circleData.pets.push(newPet);
     }
 
     // 添加瞬间
@@ -220,14 +230,15 @@ Page({
     };
 
     // 更新第一个宠物或宝宝
-    if (app.globalData.pets.length > 0) {
-      const pet = app.globalData.pets[0];
+    const pets = circleData.pets || [];
+    if (pets.length > 0) {
+      const pet = pets[0];
       pet.moments = [momentItem, ...(pet.moments || [])];
       pet.cans = (pet.cans || 0) + 1;
     }
 
-    // 添��动态
-    app.globalData.feedItems.unshift({
+    // 添加动态到当前圈子
+    app.addFeedItemToCurrentCircle({
       id: Date.now(),
       user: { avatar: 'https://picsum.photos/100', name: '我' },
       type: 'moment',
@@ -246,7 +257,7 @@ Page({
     }, 1500);
   },
 
-  // 提交纪念日
+  // 提交纪念日 - 写入当前圈子
   submitAnniversary() {
     const { anniversaryForm } = this.data;
 
@@ -283,10 +294,11 @@ Page({
       icon: icons[Math.floor(Math.random() * icons.length)]
     };
 
-    app.globalData.anniversaries.unshift(newAnniversary);
+    // 写入当前圈子
+    app.addAnniversaryToCurrentCircle(newAnniversary);
 
-    // 添加动态
-    app.globalData.feedItems.unshift({
+    // 添加动态到当前圈子
+    app.addFeedItemToCurrentCircle({
       id: Date.now(),
       user: { avatar: 'https://picsum.photos/100', name: '我' },
       type: 'anniversary',

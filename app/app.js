@@ -7,28 +7,38 @@ App({
     circles: [],
     currentCircleId: null,
     currentCircle: null,
-    pendingRequests: [],
-    // 示例数据 - 实际项目中应从云端获取
-    feedItems: [],
-    wishes: [],
-    anniversaries: [],
-    moments: [],
-    pets: [],
-    babies: [],
-    museum: []
+    // 按圈子存储的数据
+    circleData: {}
   },
 
   onLaunch() {
     // 小程序启动
     console.log('聚了吗小程序启动');
     this.initData();
-    console.log('数据初始化完成, feedItems:', this.globalData.feedItems.length);
+    console.log('数据初始化完成, circles:', this.globalData.circles.length);
   },
 
   // 初始化示例数据
   initData() {
+    // 创建默认圈子，将示例数据放入该圈子
+    const defaultCircleId = 1;
+    const defaultCircle = {
+      id: defaultCircleId,
+      name: '我的第一个圈子',
+      description: '欢迎来到聚了吗！这是您的专属圈子',
+      color: '#1890ff',
+      code: this.generateJoinCode(),
+      ownerId: 'me',
+      members: [
+        { id: 'me', avatar: 'https://picsum.photos/100', name: '我', role: 'owner' }
+      ],
+      memberCount: 1,
+      joinRequests: [],
+      createdAt: new Date().toISOString()
+    };
+
     // 示例动态数据
-    this.globalData.feedItems = [
+    const feedItems = [
       {
         id: 1,
         user: { avatar: 'https://picsum.photos/100', name: '小明' },
@@ -48,7 +58,7 @@ App({
         image: 'https://picsum.photos/200/200',
         time: '3小时前',
         likes: 12,
-        comments: ['太可爱了��', '想撸']
+        comments: ['太可爱了！', '想撸']
       },
       {
         id: 3,
@@ -63,7 +73,7 @@ App({
     ];
 
     // 示例愿望数据
-    this.globalData.wishes = [
+    const wishes = [
       {
         id: 1,
         title: '去重庆吃火锅',
@@ -132,7 +142,7 @@ App({
     ];
 
     // 示例纪念日数据
-    this.globalData.anniversaries = [
+    const anniversaries = [
       {
         id: 1,
         name: '疯狂星期四',
@@ -172,7 +182,7 @@ App({
     ];
 
     // 示例萌宠数据
-    this.globalData.pets = [
+    const pets = [
       {
         id: 1,
         name: '小橘',
@@ -208,7 +218,7 @@ App({
     ];
 
     // 示例萌娃数据
-    this.globalData.babies = [
+    const babies = [
       {
         id: 1,
         name: '豆豆',
@@ -235,17 +245,135 @@ App({
       }
     ];
 
-    // 示例回忆博物馆数据
-    this.globalData.museum = [
-      {
-        id: 1,
-        wish: { title: '元旦聚餐', category: 'restaurant' },
-        images: ['https://picsum.photos/400/400', 'https://picsum.photos/401/401'],
-        participants: ['小明', '小红', '阿强'],
-        feeling: '很开心的一年！',
-        createdAt: '2026-01-01'
-      }
-    ];
+    // 将所有数据放入默认圈子的 circleData 中
+    this.globalData.circleData[defaultCircleId] = {
+      feedItems,
+      wishes,
+      anniversaries,
+      pets,
+      babies
+    };
+
+    // 添加默认圈子到 circles 列表
+    this.globalData.circles.push(defaultCircle);
+
+    // 设置当前圈子
+    this.globalData.currentCircleId = defaultCircleId;
+    this.globalData.currentCircle = defaultCircle;
+  },
+
+  // 生成6位圈子号码
+  generateJoinCode() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  },
+
+  // 确保圈子数据容器存在
+  ensureCircleData(circleId) {
+    if (!this.globalData.circleData[circleId]) {
+      this.globalData.circleData[circleId] = {
+        feedItems: [],
+        wishes: [],
+        anniversaries: [],
+        pets: [],
+        babies: []
+      };
+    }
+    return this.globalData.circleData[circleId];
+  },
+
+  // 获取当前圈子的数据
+  getCurrentCircleData() {
+    if (!this.globalData.currentCircleId) {
+      return null;
+    }
+    return this.globalData.circleData[this.globalData.currentCircleId] || null;
+  },
+
+  // 设置当前圈子
+  setCurrentCircle(circle) {
+    this.globalData.currentCircleId = circle.id;
+    this.globalData.currentCircle = circle;
+    // 确保该圈子的数据容器存在
+    this.ensureCircleData(circle.id);
+  },
+
+  // 添加动态到当前圈子
+  addFeedItemToCurrentCircle(item) {
+    if (!this.globalData.currentCircleId) {
+      console.warn('No current circle selected');
+      return false;
+    }
+    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
+    circleData.feedItems.unshift(item);
+    return true;
+  },
+
+  // 添加愿望到当前圈子
+  addWishToCurrentCircle(wish) {
+    if (!this.globalData.currentCircleId) {
+      console.warn('No current circle selected');
+      return false;
+    }
+    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
+    circleData.wishes.unshift(wish);
+    return true;
+  },
+
+  // 添加纪念日到当前圈子
+  addAnniversaryToCurrentCircle(anniversary) {
+    if (!this.globalData.currentCircleId) {
+      console.warn('No current circle selected');
+      return false;
+    }
+    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
+    circleData.anniversaries.unshift(anniversary);
+    return true;
+  },
+
+  // 添加萌宠到当前圈子
+  addPetToCurrentCircle(pet) {
+    if (!this.globalData.currentCircleId) {
+      console.warn('No current circle selected');
+      return false;
+    }
+    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
+    circleData.pets.push(pet);
+    return true;
+  },
+
+  // 添加萌娃到当前圈子
+  addBabyToCurrentCircle(baby) {
+    if (!this.globalData.currentCircleId) {
+      console.warn('No current circle selected');
+      return false;
+    }
+    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
+    circleData.babies.push(baby);
+    return true;
+  },
+
+  // 通过圈子号码查找圈子
+  findCircleByCode(code) {
+    return this.globalData.circles.find(c => c.code === code);
+  },
+
+  // 通过圈子ID查找圈子
+  findCircleById(id) {
+    return this.globalData.circles.find(c => c.id === id);
+  },
+
+  // 检查当前用户是否已经是圈子成员
+  isCircleMember(circleId) {
+    const circle = this.findCircleById(circleId);
+    if (!circle || !circle.members) return false;
+    return circle.members.some(m => m.id === 'me');
+  },
+
+  // 检查当前用户是否已经有待处理的加入申请
+  hasPendingRequest(circleId) {
+    const circle = this.findCircleById(circleId);
+    if (!circle || !circle.joinRequests) return false;
+    return circle.joinRequests.some(r => r.userId === 'me' && r.status === 'pending');
   },
 
   // 获取用户信息
@@ -282,8 +410,8 @@ App({
     return { days, hours, minutes, finished: false };
   },
 
-  // 添加动态
+  // 添加动态（兼容旧接口）
   addFeedItem(item) {
-    this.globalData.feedItems.unshift(item);
+    return this.addFeedItemToCurrentCircle(item);
   }
 });

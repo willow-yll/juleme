@@ -7,11 +7,13 @@ Page({
       wishes: 0,
       moments: 0,
       circles: 0,
-      friends: 12
-    }
+      friends: 0
+    },
+    currentCircle: null
   },
 
   onShow() {
+    // 页面守卫：检查是否选择了圈子
     if (!app.globalData.currentCircleId) {
       wx.redirectTo({ url: '/pages/circle/index' });
       return;
@@ -19,29 +21,45 @@ Page({
     this.loadStats();
   },
 
-  // 加载统计数据
+  // 加载统计数据 - 基于当前圈子
   loadStats() {
-    const wishes = app.globalData.wishes ? app.globalData.wishes.length : 0;
-    const circles = app.globalData.circles ? app.globalData.circles.length : 0;
+    const circleData = app.getCurrentCircleData();
+    const currentCircle = app.globalData.currentCircle;
 
+    // 当前圈子的活动数
+    const wishes = circleData ? circleData.wishes.length : 0;
+
+    // 当前圈子加入的圈子数
+    const circles = app.globalData.circles.filter(c => {
+      const members = c.members || [];
+      return members.some(m => m.id === 'me');
+    }).length;
+
+    // 当前圈子的瞬间数（萌宠+萌娃）
     let moments = 0;
-    if (app.globalData.pets) {
-      app.globalData.pets.forEach(p => {
-        if (p.moments) moments += p.moments.length;
-      });
+    if (circleData) {
+      if (circleData.pets) {
+        circleData.pets.forEach(p => {
+          if (p.moments) moments += p.moments.length;
+        });
+      }
+      if (circleData.babies) {
+        circleData.babies.forEach(b => {
+          if (b.moments) moments += b.moments.length;
+        });
+      }
     }
-    if (app.globalData.babies) {
-      app.globalData.babies.forEach(b => {
-        if (b.moments) moments += b.moments.length;
-      });
-    }
+
+    // 当前圈子的成员数
+    const friends = currentCircle ? currentCircle.memberCount : 0;
 
     this.setData({
+      currentCircle,
       stats: {
         wishes,
         moments,
         circles,
-        friends: 12
+        friends
       }
     });
   },

@@ -32,13 +32,29 @@
     </view>
   </view>
 
-  <!-- 待确认的加入申请 -->
+  <!-- 我发出的申请 -->
+  <view class="pending-section" wx:if="{{myPendingRequests.length > 0}}">
+    <text class="section-title">📋 我的申请</text>
+    <block wx:for="{{myPendingRequests}}" wx:key="id">
+      <view class="my-request-card">
+        <view class="request-info">
+          <text class="request-name">申请加入：{{item.circleName}}</text>
+          <text class="request-status">等待圈主确认中...</text>
+        </view>
+        <view class="request-code">
+          <text>圈子号码：{{item.circleCode}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 待确认的加入申请（圈主可见） -->
   <view class="pending-section" wx:if="{{pendingRequests.length > 0}}">
     <text class="section-title">👀 待确认</text>
     <block wx:for="{{pendingRequests}}" wx:key="id">
       <view class="pending-card">
         <view class="pending-info">
-          <text class="pending-name">{{item.name}}</text>
+          <text class="pending-name">{{item.userName}}</text>
           <text class="pending-circle">申请加入：{{item.circleName}}</text>
         </view>
         <view class="pending-actions">

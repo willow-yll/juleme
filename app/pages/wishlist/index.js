@@ -15,6 +15,7 @@ Page({
 
   onShow() {
     console.log('活动页面显示');
+    // 页面守卫：检查是否选择了圈子
     if (!app.globalData.currentCircleId) {
       wx.redirectTo({ url: '/pages/circle/index' });
       return;
@@ -29,15 +30,16 @@ Page({
     }, 1000);
   },
 
-  // 加载活动数据
+  // 加载活动数据 - 从当前圈子获取
   loadWishes() {
-    const wishes = app.globalData.wishes || [];
+    const circleData = app.getCurrentCircleData();
+    const wishes = circleData ? circleData.wishes : [];
     console.log('加载活动, 总数:', wishes.length);
 
     // 标记当前用户是否已报名
     const wishesWithClaim = wishes.map(w => ({
       ...w,
-      hasClaimed: w.claimed.some(c => c.user.name === '我')
+      hasClaimed: w.claimed && w.claimed.some(c => c.user && c.user.name === '我')
     }));
 
     this.setData({ wishes: wishesWithClaim });
@@ -121,6 +123,9 @@ Page({
     }
 
     // 检查是否已满
+    if (!wish.claimed) {
+      wish.claimed = [];
+    }
     if (wish.claimed.length >= wish.maxClaim) {
       wx.showToast({ title: '名额已满啦', icon: 'none' });
       return;
@@ -135,8 +140,17 @@ Page({
     this.setData({ wishes: newWishes });
     this.filterWishes();
 
-    // 添加动态
-    app.globalData.feedItems.unshift({
+    // 更新当前圈子的数据
+    const circleData = app.getCurrentCircleData();
+    if (circleData) {
+      const wishIndex = circleData.wishes.findIndex(w => w.id === id);
+      if (wishIndex > -1) {
+        circleData.wishes[wishIndex].claimed = newClaimed;
+      }
+    }
+
+    // 添加动态到当前圈子
+    app.addFeedItemToCurrentCircle({
       id: Date.now(),
       user: { avatar: 'https://picsum.photos/100', name: '我' },
       type: 'wish',
