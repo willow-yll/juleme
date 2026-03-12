@@ -69,6 +69,13 @@
   flex: 1;
 }
 
+.date-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 4rpx;
+}
+
 .date-name,
 .cycle-name {
   font-size: 30rpx;
@@ -76,6 +83,14 @@
   color: var(--text);
   display: block;
   margin-bottom: 4rpx;
+}
+
+.auto-badge {
+  font-size: 20rpx;
+  padding: 4rpx 8rpx;
+  background: linear-gradient(135deg, var(--secondary), #FFCBA4);
+  color: #fff;
+  border-radius: var(--radius-sm);
 }
 
 .date-value,

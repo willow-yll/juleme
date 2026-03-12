@@ -1,7 +1,7 @@
 <!-- 创建页面 -->
 <view class="page">
   <!-- 类型选择 -->
-  <view class="type-selector">
+  <view class="type-selector two-columns">
     <view
       class="type-item {{type === 'wish' ? 'active' : ''}}"
       bindtap="switchType"
@@ -11,16 +11,6 @@
         <text class="type-icon">🎯</text>
       </view>
       <text class="type-name">发起活动</text>
-    </view>
-    <view
-      class="type-item {{type === 'moment' ? 'active' : ''}}"
-      bindtap="switchType"
-      data-type="moment"
-    >
-      <view class="type-icon-wrap">
-        <text class="type-icon">📸</text>
-      </view>
-      <text class="type-name">发动态</text>
     </view>
     <view
       class="type-item {{type === 'anniversary' ? 'active' : ''}}"
@@ -92,34 +82,6 @@
         <slider min="1" max="30" value="{{form.maxClaim}}" bindchange="onMaxClaimChange" activeColor="#9B7DED" block-color="#9B7DED" />
         <text class="slider-value">{{form.maxClaim}}人</text>
       </view>
-    </view>
-  </view>
-
-  <!-- 动态表单 -->
-  <view class="form" wx:if="{{type === 'moment'}}">
-    <view class="form-group" wx:if="{{showPetForm}}">
-      <text class="label">宠物名字</text>
-      <input class="input" placeholder="给Ta起个名字" bindinput="onPetNameInput" value="{{petForm.name}}" />
-    </view>
-
-    <view class="form-group" wx:if="{{showPetForm}}">
-      <text class="label">品种（可选）</text>
-      <input class="input" placeholder="如：中华田园猫" bindinput="onBreedInput" value="{{petForm.breed}}" />
-    </view>
-
-    <view class="form-group">
-      <text class="label">照片</text>
-      <view class="image-uploader" bindtap="chooseImage">
-        <view class="upload-icon-wrap">
-          <text class="upload-icon">📷</text>
-        </view>
-        <text class="upload-text">点击上传照片</text>
-      </view>
-    </view>
-
-    <view class="form-group">
-      <text class="label">内容</text>
-      <textarea class="textarea" placeholder="分享此刻发生了什么..." bindinput="onMomentContentInput" value="{{momentForm.content}}" />
     </view>
   </view>
 

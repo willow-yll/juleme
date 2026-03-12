@@ -5,7 +5,7 @@ Page({
   data: {
     stats: {
       wishes: 0,
-      moments: 0,
+      anniversaries: 0,
       circles: 0,
       friends: 0
     },
@@ -18,6 +18,12 @@ Page({
       wx.redirectTo({ url: '/pages/circle/index' });
       return;
     }
+
+    if (!app.hasUserProfile()) {
+      wx.navigateTo({ url: '/pages/profile/setup/index' });
+      return;
+    }
+
     this.loadStats();
   },
 
@@ -26,38 +32,21 @@ Page({
     const circleData = app.getCurrentCircleData();
     const currentCircle = app.globalData.currentCircle;
 
-    // 当前圈子的活动数
     const wishes = circleData ? circleData.wishes.length : 0;
+    const anniversaries = circleData ? (circleData.anniversaries || []).length : 0;
 
-    // 当前圈子加入的圈子数
     const circles = app.globalData.circles.filter(c => {
       const members = c.members || [];
       return members.some(m => m.id === 'me');
     }).length;
 
-    // 当前圈子的瞬间数（萌宠+萌娃）
-    let moments = 0;
-    if (circleData) {
-      if (circleData.pets) {
-        circleData.pets.forEach(p => {
-          if (p.moments) moments += p.moments.length;
-        });
-      }
-      if (circleData.babies) {
-        circleData.babies.forEach(b => {
-          if (b.moments) moments += b.moments.length;
-        });
-      }
-    }
-
-    // 当前圈子的成员数
     const friends = currentCircle ? currentCircle.memberCount : 0;
 
     this.setData({
       currentCircle,
       stats: {
         wishes,
-        moments,
+        anniversaries,
         circles,
         friends
       }
@@ -71,10 +60,10 @@ Page({
     });
   },
 
-  // 跳转萌宠墙
-  goToMoments() {
+  // 跳转资料设置
+  goToProfileSetup() {
     wx.navigateTo({
-      url: '/pages/moment/index'
+      url: '/pages/profile/setup/index'
     });
   },
 

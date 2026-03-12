@@ -48,6 +48,74 @@
   </view>
 
   <view class="section" wx:if="{{activeSection === 'analysis'}}">
+    <!-- 统计数据 -->
+    <view class="stats-summary">
+      <view class="stat-item-wrap">
+        <text class="stat-num-large">{{stats.totalGatherings}}</text>
+        <text class="stat-label-small">共聚会(次)</text>
+      </view>
+      <view class="stat-item-wrap">
+        <text class="stat-num-large">{{stats.totalDishes}}</text>
+        <text class="stat-label-small">一起吃了(道)</text>
+      </view>
+      <view class="stat-item-wrap">
+        <text class="stat-num-large">{{stats.totalCities}}</text>
+        <text class="stat-label-small">足迹(城)</text>
+      </view>
+    </view>
+
+    <!-- 排行榜 -->
+    <view class="leaderboard-section">
+      <text class="section-subtitle">🏆 荣誉榜</text>
+      <view class="leaderboard-grid">
+        <!-- 捧场王 -->
+        <view class="leaderboard-card king-party">
+          <view class="king-icon">🎉</view>
+          <text class="king-title">捧场王</text>
+          <text class="king-desc">参加活动最��</text>
+          <view class="king-winner" wx:if="{{leaderboard.partyKing}}">
+            <image class="king-avatar" src="{{leaderboard.partyKing.avatar}}" />
+            <text class="king-name">{{leaderboard.partyKing.name}}</text>
+            <text class="king-count">{{leaderboard.partyKing.eventsJoined}}次</text>
+          </view>
+          <view class="king-empty" wx:else>
+            <text>虚位以待</text>
+          </view>
+        </view>
+
+        <!-- 干饭王 -->
+        <view class="leaderboard-card king-food">
+          <view class="king-icon">🍽️</view>
+          <text class="king-title">干饭王</text>
+          <text class="king-desc">最常聚餐</text>
+          <view class="king-winner" wx:if="{{leaderboard.foodKing}}">
+            <image class="king-avatar" src="{{leaderboard.foodKing.avatar}}" />
+            <text class="king-name">{{leaderboard.foodKing.name}}</text>
+            <text class="king-count">{{leaderboard.foodKing.diningCount}}次</text>
+          </view>
+          <view class="king-empty" wx:else>
+            <text>虚位以待</text>
+          </view>
+        </view>
+
+        <!-- 局头 -->
+        <view class="leaderboard-card king-organizer">
+          <view class="king-icon">🎯</view>
+          <text class="king-title">局头</text>
+          <text class="king-desc">发起活动最多</text>
+          <view class="king-winner" wx:if="{{leaderboard.organizerKing}}">
+            <image class="king-avatar" src="{{leaderboard.organizerKing.avatar}}" />
+            <text class="king-name">{{leaderboard.organizerKing.name}}</text>
+            <text class="king-count">{{leaderboard.organizerKing.eventsCreated}}次</text>
+          </view>
+          <view class="king-empty" wx:else>
+            <text>虚位以待</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 性别分布 -->
     <view class="analysis-card">
       <text class="analysis-title">性别分布</text>
       <view class="analysis-bar-item" wx:for="{{analysis.gender}}" wx:key="name">

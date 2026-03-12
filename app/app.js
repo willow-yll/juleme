@@ -102,17 +102,6 @@ App({
       },
       {
         id: 2,
-        user: { avatar: 'https://picsum.photos/101', name: '小红' },
-        type: 'moment',
-        content: '晒出了小橘的可爱瞬间',
-        title: '今天给小橘买了新玩具',
-        image: 'https://picsum.photos/200/200',
-        time: '3小时前',
-        likes: 12,
-        comments: ['太可爱了！', '想撸']
-      },
-      {
-        id: 3,
         user: { avatar: 'https://picsum.photos/102', name: '阿强' },
         type: 'anniversary',
         content: '设置了新纪念日',
@@ -232,77 +221,11 @@ App({
       }
     ];
 
-    // 示例萌宠数据
-    const pets = [
-      {
-        id: 1,
-        name: '小橘',
-        avatar: 'https://picsum.photos/200',
-        breed: '中华田园猫',
-        personality: ['黏人', '贪吃', '软乎乎'],
-        milestones: [
-          { date: '2025-06-01', content: '第一次会爬', icon: '🐾' },
-          { date: '2025-08-15', content: '第一次洗澡', icon: '🛁' }
-        ],
-        cans: 156,
-        hearts: 89,
-        badges: ['小可爱'],
-        moments: [
-          {
-            id: 1,
-            image: 'https://picsum.photos/300/300',
-            content: '今天给小橘买了新玩具',
-            createdAt: '2026-03-10',
-            cans: 5,
-            hearts: 12
-          },
-          {
-            id: 2,
-            image: 'https://picsum.photos/301/301',
-            content: '晒太阳真是太舒服了',
-            createdAt: '2026-03-08',
-            cans: 8,
-            hearts: 20
-          }
-        ]
-      }
-    ];
-
-    // 示例萌娃数据
-    const babies = [
-      {
-        id: 1,
-        name: '豆豆',
-        avatar: 'https://picsum.photos/201',
-        age: '1岁6个月',
-        personality: ['活泼', '好奇', '爱笑'],
-        milestones: [
-          { date: '2025-09-01', content: '第一次会爬', icon: '🐾' },
-          { date: '2025-11-15', content: '第一次走路', icon: '🚶' }
-        ],
-        cans: 0,
-        hearts: 234,
-        badges: ['小明星'],
-        moments: [
-          {
-            id: 1,
-            images: ['https://picsum.photos/302/302', 'https://picsum.photos/303/303'],
-            content: '今天学会新技能了！',
-            createdAt: '2026-03-09',
-            age: '1岁6个月',
-            hearts: 15
-          }
-        ]
-      }
-    ];
-
     // 将所有数据放入默认圈子的 circleData 中
     this.globalData.circleData[defaultCircleId] = {
       feedItems,
       wishes,
-      anniversaries,
-      pets,
-      babies
+      anniversaries
     };
 
     // 添加默认圈子到 circles 列表
@@ -324,9 +247,7 @@ App({
       this.globalData.circleData[circleId] = {
         feedItems: [],
         wishes: [],
-        anniversaries: [],
-        pets: [],
-        babies: []
+        anniversaries: []
       };
     }
     return this.globalData.circleData[circleId];
@@ -378,28 +299,6 @@ App({
     }
     const circleData = this.ensureCircleData(this.globalData.currentCircleId);
     circleData.anniversaries.unshift(anniversary);
-    return true;
-  },
-
-  // 添加萌宠到当前圈子
-  addPetToCurrentCircle(pet) {
-    if (!this.globalData.currentCircleId) {
-      console.warn('No current circle selected');
-      return false;
-    }
-    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
-    circleData.pets.push(pet);
-    return true;
-  },
-
-  // 添加萌娃到当前圈子
-  addBabyToCurrentCircle(baby) {
-    if (!this.globalData.currentCircleId) {
-      console.warn('No current circle selected');
-      return false;
-    }
-    const circleData = this.ensureCircleData(this.globalData.currentCircleId);
-    circleData.babies.push(baby);
     return true;
   },
 

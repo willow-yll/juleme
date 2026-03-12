@@ -107,7 +107,6 @@
 }
 
 .tag-wish { background: #FFF3E0; }
-.tag-moment { background: #E8F5E9; }
 .tag-anniversary { background: #FCE4EC; }
 
 /* 内容 */

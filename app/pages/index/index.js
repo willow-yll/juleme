@@ -25,6 +25,10 @@ Page({
       wx.redirectTo({ url: '/pages/circle/index' });
       return;
     }
+    if (!app.hasUserProfile()) {
+      wx.navigateTo({ url: '/pages/profile/setup/index' });
+      return;
+    }
     // 每次显示时刷新数据
     this.loadFeedData();
   },

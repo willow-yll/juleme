@@ -4,7 +4,6 @@ const app = getApp();
 Page({
   data: {
     type: 'wish',
-    showPetForm: false,
     form: {
       title: '',
       description: '',
@@ -12,14 +11,6 @@ Page({
       targetDate: '',
       dateUndecided: false,
       maxClaim: 5
-    },
-    petForm: {
-      name: '',
-      breed: ''
-    },
-    momentForm: {
-      content: '',
-      image: ''
     },
     anniversaryForm: {
       name: '',
@@ -38,12 +29,9 @@ Page({
       return;
     }
 
-    const { type, subType } = options;
-    if (type) {
+    const { type } = options;
+    if (type && ['wish', 'anniversary'].includes(type)) {
       this.setData({ type });
-      if (type === 'moment' && subType) {
-        this.setData({ showPetForm: subType === 'pet' });
-      }
     }
   },
 
@@ -86,29 +74,6 @@ Page({
     this.setData({ 'form.maxClaim': e.detail.value });
   },
 
-  // 宠物表单输入
-  onPetNameInput(e) {
-    this.setData({ 'petForm.name': e.detail.value });
-  },
-
-  onBreedInput(e) {
-    this.setData({ 'petForm.breed': e.detail.value });
-  },
-
-  onMomentContentInput(e) {
-    this.setData({ 'momentForm.content': e.detail.value });
-  },
-
-  // 选择图片
-  chooseImage() {
-    wx.chooseImage({
-      count: 1,
-      success: (res) => {
-        this.setData({ 'momentForm.image': res.tempFilePaths[0] });
-      }
-    });
-  },
-
   // 纪念日表单
   onAnniversaryNameInput(e) {
     this.setData({ 'anniversaryForm.name': e.detail.value });
@@ -138,9 +103,6 @@ Page({
     switch (type) {
       case 'wish':
         this.submitWish();
-        break;
-      case 'moment':
-        this.submitMoment();
         break;
       case 'anniversary':
         this.submitAnniversary();
@@ -199,73 +161,6 @@ Page({
 
     setTimeout(() => {
       wx.switchTab({ url: '/pages/wishlist/index' });
-    }, 1500);
-  },
-
-  // 提交萌宠/萌娃瞬间 - 写入当前圈子
-  submitMoment() {
-    const { momentForm, petForm, showPetForm, type } = this.data;
-
-    if (!momentForm.content && !momentForm.image) {
-      wx.showToast({ title: '请输入内容或上传图片', icon: 'none' });
-      return;
-    }
-
-    const circleData = app.getCurrentCircleData();
-    if (!circleData) return;
-
-    // 如果是新增宠物
-    if (showPetForm && petForm.name) {
-      const newPet = {
-        id: Date.now(),
-        name: petForm.name,
-        avatar: momentForm.image || 'https://picsum.photos/200',
-        breed: petForm.breed,
-        personality: ['可爱'],
-        milestones: [],
-        cans: 0,
-        hearts: 0,
-        badges: [],
-        moments: []
-      };
-      circleData.pets.push(newPet);
-    }
-
-    // 添加瞬间
-    const momentItem = {
-      id: Date.now(),
-      image: momentForm.image,
-      content: momentForm.content,
-      createdAt: new Date().toISOString().split('T')[0],
-      cans: 0,
-      hearts: 0
-    };
-
-    // 更新第一个宠物或宝宝
-    const pets = circleData.pets || [];
-    if (pets.length > 0) {
-      const pet = pets[0];
-      pet.moments = [momentItem, ...(pet.moments || [])];
-      pet.cans = (pet.cans || 0) + 1;
-    }
-
-    // 添加动态到当前圈子
-    app.addFeedItemToCurrentCircle({
-      id: Date.now(),
-      user: { avatar: 'https://picsum.photos/100', name: '我' },
-      type: 'moment',
-      content: '发布了一条动态',
-      title: momentForm.content,
-      image: momentForm.image,
-      time: '刚刚',
-      likes: 0,
-      comments: []
-    });
-
-    wx.showToast({ title: '发布成功！', icon: 'success' });
-
-    setTimeout(() => {
-      wx.switchTab({ url: '/pages/moment/index' });
     }, 1500);
   },
 

@@ -25,7 +25,6 @@
             </view>
             <view class="type-tag tag-{{item.type}}">
               <text wx:if="{{item.type === 'wish'}}">🎯</text>
-              <text wx:elif="{{item.type === 'moment'}}">🐱</text>
               <text wx:elif="{{item.type === 'anniversary'}}">💕</text>
             </view>
           </view>
