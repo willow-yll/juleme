@@ -4,6 +4,20 @@
   background: var(--bg);
 }
 
+.page-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 48rpx;
+}
+
+.state-text {
+  font-size: 30rpx;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.8;
+}
+
 .header {
   padding: 48rpx var(--spacing-lg) 72rpx;
 }

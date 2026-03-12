@@ -8,6 +8,8 @@ Page({
     pendingRequests: [],
     activeSection: 'members',
     isOwner: false,
+    loading: true,
+    pageError: '',
     analysis: {
       gender: [],
       mbti: [],
@@ -37,16 +39,18 @@ Page({
   },
 
   async loadData() {
+    this.setData({ loading: true, pageError: '' });
     try {
       await app.ensureBootstrap();
       const hasProfile = app.hasUserProfile();
       const circleId = await app.ensureCurrentCircleSelected();
       if (!circleId) {
+        this.setData({ loading: false, circle: null });
         if (!hasProfile) {
-          wx.redirectTo({ url: '/pages/profile/setup/index' });
+          wx.reLaunch({ url: '/pages/profile/setup/index' });
           return;
         }
-        wx.redirectTo({ url: '/pages/circle/index' });
+        wx.reLaunch({ url: '/pages/circle/index' });
         return;
       }
 
@@ -80,6 +84,8 @@ Page({
         members,
         pendingRequests,
         isOwner,
+        loading: false,
+        pageError: '',
         analysis: {
           gender: Object.entries(genderMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 })),
           mbti: Object.entries(mbtiMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 })),
@@ -90,6 +96,11 @@ Page({
         llmError: ''
       });
     } catch (error) {
+      this.setData({
+        loading: false,
+        circle: null,
+        pageError: error.message || '加载圈子失败'
+      });
       wx.showToast({ title: error.message || '加载圈子失败', icon: 'none' });
     }
   },

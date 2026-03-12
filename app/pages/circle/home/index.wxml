@@ -1,5 +1,17 @@
 <!-- 圈子主页 -->
-<view class="page" wx:if="{{circle}}">
+<view class="page page-state" wx:if="{{loading}}">
+  <text class="state-text">加载中...</text>
+</view>
+
+<view class="page page-state" wx:elif="{{pageError}}">
+  <text class="state-text">{{pageError}}</text>
+</view>
+
+<view class="page page-state" wx:elif="{{!circle}}">
+  <text class="state-text">正在为你跳转...</text>
+</view>
+
+<view class="page" wx:else>
   <view class="header" style="background: linear-gradient(135deg, {{circle.color}} 0%, {{circle.color}}CC 100%)">
     <view class="circle-info">
       <view class="circle-avatar">{{circle.name[0]}}</view>
