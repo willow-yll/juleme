@@ -76,6 +76,13 @@ Page({
     });
   },
 
+  // 跳转关于
+  goToAbout() {
+    wx.navigateTo({
+      url: '/pages/profile/about/index'
+    });
+  },
+
   onShareAppMessage() {
     return {
       title: '聚了吗 - 我的',

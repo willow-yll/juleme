@@ -1,0 +1,18 @@
+<view class="page">
+  <view class="content-card">
+    <view class="hero-icon">ℹ️</view>
+    <text class="eyebrow">朋友回忆小程序</text>
+    <text class="title">聚了吗</text>
+    <text class="version">Version 1.0.0</text>
+    <text class="desc">一个记录朋友共同生活的小程序。发布活动、点亮地图、沉淀每一次相聚的记忆，让一起吃过的饭、去过的地方、经历的时刻都被留下。通过时间轴、圈子画像和年度统计，把零散的聚会变成可回顾、可分享的朋友回忆。</text>
+
+    <view class="info-section">
+      <text class="info-title">反馈与联系</text>
+      <text class="info-text">如果你有建议或想法，欢迎通过产品内反馈入口告诉我们。</text>
+    </view>
+
+    <view class="footer-note">
+      <text class="footer-text">愿每一次相聚，都有迹可循。</text>
+    </view>
+  </view>
+</view>

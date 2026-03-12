@@ -64,7 +64,7 @@
       <text class="menu-text">设置</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item">
+    <view class="menu-item" bindtap="goToAbout">
       <text class="menu-icon">ℹ️</text>
       <text class="menu-text">关于</text>
       <text class="menu-arrow">›</text>

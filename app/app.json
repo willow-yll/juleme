@@ -11,6 +11,7 @@
     "pages/capsule/index",
     "pages/profile/index",
     "pages/profile/setup/index",
+    "pages/profile/about/index",
     "pages/create/index"
   ],
   "window": {
