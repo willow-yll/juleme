@@ -94,18 +94,18 @@ function extractMessageContent(data) {
   return '';
 }
 
-function buildBailianError(res, data, raw) {
+function buildModelProviderError(res, data, raw) {
   const statusCode = res && res.statusCode ? res.statusCode : 0;
-  const requestId = data && (data.request_id || data.requestId) ? (data.request_id || data.requestId) : '';
-  const code = data && data.code ? data.code : '';
-  const message = data && data.message ? data.message : '';
+  const requestId = data && (data.request_id || data.requestId || data.id) ? (data.request_id || data.requestId || data.id) : '';
+  const code = data && (data.code || data.error && data.error.code) ? (data.code || data.error.code) : '';
+  const message = data && (data.message || data.error && data.error.message) ? (data.message || data.error.message) : '';
   const details = [
     `HTTP ${statusCode}`,
     code ? `code=${code}` : '',
     requestId ? `request_id=${requestId}` : '',
     message || (raw ? `raw=${raw}` : '')
   ].filter(Boolean).join(' | ');
-  return new Error(`百炼服务请求失败：${details}`);
+  return new Error(`大模型服务请求失败：${details}`);
 }
 
 exports.main = async (event) => {
@@ -127,11 +127,11 @@ exports.main = async (event) => {
   const configRes = await db.collection(COLLECTIONS.USERS).doc(OPENID).get().catch(() => null);
   void configRes;
 
-  const apiKey = process.env.BAILIAN_API_KEY;
-  const model = process.env.BAILIAN_MODEL || 'qwen-plus';
-  const baseUrl = process.env.BAILIAN_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+  const apiKey = process.env.OPENAI_API_KEY || process.env.BAILIAN_API_KEY;
+  const model = process.env.OPENAI_MODEL || process.env.BAILIAN_MODEL || 'gpt-4o-mini';
+  const baseUrl = process.env.OPENAI_BASE_URL || process.env.BAILIAN_BASE_URL || 'https://api.openai.com/v1/chat/completions';
   if (!apiKey) {
-    throw new Error('云函数环境变量中未配置 BAILIAN_API_KEY');
+    throw new Error('云函数环境变量中未配置 OPENAI_API_KEY');
   }
 
   const response = await new Promise((resolve, reject) => {
@@ -172,7 +172,7 @@ exports.main = async (event) => {
               statusCode: res.statusCode,
               data
             });
-            reject(buildBailianError(res, data, raw));
+            reject(buildModelProviderError(res, data, raw));
             return;
           }
           console.log('generateCircleInterpretation response ok', {
@@ -185,13 +185,13 @@ exports.main = async (event) => {
             statusCode: res.statusCode,
             raw
           });
-          reject(new Error(`百炼返回解析失败：HTTP ${res.statusCode || 0}`));
+          reject(new Error(`大模型服务返回解析失败：HTTP ${res.statusCode || 0}`));
         }
       });
     });
 
     request.on('timeout', () => {
-      request.destroy(new Error('百炼请求超时（15s）'));
+      request.destroy(new Error('大模型服务请求超时（15s）'));
     });
     request.on('error', (error) => {
       console.error('generateCircleInterpretation request error', error);
