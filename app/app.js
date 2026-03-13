@@ -184,6 +184,57 @@ App({
     return this.invokeCloudFunction(name, data);
   },
 
+  normalizeActionError(error, action) {
+    const message = error && error.message ? String(error.message) : '';
+    if (!message) {
+      return error;
+    }
+
+    const rules = {
+      submitJoinRequest: [
+        {
+          test: ['你已加入该圈子'],
+          message: '你已经加入这个圈子了'
+        },
+        {
+          test: ['已有待处理的申请，请耐心等待'],
+          message: '你已经提交过申请，请等待圈主处理'
+        }
+      ],
+      toggleWishClaim: [
+        {
+          test: ['已经报名过了', '已经报名过'],
+          message: '你已经报名过这个活动了'
+        },
+        {
+          test: ['你还没有报名该活动', '尚未报名'],
+          message: '你还没有报名这个活动'
+        },
+        {
+          test: ['名额已满啦', '名额已满'],
+          message: '活动名额已满啦'
+        }
+      ]
+    };
+
+    const matchedRule = (rules[action] || []).find((rule) => rule.test.some((item) => message.includes(item)));
+    if (!matchedRule) {
+      return error;
+    }
+
+    const normalizedError = new Error(matchedRule.message);
+    normalizedError.originalMessage = message;
+    return normalizedError;
+  },
+
+  async refreshCurrentCircleData(options = {}) {
+    return this.loadCurrentCircleData({
+      silent: true,
+      force: true,
+      ...options
+    });
+  },
+
   getCurrentUserId() {
     return this.globalData.currentUserId;
   },
@@ -350,14 +401,18 @@ App({
     await this.refreshBootstrap();
     if (result && result.circle && result.circle._id) {
       this.setCurrentCircle(result.circle._id, { syncOnly: true });
-      await this.loadCurrentCircleData({ silent: true });
+      await this.refreshCurrentCircleData();
     }
     return result;
   },
 
   async submitJoinRequest(payload) {
     await this.ensureBootstrap();
-    return this.callCloud('submitJoinRequest', payload);
+    try {
+      return await this.callCloud('submitJoinRequest', payload);
+    } catch (error) {
+      throw this.normalizeActionError(error, 'submitJoinRequest');
+    }
   },
 
   async reviewJoinRequest(payload) {
@@ -365,7 +420,7 @@ App({
     const result = await this.callCloud('reviewJoinRequest', payload);
     await this.loadCircleList({ force: true });
     if (this.globalData.currentCircleId === payload.circleId) {
-      await this.loadCurrentCircleData({ silent: true });
+      await this.refreshCurrentCircleData();
     }
     return result;
   },
@@ -380,7 +435,7 @@ App({
       name
     });
     await this.loadCircleList({ force: true });
-    await this.loadCurrentCircleData({ silent: true });
+    await this.refreshCurrentCircleData();
     return result;
   },
 
@@ -393,7 +448,7 @@ App({
       circleId: this.globalData.currentCircleId,
       ...payload
     });
-    await this.loadCurrentCircleData({ silent: true });
+    await this.refreshCurrentCircleData();
     return result;
   },
 
@@ -402,13 +457,17 @@ App({
     if (!this.globalData.currentCircleId) {
       throw new Error('请先选择圈子');
     }
-    const result = await this.callCloud('toggleWishClaim', {
-      circleId: this.globalData.currentCircleId,
-      wishId,
-      action
-    });
-    await this.loadCurrentCircleData({ silent: true });
-    return result;
+    try {
+      const result = await this.callCloud('toggleWishClaim', {
+        circleId: this.globalData.currentCircleId,
+        wishId,
+        action
+      });
+      await this.refreshCurrentCircleData();
+      return result;
+    } catch (error) {
+      throw this.normalizeActionError(error, 'toggleWishClaim');
+    }
   },
 
   async deleteWish(wishId) {
@@ -420,7 +479,7 @@ App({
       circleId: this.globalData.currentCircleId,
       wishId
     });
-    await this.loadCurrentCircleData({ silent: true });
+    await this.refreshCurrentCircleData();
     return result;
   },
 
@@ -430,7 +489,7 @@ App({
     this.globalData.userProfile = result && result.userProfile ? result.userProfile : profile;
     await this.loadCircleList({ force: true });
     if (this.globalData.currentCircleId) {
-      await this.loadCurrentCircleData({ silent: true });
+      await this.refreshCurrentCircleData();
     }
     return result;
   },
@@ -444,7 +503,7 @@ App({
       circleId: this.globalData.currentCircleId,
       ...payload
     });
-    await this.loadCurrentCircleData({ silent: true });
+    await this.refreshCurrentCircleData();
     return result;
   },
 
@@ -458,7 +517,7 @@ App({
       anniversaryId,
       enabled
     });
-    await this.loadCurrentCircleData({ silent: true });
+    await this.refreshCurrentCircleData();
     return result;
   },
 
@@ -497,7 +556,7 @@ App({
     }
 
     await this.loadCircleList({ force: true });
-    await this.loadCurrentCircleData({ silent: true });
+    await this.refreshCurrentCircleData();
     const nextResult = result || {};
     nextResult.hasCircles = true;
     nextResult.currentCircleId = this.globalData.currentCircleId;
