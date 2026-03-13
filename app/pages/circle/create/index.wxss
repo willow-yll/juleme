@@ -26,9 +26,12 @@
   width: 100%;
   background: #fff;
   border-radius: 16rpx;
-  padding: 24rpx;
+  padding: 0 24rpx; /* 去掉上下padding，避免挤压 */
   font-size: 28rpx;
   box-sizing: border-box;
+  /* 核心：固定高度 + 行高匹配，实现单行垂直居中 */
+  height: 80rpx; /* 自定义高度，根据需求调整 */
+  line-height: 80rpx; /* 和height一致 */
 }
 
 .textarea {
@@ -85,13 +88,18 @@
 /* 提交按钮 */
 .submit-btn {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 24rpx;
-  background: #fff;
-  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
   z-index: 100;
+  /* 核心：水平居中 + 宽度可控 */
+  left: 50%;
+  transform: translateX(-50%);
+  /* 基础样式（精简后） */
+  width: 90vw; /* 建议用90vw，避免贴边，居中更美观 */
+  margin: 0;
+  padding: 24rpx;
+  box-sizing: border-box;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  text-align: center;
 }
 
 .btn-block {

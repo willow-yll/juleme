@@ -279,6 +279,7 @@
   background: #fff;
   box-shadow: var(--shadow-bottom);
   z-index: 100;
+  text-align: center;
 }
 
 .btn-block {
