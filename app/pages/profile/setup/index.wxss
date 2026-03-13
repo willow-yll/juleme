@@ -15,12 +15,25 @@
   font-weight: 700;
   color: #fff;
   display: block;
+  /* 核心：左右 margin 设为 auto，块级元素水平居中 */
+  margin-left: auto;
+  margin-right: auto;
+  /* 可选：限制标题宽度（否则宽度占满父容器，居中看不出来） */
+  width: fit-content; /* 宽度自适应文字内容 */
+  /* 或固定宽度：width: 500rpx; */
 }
 
 .subtitle {
   font-size: 26rpx;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.8);
-  margin-top: var(--spacing-xs);
+  display: block;
+  /* 核心：左右 margin 设为 auto，块级元素水平居中 */
+  margin-left: auto;
+  margin-right: auto;
+  /* 可选：限制标题宽度（否则宽度占满父容器，居中看不出来） */
+  width: fit-content; /* 宽度自适应文字内容 */
+  /* 或固定宽度：width: 500rpx; */
 }
 
 .form {
@@ -48,7 +61,7 @@
 }
 
 .label {
-  font-size: 30rpx;
+  font-size: 28rpx;
   color: var(--text);
   font-weight: 500;
 }
@@ -56,7 +69,7 @@
 .input {
   flex: 1;
   text-align: right;
-  font-size: 30rpx;
+  font-size: 28rpx;
   color: var(--text);
   margin-left: var(--spacing-lg);
 }
@@ -64,7 +77,7 @@
 .picker-value {
   display: flex;
   align-items: center;
-  font-size: 30rpx;
+  font-size: 28rpx;
   color: var(--text-muted);
 }
 
@@ -103,14 +116,21 @@
 }
 
 .save-btn {
-  margin: 48rpx var(--spacing-lg);
+  margin: 60rpx var(--spacing-lg);
   background: linear-gradient(135deg, var(--primary), #B794F6);
   color: #fff;
-  font-size: 32rpx;
+  font-size: 34rpx;
   font-weight: 600;
   border-radius: 48rpx;
-  height: 96rpx;
-  line-height: 96rpx;
+  /* 核心：Flex 布局实现垂直+水平居中 */
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  /* 直接设置高度，无需 line-height */
+  height: 105rpx;
+  /* 即使加内边距/边框，居中依然生效 */
+  padding: 0 20rpx;
+  box-sizing: border-box;
 }
 
 /* 选择器弹窗 */

@@ -41,7 +41,7 @@
           />
           <view class="countdown" wx:if="{{!isPast(item.date)}}">
             <text class="countdown-num">{{getCountdown(item.date).days}}</text>
-            <text class="countdown-unit">天</text>
+            <text class="countdown-unit"></text>
           </view>
           <view class="countdown passed" wx:else>
             <text class="countdown-text">已过</text>
