@@ -26,6 +26,7 @@ Page({
       totalCities: 0
     },
     llmInterpretation: '',
+    llmInterpretationLines: [],
     llmLoading: false,
     llmError: ''
   },
@@ -280,17 +281,27 @@ Page({
     const { circle, members, llmLoading } = this.data;
     if (llmLoading) return;
     if (!circle || !members.length) {
-      this.setData({ llmInterpretation: '', llmError: '当前圈子还没有圈友数据，先邀请成员加入后再试试。' });
+      this.setData({ llmInterpretation: '', llmInterpretationLines: [], llmError: '当前圈子还没有圈友数据，先邀请成员加入后再试试。' });
       return;
     }
 
-    this.setData({ llmLoading: true, llmError: '', llmInterpretation: '' });
+    this.setData({ llmLoading: true, llmError: '', llmInterpretation: '', llmInterpretationLines: [] });
     generateCircleInterpretation(circle._id)
       .then((text) => {
-        this.setData({ llmInterpretation: text, llmLoading: false, llmError: '' });
+        // 按句号、换行、分号分割成数组
+        const lines = text
+          .split(/[。\n；]/)
+          .map((line) => line.trim())
+          .filter((line) => line.length > 0);
+        this.setData({
+          llmInterpretation: text,
+          llmInterpretationLines: lines,
+          llmLoading: false,
+          llmError: ''
+        });
       })
       .catch((error) => {
-        this.setData({ llmInterpretation: '', llmLoading: false, llmError: error.message || '生成失败，请稍后重试。' });
+        this.setData({ llmInterpretation: '', llmInterpretationLines: [], llmLoading: false, llmError: error.message || '生成失败，请稍后重试。' });
       });
   },
 

@@ -1,14 +1,26 @@
 const { db, getContext, ensureUser, requireMembership, buildCircleContent, CIRCLE_REPORT_PROMPT, COLLECTIONS } = require('./db');
 
 function buildUserPrompt(payload) {
+  const genderTop = payload.analysis.gender.slice(0, 2).map((item) => `${item.name}${item.count ? `（${item.count}人）` : ''}`).join('、') || '暂无明显特征';
+  const mbtiTop = payload.analysis.mbti.slice(0, 2).map((item) => `${item.name}${item.count ? `（${item.count}人）` : ''}`).join('、') || '暂无明显特征';
+  const constellationTop = payload.analysis.constellation.slice(0, 2).map((item) => `${item.name}${item.count ? `（${item.count}人）` : ''}`).join('、') || '暂无明显特征';
+  const topActivity = payload.stats.totalDishes >= payload.stats.totalCities
+    ? '聚会更偏向吃饭型'
+    : '聚会更偏向旅行型';
+  const memberActivity = payload.stats.totalGatherings > payload.memberCount
+    ? '圈友响应积极'
+    : '活动节奏偏稳';
+
   return [
+    '你要分析的是一个圈子的相处气质，不是汇报统计表。',
+    '',
     `圈子名称：${payload.circleName}`,
-    `圈友人数：${payload.memberCount}`,
-    `统计数据：${JSON.stringify(payload.stats)}`,
-    `性别分布：${JSON.stringify(payload.analysis.gender)}`,
-    `MBTI 分布：${JSON.stringify(payload.analysis.mbti)}`,
-    `星座分布：${JSON.stringify(payload.analysis.constellation)}`,
-    `荣誉榜：${JSON.stringify(payload.leaderboard)}`
+    `成员规模：${payload.memberCount}人`,
+    `活动倾向：${topActivity}`,
+    `相处节奏：${memberActivity}`,
+    `最近的标签线索：MBTI 更集中在 ${mbtiTop}；星座气质更偏 ${constellationTop}；性别分布可参考 ${genderTop}`,
+    `圈内角色线索：最会响应的是${payload.leaderboard.partyKing ? payload.leaderboard.partyKing.name : '暂无明显人物'}，最会组织的是${payload.leaderboard.organizerKing ? payload.leaderboard.organizerKing.name : '暂无明显人物'}，最像干饭搭子的是${payload.leaderboard.foodKing ? payload.leaderboard.foodKing.name : '暂无明显人物'}`,
+    '请不要复述上面的字段内容，而是只提炼出：这个圈子最像什么、最明显的相处特点、以及一句 MBTI+星座组合洞察。'
   ].join('\n');
 }
 

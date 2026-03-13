@@ -154,19 +154,32 @@
       </view>
     </view>
 
-    <view class="analysis-card">
-      <text class="analysis-title">AI 解读</text>
-      <text class="ai-description">基于当前圈友画像、荣誉榜和活动统计生成圈子属性解读。</text>
+    <view class="analysis-card ai-card">
+      <view class="ai-header">
+        <view>
+          <text class="analysis-title">AI 解读</text>
+          <text class="ai-description">给这个圈子一段短一点、好读一点的小观察。</text>
+        </view>
+        <view class="ai-badge">轻量画像</view>
+      </view>
       <button class="btn btn-primary ai-button" loading="{{llmLoading}}" bindtap="handleGenerateInterpretation">
-        {{llmLoading ? '解读生成中...' : 'AI 解读圈子属性'}}
+        {{llmLoading ? '解读生成中...' : '生成圈子解读'}}
       </button>
       <view class="ai-result" wx:if="{{llmInterpretation}}">
-        <text class="ai-result-text">{{llmInterpretation}}</text>
+        <view class="ai-result-header">
+          <text class="ai-result-title">圈子气质小结</text>
+        </view>
+        <view class="ai-result-list">
+          <view class="ai-result-item" wx:for="{{llmInterpretationLines}}" wx:key="index">
+            <view class="ai-result-dot"></view>
+            <text class="ai-result-text">{{item}}</text>
+          </view>
+        </view>
       </view>
       <view class="ai-error" wx:if="{{llmError}}">
         <text class="ai-error-text">{{llmError}}</text>
       </view>
-      <text class="empty-text" wx:if="{{!llmInterpretation && !llmError && !llmLoading}}"></text>
+      <text class="empty-text" wx:if="{{!llmInterpretation && !llmError && !llmLoading}}">点一下按钮，看看这个圈子现在更像哪一种小气候。</text>
     </view>
 
     <!-- 性别分布 -->
