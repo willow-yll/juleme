@@ -23,7 +23,7 @@ Page({
     this.setData({ loading: true });
     try {
       await app.ensureBootstrap();
-      const result = await app.loadCircleList();
+      const result = await app.loadCircleList({ force: true });
       const circles = Array.isArray(result && result.circles) ? result.circles : [];
       const myPendingRequests = Array.isArray(result && result.myPendingRequests)
         ? result.myPendingRequests.map((item) => ({

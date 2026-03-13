@@ -133,7 +133,7 @@ Page({
     if (!circleId) {
       return [];
     }
-    const result = await app.loadCircleList();
+    const result = await app.loadCircleList({ force: true });
     const pendingRequests = Array.isArray(result && result.pendingRequests) ? result.pendingRequests : [];
     return pendingRequests
       .filter((item) => item.circleId === circleId)
