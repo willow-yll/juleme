@@ -3,9 +3,9 @@
   <!-- 用户信息 -->
   <view class="user-section">
     <view class="user-info">
-      <image wx:if="{{avatarUrl}}" class="user-avatar user-avatar-image" src="{{avatarUrl}}" mode="aspectFill" />
-      <view wx:else class="user-avatar" style="background: {{avatarBgColor}};">{{avatarText}}</view>
-      <text class="user-name">{{userProfile.nickname || '我'}}</text>
+      <image wx:if="{{avatarUrl}}" class="user-avatar user-avatar-image" src="{{avatarUrl}}" mode="aspectFill" bindtap="handleAvatarTap" />
+      <view wx:else class="user-avatar user-avatar-button" style="background: {{avatarBgColor}};" bindtap="handleAvatarTap">{{avatarText}}</view>
+      <text class="user-name user-name-button" bindtap="handleNicknameTap">{{userProfile.nickname || '我'}}</text>
       <text class="user-bio">圈子代码：{{currentCircle ? currentCircle.code : '暂无'}}</text>
     </view>
   </view>
@@ -33,15 +33,15 @@
       <text class="menu-text">我的圈子</text>
       <text class="menu-arrow">›</text>
     </view>
-  </view>
-
-  <!-- 设置 -->
-  <view class="menu-section">
     <view class="menu-item" bindtap="handleLeaveCircle" wx:if="{{currentCircle}}">
       <text class="menu-icon">🚪</text>
       <text class="menu-text">退出圈子</text>
       <text class="menu-arrow">›</text>
     </view>
+  </view>
+
+  <!-- 设置 -->
+  <view class="menu-section">
     <view class="menu-item" bindtap="goToAbout">
       <text class="menu-icon">ℹ️</text>
       <text class="menu-text">关于</text>

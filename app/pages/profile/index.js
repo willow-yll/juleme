@@ -15,6 +15,47 @@ function showModal(options) {
   });
 }
 
+function chooseImage(options) {
+  return new Promise((resolve, reject) => {
+    wx.chooseImage({
+      ...options,
+      success: resolve,
+      fail: reject
+    });
+  });
+}
+
+function uploadFile(options) {
+  return new Promise((resolve, reject) => {
+    wx.cloud.uploadFile({
+      ...options,
+      success: resolve,
+      fail: reject
+    });
+  });
+}
+
+function promptNickname(options) {
+  return new Promise((resolve, reject) => {
+    wx.showModal({
+      ...options,
+      editable: true,
+      success: resolve,
+      fail: reject
+    });
+  });
+}
+
+function showActionSheet(options) {
+  return new Promise((resolve, reject) => {
+    wx.showActionSheet({
+      ...options,
+      success: resolve,
+      fail: reject
+    });
+  });
+}
+
 Page({
   data: {
     currentCircle: null,
@@ -53,31 +94,116 @@ Page({
     });
   },
 
+  async updateProfile(patch, successMessage) {
+    const currentProfile = app.getUserProfile() || {};
+    const nickname = (patch.nickname !== undefined ? patch.nickname : currentProfile.nickname || '').trim();
+    if (!nickname) {
+      wx.showToast({ title: '请输入昵称', icon: 'none' });
+      return false;
+    }
+
+    await app.saveUserProfile({
+      nickname,
+      gender: patch.gender !== undefined ? patch.gender : (currentProfile.gender || ''),
+      mbti: patch.mbti !== undefined ? patch.mbti : (currentProfile.mbti || ''),
+      constellation: patch.constellation !== undefined ? patch.constellation : (currentProfile.constellation || ''),
+      avatar: patch.avatar !== undefined ? patch.avatar : (currentProfile.avatar || '')
+    });
+    this.loadProfile();
+    wx.showToast({ title: successMessage, icon: 'success' });
+    return true;
+  },
+
+  async handleAvatarTap() {
+    try {
+      const chooseResult = await chooseImage({
+        count: 1,
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera']
+      });
+      const filePath = chooseResult && chooseResult.tempFilePaths && chooseResult.tempFilePaths[0];
+      if (!filePath) {
+        return;
+      }
+
+      wx.showLoading({ title: '上传中...' });
+      const userId = app.getCurrentUserId() || 'anonymous';
+      const extensionMatch = filePath.match(/\.[^.]+$/);
+      const extension = extensionMatch ? extensionMatch[0] : '.jpg';
+      const cloudPath = `avatars/${userId}/${Date.now()}${extension}`;
+      const uploadResult = await uploadFile({ cloudPath, filePath });
+      await this.updateProfile({ avatar: uploadResult.fileID || '' }, '头像已更新');
+      wx.hideLoading();
+    } catch (error) {
+      wx.hideLoading();
+      if (error && error.errMsg && error.errMsg.indexOf('cancel') >= 0) {
+        return;
+      }
+      wx.showToast({ title: error.message || '头像更新失败', icon: 'none' });
+    }
+  },
+
+  async handleNicknameTap() {
+    const currentProfile = app.getUserProfile() || {};
+    try {
+      const result = await promptNickname({
+        title: '修改昵称',
+        placeholderText: '请输入昵称',
+        content: currentProfile.nickname || ''
+      });
+      if (!result.confirm) {
+        return;
+      }
+      const nickname = String((result.content || '')).trim();
+      if (!nickname) {
+        wx.showToast({ title: '请输入昵称', icon: 'none' });
+        return;
+      }
+      await this.updateProfile({ nickname }, '昵称已更新');
+    } catch (error) {
+      wx.showToast({ title: error.message || '昵称更新失败', icon: 'none' });
+    }
+  },
+
   async handleLeaveCircle() {
-    const { currentCircle } = this.data;
-    if (!currentCircle || !currentCircle._id) {
+    const listResult = await app.loadCircleList({ force: true }).catch(() => null);
+    const circles = Array.isArray(listResult && listResult.circles)
+      ? listResult.circles.filter((item) => item && item._id)
+      : (app.globalData.circles || []).filter((item) => item && item._id);
+    if (!circles.length) {
       wx.showToast({ title: '当前没有可退出的圈子', icon: 'none' });
       return;
     }
 
-    const firstConfirm = await showModal({
-      title: '退出圈子',
-      content: `确认退出「${currentCircle.name}」吗？退出后你在该圈的活动报名会被取消。`,
-      confirmColor: '#D4380D'
-    });
-    if (!firstConfirm.confirm) {
-      return;
-    }
-
-    wx.showLoading({ title: '退出中...' });
     try {
-      const result = await app.leaveCircle(currentCircle._id);
+      const action = await showActionSheet({
+        itemList: circles.map((item) => item.name || '未命名圈子')
+      });
+      const targetCircle = circles[action.tapIndex];
+      if (!targetCircle) {
+        return;
+      }
+
+      const confirm = await showModal({
+        title: '退出圈子',
+        content: `确认退出「${targetCircle.name}」吗？退出后你在该圈的活动报名会被取消。`,
+        confirmColor: '#D4380D'
+      });
+      if (!confirm.confirm) {
+        return;
+      }
+
+      wx.showLoading({ title: '退出中...' });
+      const result = await app.leaveCircle(targetCircle._id);
       wx.hideLoading();
       wx.showToast({ title: '已退出圈子', icon: 'success' });
       const targetUrl = result && result.hasCircles ? '/pages/circle/home/index' : '/pages/circle/index';
       wx.reLaunch({ url: targetUrl });
     } catch (error) {
       wx.hideLoading();
+      if (error && error.errMsg && error.errMsg.indexOf('cancel') >= 0) {
+        return;
+      }
       wx.showToast({ title: error.message || '退出失败', icon: 'none' });
     }
   },

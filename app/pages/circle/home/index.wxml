@@ -69,6 +69,19 @@
     </view>
 
     <view class="member-list">
+      <view class="member-card member-action-card" bindtap="handleLeaveCircle">
+        <view class="member-avatar member-action-avatar">
+          <text>🚪</text>
+        </view>
+        <view class="member-info">
+          <view class="member-name-row">
+            <text class="member-name">退出当前圈子</text>
+          </view>
+          <view class="member-meta">
+            <text>退出后你在该圈的活动报名会被取消</text>
+          </view>
+        </view>
+      </view>
       <view class="member-card" wx:for="{{members}}" wx:key="id">
         <image class="member-avatar" src="{{item.avatar || defaultAvatar}}" mode="aspectFill" />
         <view class="member-info">

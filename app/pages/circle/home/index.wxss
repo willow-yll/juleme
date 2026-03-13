@@ -360,6 +360,19 @@
   margin-right: var(--spacing-md);
 }
 
+.member-action-card {
+  background: #FFF7F6;
+}
+
+.member-action-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFECE8;
+  color: #D4380D;
+  font-size: 34rpx;
+}
+
 .member-info {
   flex: 1;
 }

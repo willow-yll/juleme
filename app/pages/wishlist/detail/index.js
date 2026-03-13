@@ -176,8 +176,13 @@ Page({
             wx.hideLoading();
             wx.showToast({ title: '活动已删除', icon: 'success' });
             setTimeout(() => {
+              const pages = getCurrentPages();
+              if (pages.length > 1) {
+                wx.navigateBack();
+                return;
+              }
               wx.switchTab({ url: '/pages/wishlist/index' });
-            }, 1200);
+            }, 300);
           })
           .catch((error) => {
             wx.hideLoading();

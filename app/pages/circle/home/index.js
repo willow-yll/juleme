@@ -3,6 +3,16 @@ const { generateCircleInterpretation } = require('../../../utils/bailian');
 
 const DEFAULT_AVATAR = '/assets/icons/user.png';
 
+function showModal(options) {
+  return new Promise((resolve, reject) => {
+    wx.showModal({
+      ...options,
+      success: resolve,
+      fail: reject
+    });
+  });
+}
+
 Page({
   data: {
     circle: null,
@@ -385,6 +395,38 @@ Page({
 
   goToCreate() {
     wx.navigateTo({ url: '/pages/create/index' });
+  },
+
+  async handleLeaveCircle() {
+    const { circle } = this.data;
+    if (!circle || !circle._id) {
+      wx.showToast({ title: '当前没有可退出的圈子', icon: 'none' });
+      return;
+    }
+
+    try {
+      const confirm = await showModal({
+        title: '退出圈子',
+        content: `确认退出「${circle.name}」吗？退出后你在该圈的活动报名会被取消。`,
+        confirmColor: '#D4380D'
+      });
+      if (!confirm.confirm) {
+        return;
+      }
+
+      wx.showLoading({ title: '退出中...' });
+      const result = await app.leaveCircle(circle._id);
+      wx.hideLoading();
+      wx.showToast({ title: '已退出圈子', icon: 'success' });
+      const targetUrl = result && result.hasCircles ? '/pages/circle/home/index' : '/pages/circle/index';
+      wx.reLaunch({ url: targetUrl });
+    } catch (error) {
+      wx.hideLoading();
+      if (error && error.errMsg && error.errMsg.indexOf('cancel') >= 0) {
+        return;
+      }
+      wx.showToast({ title: error.message || '退出失败', icon: 'none' });
+    }
   },
 
   handleGenerateInterpretation() {
