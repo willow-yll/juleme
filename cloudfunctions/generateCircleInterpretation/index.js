@@ -94,6 +94,20 @@ function extractMessageContent(data) {
   return '';
 }
 
+function buildBailianError(res, data, raw) {
+  const statusCode = res && res.statusCode ? res.statusCode : 0;
+  const requestId = data && (data.request_id || data.requestId) ? (data.request_id || data.requestId) : '';
+  const code = data && data.code ? data.code : '';
+  const message = data && data.message ? data.message : '';
+  const details = [
+    `HTTP ${statusCode}`,
+    code ? `code=${code}` : '',
+    requestId ? `request_id=${requestId}` : '',
+    message || (raw ? `raw=${raw}` : '')
+  ].filter(Boolean).join(' | ');
+  return new Error(`百炼服务请求失败：${details}`);
+}
+
 exports.main = async (event) => {
   const { circleId } = event;
   if (!circleId) {
@@ -121,12 +135,30 @@ exports.main = async (event) => {
   }
 
   const response = await new Promise((resolve, reject) => {
-    require('https').request(baseUrl, {
+    const requestBody = JSON.stringify({
+      model,
+      messages: [
+        { role: 'system', content: CIRCLE_REPORT_PROMPT },
+        { role: 'user', content: buildUserPrompt(payload) }
+      ],
+      temperature: 0.7
+    });
+
+    console.log('generateCircleInterpretation request', {
+      circleId,
+      model,
+      baseUrl,
+      memberCount: payload.memberCount
+    });
+
+    const request = require('https').request(baseUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
-      }
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Length': Buffer.byteLength(requestBody)
+      },
+      timeout: 15000
     }, (res) => {
       let raw = '';
       res.on('data', (chunk) => {
@@ -136,22 +168,36 @@ exports.main = async (event) => {
         try {
           const data = JSON.parse(raw || '{}');
           if (res.statusCode < 200 || res.statusCode >= 300) {
-            reject(new Error(data.message || '百炼服务请求失败，请稍后重试。'));
+            console.error('generateCircleInterpretation response error', {
+              statusCode: res.statusCode,
+              data
+            });
+            reject(buildBailianError(res, data, raw));
             return;
           }
+          console.log('generateCircleInterpretation response ok', {
+            statusCode: res.statusCode,
+            requestId: data.request_id || data.requestId || ''
+          });
           resolve(data);
         } catch (error) {
-          reject(error);
+          console.error('generateCircleInterpretation parse error', {
+            statusCode: res.statusCode,
+            raw
+          });
+          reject(new Error(`百炼返回解析失败：HTTP ${res.statusCode || 0}`));
         }
       });
-    }).on('error', reject).end(JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: CIRCLE_REPORT_PROMPT },
-        { role: 'user', content: buildUserPrompt(payload) }
-      ],
-      temperature: 0.7
-    }));
+    });
+
+    request.on('timeout', () => {
+      request.destroy(new Error('百炼请求超时（15s）'));
+    });
+    request.on('error', (error) => {
+      console.error('generateCircleInterpretation request error', error);
+      reject(error);
+    });
+    request.end(requestBody);
   });
 
   const text = extractMessageContent(response);
