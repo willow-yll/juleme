@@ -143,15 +143,18 @@ exports.main = async (event) => {
       ],
       temperature: 0.7
     });
+    const parsedUrl = new URL(baseUrl);
+    const requestLib = parsedUrl.protocol === 'http:' ? require('http') : require('https');
 
     console.log('generateCircleInterpretation request', {
       circleId,
       model,
       baseUrl,
+      protocol: parsedUrl.protocol,
       memberCount: payload.memberCount
     });
 
-    const request = require('https').request(baseUrl, {
+    const request = requestLib.request(baseUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
