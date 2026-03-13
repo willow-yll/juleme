@@ -91,15 +91,15 @@
     <view class="stats-summary">
       <view class="stat-item-wrap">
         <text class="stat-num-large">{{stats.totalGatherings}}</text>
-        <text class="stat-label-small">共聚会(次)</text>
+        <text class="stat-label-small">聚会</text>
       </view>
       <view class="stat-item-wrap">
         <text class="stat-num-large">{{stats.totalDishes}}</text>
-        <text class="stat-label-small">一起吃了(道)</text>
+        <text class="stat-label-small">饭饭</text>
       </view>
       <view class="stat-item-wrap">
         <text class="stat-num-large">{{stats.totalCities}}</text>
-        <text class="stat-label-small">足迹(城)</text>
+        <text class="stat-label-small">足迹</text>
       </view>
     </view>
 
@@ -111,7 +111,7 @@
         <view class="leaderboard-card king-party">
           <view class="king-icon">🎉</view>
           <text class="king-title">捧场王</text>
-          <text class="king-desc">参加活动最��</text>
+          <text class="king-desc">每次都有你</text>
           <view class="king-winner" wx:if="{{leaderboard.partyKing}}">
             <image class="king-avatar" src="{{leaderboard.partyKing.avatar}}" />
             <text class="king-name">{{leaderboard.partyKing.name}}</text>
@@ -126,7 +126,7 @@
         <view class="leaderboard-card king-food">
           <view class="king-icon">🍽️</view>
           <text class="king-title">干饭王</text>
-          <text class="king-desc">最常聚餐</text>
+          <text class="king-desc">吃饭必有你</text>
           <view class="king-winner" wx:if="{{leaderboard.foodKing}}">
             <image class="king-avatar" src="{{leaderboard.foodKing.avatar}}" />
             <text class="king-name">{{leaderboard.foodKing.name}}</text>
@@ -140,7 +140,7 @@
         <!-- 局头 -->
         <view class="leaderboard-card king-organizer">
           <view class="king-icon">🎯</view>
-          <text class="king-title">局头</text>
+          <text class="king-title">局头子</text>
           <text class="king-desc">发起活动最多</text>
           <view class="king-winner" wx:if="{{leaderboard.organizerKing}}">
             <image class="king-avatar" src="{{leaderboard.organizerKing.avatar}}" />
@@ -166,7 +166,7 @@
       <view class="ai-error" wx:if="{{llmError}}">
         <text class="ai-error-text">{{llmError}}</text>
       </view>
-      <text class="empty-text" wx:if="{{!llmInterpretation && !llmError && !llmLoading}}">点击按钮后即可生成 AI 解读</text>
+      <text class="empty-text" wx:if="{{!llmInterpretation && !llmError && !llmLoading}}"></text>
     </view>
 
     <!-- 性别分布 -->
