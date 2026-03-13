@@ -271,10 +271,14 @@
 }
 
 .pending-review-item {
-  display: flex;
+  display: block;
   align-items: center;
   padding: var(--spacing-lg);
   border-bottom: 1rpx solid var(--border);
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
 }
 
 .pending-review-item:last-child {
@@ -286,10 +290,15 @@
   height: 72rpx;
   border-radius: var(--radius-circle);
   margin-right: var(--spacing-md);
+  flex-shrink: 0; 
 }
 
 .pending-review-info {
   flex: 1;
+  flex-shrink: 1;
+  max-width: calc(100% - 220rpx); 
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .pending-review-name {
@@ -310,6 +319,7 @@
   display: flex;
   gap: 12rpx;
   margin-left: var(--spacing-md);
+  flex-shrink: 0; 
 }
 
 .pending-btn {

@@ -55,7 +55,6 @@
       </view>
       <block wx:for="{{pendingRequests}}" wx:key="id">
         <view class="pending-review-item">
-          <image class="pending-review-avatar" src="{{item.userAvatar}}" mode="aspectFill" />
           <view class="pending-review-info">
             <text class="pending-review-name">{{item.userName}}</text>
             <text class="pending-review-desc">申请加入当前圈子</text>
