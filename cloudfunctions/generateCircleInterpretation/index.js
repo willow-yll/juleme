@@ -95,13 +95,21 @@ function buildSummary(content) {
   };
 }
 
+function stripThinkingTags(text) {
+  if (!text) return '';
+  return text
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .replace(/<thinking>[\s\S]*?<\/thinking>/gi, '')
+    .trim();
+}
+
 function extractMessageContent(data) {
   const content = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
   if (typeof content === 'string') {
-    return content.trim();
+    return stripThinkingTags(content.trim());
   }
   if (Array.isArray(content)) {
-    return content.map((item) => item && item.text ? item.text : '').join('').trim();
+    return stripThinkingTags(content.map((item) => item && item.text ? item.text : '').join('').trim());
   }
   return '';
 }
