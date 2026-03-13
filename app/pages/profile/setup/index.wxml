@@ -6,6 +6,18 @@
   </view>
 
   <view class="form">
+    <view class="form-item avatar-form-item">
+      <text class="label">头像</text>
+      <view class="avatar-editor" bindtap="chooseAvatar">
+        <image wx:if="{{avatar}}" class="avatar-preview" src="{{avatar}}" mode="aspectFill" />
+        <image wx:else class="avatar-preview" src="{{defaultAvatar}}" mode="aspectFit" />
+        <view class="avatar-editor-meta">
+          <text class="avatar-editor-text">{{avatarUploading ? '头像上传中...' : '更换头像'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+    </view>
+
     <view class="form-item">
       <text class="label">昵称</text>
       <input class="input" placeholder="请输入昵称" value="{{nickname}}" bindinput="onNicknameInput" maxlength="20" />
@@ -42,5 +54,5 @@
     </view>
   </view>
 
-  <button class="save-btn" bindtap="handleSave">保存</button>
+  <button class="save-btn" bindtap="handleSave" loading="{{saving}}" disabled="{{saving || avatarUploading}}">保存</button>
 </view>

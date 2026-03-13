@@ -471,6 +471,54 @@ App({
     return this.callCloud('generateCircleInterpretation', { circleId: targetCircleId });
   },
 
+  async leaveCircle(circleId) {
+    await this.ensureBootstrap();
+    const targetCircleId = circleId || this.globalData.currentCircleId;
+    if (!targetCircleId) {
+      throw new Error('请先选择圈子');
+    }
+
+    const result = await this.callCloud('leaveCircle', { circleId: targetCircleId });
+    const previousCircleId = this.globalData.currentCircleId;
+    const bootstrap = await this.refreshBootstrap();
+    const circles = Array.isArray(bootstrap && bootstrap.circles) ? bootstrap.circles : [];
+
+    if (!circles.length) {
+      this.clearCurrentCircle();
+      const emptyResult = result || {};
+      emptyResult.hasCircles = false;
+      emptyResult.currentCircleId = null;
+      return emptyResult;
+    }
+
+    if (previousCircleId === targetCircleId || !this.globalData.currentCircleId) {
+      const nextCircle = circles.find((item) => item._id !== targetCircleId) || circles[0];
+      this.setCurrentCircle(nextCircle._id, { syncOnly: true });
+    }
+
+    await this.loadCircleList({ force: true });
+    await this.loadCurrentCircleData({ silent: true });
+    const nextResult = result || {};
+    nextResult.hasCircles = true;
+    nextResult.currentCircleId = this.globalData.currentCircleId;
+    return nextResult;
+  },
+
+  async deleteAccount() {
+    await this.ensureBootstrap();
+    const result = await this.callCloud('deleteAccount');
+    this.globalData.userInfo = null;
+    this.globalData.hasLogin = false;
+    this.globalData.userProfile = null;
+    this.globalData.currentUserId = '';
+    this.globalData.circles = [];
+    this.globalData.circleListData = null;
+    this.globalData.currentCircleData = null;
+    this.clearCurrentCircle();
+    this.bootstrapPromise = null;
+    return result;
+  },
+
   getUserInfo() {
     return this.globalData.userInfo;
   },

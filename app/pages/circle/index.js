@@ -45,7 +45,14 @@ Page({
           }))
         : [];
 
-      const normalizedCircles = circles.map((item) => ({ ...item, id: item._id }));
+      const normalizedCircles = circles.map((item) => {
+        const normalizedItem = {};
+        Object.keys(item || {}).forEach((key) => {
+          normalizedItem[key] = item[key];
+        });
+        normalizedItem.id = item._id;
+        return normalizedItem;
+      });
       let currentCircleId = app.getCurrentCircleId();
       const hasProfile = app.hasUserProfile();
 

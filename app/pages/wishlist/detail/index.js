@@ -1,8 +1,6 @@
 // 活动详情页面
 const app = getApp();
 
-const CURRENT_USER = { id: 'me', avatar: 'https://picsum.photos/100' };
-
 Page({
   data: {
     wish: null,
@@ -22,47 +20,54 @@ Page({
   },
 
   onShow() {
-    // 页面守卫：检查是否选择了圈子
-    if (!app.globalData.currentCircleId) {
-      wx.redirectTo({ url: '/pages/circle/index' });
-      return;
-    }
-
     const { wish } = this.data;
     if (wish && wish.id) {
       this.loadWish(wish.id);
     }
   },
 
-  getCurrentUser() {
-    const userProfile = app.getUserProfile() || {};
-    return {
-      ...CURRENT_USER,
-      name: userProfile.nickname || '我'
-    };
-  },
-
   // 加载活动 - 从当前圈子获取
-  loadWish(id) {
-    const circleData = app.getCurrentCircleData();
-    if (!circleData) {
-      wx.showToast({ title: '请先选择圈子', icon: 'none' });
-      return;
-    }
+  async loadWish(id) {
+    try {
+      await app.ensureBootstrap();
+      const circleId = await app.ensureCurrentCircleSelected();
+      if (!circleId) {
+        wx.redirectTo({ url: '/pages/circle/index' });
+        return;
+      }
 
-    const wish = circleData.wishes.find(w => w.id == id);
+      const circleData = await app.loadCurrentCircleData();
+      const currentUserId = app.getCurrentUserId();
+      const wishes = circleData && Array.isArray(circleData.wishes) ? circleData.wishes : [];
+      const wish = wishes.find((item) => item.id == id);
 
-    if (wish) {
-      const progress = this.calculateProgress(wish);
-      const countdownText = this.getCountdownText(wish.targetDate);
-      const isClaimed = wish.claimed && wish.claimed.some(c => c.user && c.user.id === CURRENT_USER.id);
-      const isCreator = !!(wish.creator && wish.creator.id === CURRENT_USER.id);
-      const currentCircle = app.globalData.currentCircle || {};
-      const isCircleOwner = currentCircle.ownerId === CURRENT_USER.id;
+      if (!wish) {
+        wx.showToast({ title: '活动不存在', icon: 'none' });
+        setTimeout(() => {
+          const pages = getCurrentPages();
+          if (pages.length > 1) {
+            wx.navigateBack();
+            return;
+          }
+          wx.switchTab({ url: '/pages/wishlist/index' });
+        }, 1500);
+        return;
+      }
+
+      const normalizedWish = {
+        ...wish,
+        claimed: Array.isArray(wish.claimed) ? wish.claimed : []
+      };
+      const progress = this.calculateProgress(normalizedWish);
+      const countdownText = this.getCountdownText(normalizedWish.targetDate);
+      const isClaimed = normalizedWish.claimed.some((claim) => claim.user && claim.user.id === currentUserId);
+      const isCreator = !!(normalizedWish.creator && normalizedWish.creator.id === currentUserId);
+      const currentCircle = circleData && circleData.circle ? circleData.circle : (app.getCurrentCircle() || {});
+      const isCircleOwner = currentCircle.ownerId === currentUserId;
       const canDelete = isCreator || isCircleOwner;
 
       this.setData({
-        wish,
+        wish: normalizedWish,
         progress,
         countdownText,
         isClaimed,
@@ -70,16 +75,8 @@ Page({
         isCircleOwner,
         canDelete
       });
-    } else {
-      wx.showToast({ title: '活动不存在', icon: 'none' });
-      setTimeout(() => {
-        const pages = getCurrentPages();
-        if (pages.length > 1) {
-          wx.navigateBack();
-          return;
-        }
-        wx.switchTab({ url: '/pages/wishlist/index' });
-      }, 1500);
+    } catch (error) {
+      wx.showToast({ title: error.message || '加载活动失败', icon: 'none' });
     }
   },
 
@@ -113,51 +110,28 @@ Page({
   },
 
   // 报名
-  handleClaim() {
-    const { wish } = this.data;
+  async handleClaim() {
+    const { wish, isClaimed } = this.data;
     if (!wish) return;
 
-    if (!wish.claimed) {
-      wish.claimed = [];
-    }
-
-    const alreadyClaimed = wish.claimed.some(c => c.user && c.user.id === CURRENT_USER.id);
-    if (alreadyClaimed) {
+    if (isClaimed) {
       wx.showToast({ title: '已经报名过了', icon: 'none' });
       return;
     }
 
-    if (wish.claimed.length >= wish.maxClaim) {
+    const claimed = Array.isArray(wish.claimed) ? wish.claimed : [];
+    if (wish.maxClaim && claimed.length >= wish.maxClaim) {
       wx.showToast({ title: '名额已满啦', icon: 'none' });
       return;
     }
 
-    const currentUser = this.getCurrentUser();
-    const newClaimed = [...wish.claimed, {
-      user: currentUser,
-      wantGo: true
-    }];
-
-    app.updateWishClaimsInCurrentCircle(wish.id, newClaimed);
-
-    this.setData({
-      wish: { ...wish, claimed: newClaimed },
-      isClaimed: true
-    });
-
-    // 添加动态到当前圈子
-    app.addFeedItemToCurrentCircle({
-      id: Date.now(),
-      user: { avatar: currentUser.avatar, name: currentUser.name },
-      type: 'wish',
-      content: '报名了活动',
-      title: wish.title,
-      time: '刚刚',
-      likes: 0,
-      comments: []
-    });
-
-    wx.showToast({ title: '报名成功！', icon: 'success' });
+    try {
+      await app.toggleWishClaim(wish.id, 'claim');
+      await this.loadWish(wish.id);
+      wx.showToast({ title: '报名成功！', icon: 'success' });
+    } catch (error) {
+      wx.showToast({ title: error.message || '报名失败', icon: 'none' });
+    }
   },
 
   // 取消报名
@@ -168,18 +142,17 @@ Page({
     wx.showModal({
       title: '确认取消',
       content: '确定要取消报名该活动吗？',
-      success: (res) => {
-        if (res.confirm) {
-          const newClaimed = wish.claimed.filter(c => c.user.id !== CURRENT_USER.id);
+      success: async (res) => {
+        if (!res.confirm) {
+          return;
+        }
 
-          app.updateWishClaimsInCurrentCircle(wish.id, newClaimed);
-
-          this.setData({
-            wish: { ...wish, claimed: newClaimed },
-            isClaimed: false
-          });
-
+        try {
+          await app.toggleWishClaim(wish.id, 'cancel');
+          await this.loadWish(wish.id);
           wx.showToast({ title: '已取消报名', icon: 'success' });
+        } catch (error) {
+          wx.showToast({ title: error.message || '取消失败', icon: 'none' });
         }
       }
     });
@@ -197,16 +170,19 @@ Page({
           return;
         }
 
-        const removed = app.removeWishFromCurrentCircle(wish.id);
-        if (!removed) {
-          wx.showToast({ title: '活动不存在', icon: 'none' });
-          return;
-        }
-
-        wx.showToast({ title: '活动已删除', icon: 'success' });
-        setTimeout(() => {
-          wx.switchTab({ url: '/pages/wishlist/index' });
-        }, 1200);
+        wx.showLoading({ title: '删除中...' });
+        app.deleteWish(wish.id)
+          .then(() => {
+            wx.hideLoading();
+            wx.showToast({ title: '活动已删除', icon: 'success' });
+            setTimeout(() => {
+              wx.switchTab({ url: '/pages/wishlist/index' });
+            }, 1200);
+          })
+          .catch((error) => {
+            wx.hideLoading();
+            wx.showToast({ title: error.message || '删除失败', icon: 'none' });
+          });
       }
     });
   },
@@ -219,8 +195,8 @@ Page({
   onShareAppMessage() {
     const { wish } = this.data;
     return {
-      title: wish ? `一起参加"${wish.title}"吧！` : '聚了吗 - 活动',
-      path: `/pages/wishlist/detail?id=${wish?.id}`
+      title: wish ? `一起参加\"${wish.title}\"吧！` : '聚了吗 - 活动',
+      path: '/pages/wishlist/detail?id=' + (wish && wish.id ? wish.id : '')
     };
   }
 });

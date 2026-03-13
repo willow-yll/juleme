@@ -1,6 +1,8 @@
 const app = getApp();
 const { generateCircleInterpretation } = require('../../../utils/bailian');
 
+const DEFAULT_AVATAR = '/assets/icons/user.png';
+
 Page({
   data: {
     circle: null,
@@ -26,9 +28,112 @@ Page({
       totalCities: 0
     },
     llmInterpretation: '',
-    llmInterpretationLines: [],
+    llmInterpretationBlocks: [],
     llmLoading: false,
-    llmError: ''
+    llmError: '',
+    defaultAvatar: DEFAULT_AVATAR
+  },
+
+  parseMarkdownBlocks(text) {
+    const lines = String(text || '').replace(/\r\n/g, '\n').split('\n');
+    const blocks = [];
+    let paragraphLines = [];
+    let listItems = [];
+
+    const flushParagraph = () => {
+      if (!paragraphLines.length) {
+        return;
+      }
+      const content = paragraphLines.join(' ').trim();
+      if (content) {
+        blocks.push({
+          type: 'paragraph',
+          segments: this.parseBoldSegments(content)
+        });
+      }
+      paragraphLines = [];
+    };
+
+    const flushList = () => {
+      if (!listItems.length) {
+        return;
+      }
+      blocks.push({
+        type: 'list',
+        items: listItems.map((item) => ({
+          segments: this.parseBoldSegments(item)
+        }))
+      });
+      listItems = [];
+    };
+
+    lines.forEach((rawLine) => {
+      const line = String(rawLine || '').trim();
+      if (!line) {
+        flushParagraph();
+        flushList();
+        return;
+      }
+
+      const headingMatch = line.match(/^(#{1,2})\s+(.+)$/);
+      if (headingMatch) {
+        flushParagraph();
+        flushList();
+        blocks.push({
+          type: headingMatch[1].length === 1 ? 'heading1' : 'heading2',
+          segments: this.parseBoldSegments(headingMatch[2].trim())
+        });
+        return;
+      }
+
+      const listMatch = line.match(/^[-*]\s+(.+)$/);
+      if (listMatch) {
+        flushParagraph();
+        listItems.push(listMatch[1].trim());
+        return;
+      }
+
+      flushList();
+      paragraphLines.push(line);
+    });
+
+    flushParagraph();
+    flushList();
+
+    if (!blocks.length) {
+      const content = String(text || '').trim();
+      return content ? [{ type: 'paragraph', segments: this.parseBoldSegments(content) }] : [];
+    }
+
+    return blocks;
+  },
+
+  parseBoldSegments(text) {
+    const content = String(text || '');
+    if (!content) {
+      return [];
+    }
+
+    const segments = [];
+    const pattern = /\*\*([^*]+?)\*\*/g;
+    let lastIndex = 0;
+    let match = null;
+
+    while ((match = pattern.exec(content))) {
+      if (match.index > lastIndex) {
+        segments.push({ text: content.slice(lastIndex, match.index), bold: false });
+      }
+      if (match[1]) {
+        segments.push({ text: match[1], bold: true });
+      }
+      lastIndex = pattern.lastIndex;
+    }
+
+    if (lastIndex < content.length) {
+      segments.push({ text: content.slice(lastIndex), bold: false });
+    }
+
+    return segments.length ? segments : [{ text: content, bold: false }];
   },
 
   onLoad() {
@@ -100,9 +205,14 @@ Page({
       }
     });
 
+    const normalizedMembers = members.map((member) => ({
+      ...member,
+      avatar: member.avatar || DEFAULT_AVATAR
+    }));
+
     this.setData({
       circle,
-      members,
+      members: normalizedMembers,
       isOwner,
       loading: false,
       pageError: '',
@@ -111,7 +221,7 @@ Page({
         mbti: Object.entries(mbtiMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 })),
         constellation: Object.entries(constellationMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 }))
       },
-      leaderboard: this.calculateLeaderboard(members, wishes),
+      leaderboard: this.calculateLeaderboard(normalizedMembers, wishes),
       stats: this.calculateStats(wishes),
       llmError: ''
     });
@@ -141,7 +251,7 @@ Page({
         id: item._id,
         circleId: item.circleId,
         userName: item.applicantName,
-        userAvatar: item.applicantAvatar,
+        userAvatar: item.applicantAvatar || DEFAULT_AVATAR,
         circleName: item.circleName,
         status: item.status
       }));
@@ -281,27 +391,23 @@ Page({
     const { circle, members, llmLoading } = this.data;
     if (llmLoading) return;
     if (!circle || !members.length) {
-      this.setData({ llmInterpretation: '', llmInterpretationLines: [], llmError: '当前圈子还没有圈友数据，先邀请成员加入后再试试。' });
+      this.setData({ llmInterpretation: '', llmInterpretationBlocks: [], llmError: '当前圈子还没有圈友数据，先邀请成员加入后再试试。' });
       return;
     }
 
-    this.setData({ llmLoading: true, llmError: '', llmInterpretation: '', llmInterpretationLines: [] });
+    this.setData({ llmLoading: true, llmError: '', llmInterpretation: '', llmInterpretationBlocks: [] });
     generateCircleInterpretation(circle._id)
       .then((text) => {
-        // 按句号、换行、分号分割成数组
-        const lines = text
-          .split(/[。\n；]/)
-          .map((line) => line.trim())
-          .filter((line) => line.length > 0);
+        const blocks = this.parseMarkdownBlocks(text);
         this.setData({
           llmInterpretation: text,
-          llmInterpretationLines: lines,
+          llmInterpretationBlocks: blocks,
           llmLoading: false,
           llmError: ''
         });
       })
       .catch((error) => {
-        this.setData({ llmInterpretation: '', llmInterpretationLines: [], llmLoading: false, llmError: error.message || '生成失败，请稍后重试。' });
+        this.setData({ llmInterpretation: '', llmInterpretationBlocks: [], llmLoading: false, llmError: error.message || '生成失败，请稍后重试。' });
       });
   },
 

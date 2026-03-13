@@ -70,7 +70,7 @@
 
     <view class="member-list">
       <view class="member-card" wx:for="{{members}}" wx:key="id">
-        <image class="member-avatar" src="{{item.avatar}}" mode="aspectFill" />
+        <image class="member-avatar" src="{{item.avatar || defaultAvatar}}" mode="aspectFill" />
         <view class="member-info">
           <view class="member-name-row">
             <text class="member-name">{{item.name}}</text>
@@ -113,7 +113,7 @@
           <text class="king-title">捧场王</text>
           <text class="king-desc">每次都有你</text>
           <view class="king-winner" wx:if="{{leaderboard.partyKing}}">
-            <image class="king-avatar" src="{{leaderboard.partyKing.avatar}}" />
+            <image class="king-avatar" src="{{leaderboard.partyKing.avatar || defaultAvatar}}" />
             <text class="king-name">{{leaderboard.partyKing.name}}</text>
             <text class="king-count">{{leaderboard.partyKing.eventsJoined}}次</text>
           </view>
@@ -128,7 +128,7 @@
           <text class="king-title">干饭王</text>
           <text class="king-desc">吃饭必有你</text>
           <view class="king-winner" wx:if="{{leaderboard.foodKing}}">
-            <image class="king-avatar" src="{{leaderboard.foodKing.avatar}}" />
+            <image class="king-avatar" src="{{leaderboard.foodKing.avatar || defaultAvatar}}" />
             <text class="king-name">{{leaderboard.foodKing.name}}</text>
             <text class="king-count">{{leaderboard.foodKing.diningCount}}次</text>
           </view>
@@ -143,7 +143,7 @@
           <text class="king-title">局头子</text>
           <text class="king-desc">发起活动最多</text>
           <view class="king-winner" wx:if="{{leaderboard.organizerKing}}">
-            <image class="king-avatar" src="{{leaderboard.organizerKing.avatar}}" />
+            <image class="king-avatar" src="{{leaderboard.organizerKing.avatar || defaultAvatar}}" />
             <text class="king-name">{{leaderboard.organizerKing.name}}</text>
             <text class="king-count">{{leaderboard.organizerKing.eventsCreated}}次</text>
           </view>
@@ -169,11 +169,34 @@
         <view class="ai-result-header">
           <text class="ai-result-title">圈子气质小结</text>
         </view>
-        <view class="ai-result-list">
-          <view class="ai-result-item" wx:for="{{llmInterpretationLines}}" wx:key="index">
-            <view class="ai-result-dot"></view>
-            <text class="ai-result-text">{{item}}</text>
-          </view>
+        <view class="ai-result-content">
+          <block wx:for="{{llmInterpretationBlocks}}" wx:key="index">
+            <view wx:if="{{item.type === 'heading1'}}" class="ai-markdown-heading ai-markdown-heading-1">
+              <block wx:for="{{item.segments}}" wx:for-item="segment" wx:key="index">
+                <text class="ai-result-segment {{segment.bold ? 'ai-result-bold' : ''}}">{{segment.text}}</text>
+              </block>
+            </view>
+            <view wx:elif="{{item.type === 'heading2'}}" class="ai-markdown-heading ai-markdown-heading-2">
+              <block wx:for="{{item.segments}}" wx:for-item="segment" wx:key="index">
+                <text class="ai-result-segment {{segment.bold ? 'ai-result-bold' : ''}}">{{segment.text}}</text>
+              </block>
+            </view>
+            <view wx:elif="{{item.type === 'list'}}" class="ai-markdown-list">
+              <view class="ai-markdown-list-item" wx:for="{{item.items}}" wx:for-item="listItem" wx:key="index">
+                <view class="ai-markdown-list-dot"></view>
+                <view class="ai-markdown-list-text">
+                  <block wx:for="{{listItem.segments}}" wx:for-item="segment" wx:key="index">
+                    <text class="ai-result-segment {{segment.bold ? 'ai-result-bold' : ''}}">{{segment.text}}</text>
+                  </block>
+                </view>
+              </view>
+            </view>
+            <view wx:else class="ai-markdown-paragraph">
+              <block wx:for="{{item.segments}}" wx:for-item="segment" wx:key="index">
+                <text class="ai-result-segment {{segment.bold ? 'ai-result-bold' : ''}}">{{segment.text}}</text>
+              </block>
+            </view>
+          </block>
         </view>
       </view>
       <view class="ai-error" wx:if="{{llmError}}">

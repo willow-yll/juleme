@@ -1,19 +1,44 @@
 // 个人资料设置页面
 const app = getApp();
 
+const DEFAULT_AVATAR = '/assets/icons/user.png';
+
+function chooseImage(options) {
+  return new Promise((resolve, reject) => {
+    wx.chooseImage({
+      ...options,
+      success: resolve,
+      fail: reject
+    });
+  });
+}
+
+function uploadFile(options) {
+  return new Promise((resolve, reject) => {
+    wx.cloud.uploadFile({
+      ...options,
+      success: resolve,
+      fail: reject
+    });
+  });
+}
+
 Page({
   data: {
     nickname: '',
     gender: '',
     mbti: '',
     constellation: '',
+    avatar: '',
     genderOptions: [],
     mbtiOptions: [],
     constellationOptions: [],
     genderIndex: -1,
     mbtiIndex: -1,
     constellationIndex: -1,
-    saving: false
+    avatarUploading: false,
+    saving: false,
+    defaultAvatar: DEFAULT_AVATAR
   },
 
   async onLoad() {
@@ -31,6 +56,7 @@ Page({
       gender: profile.gender || '',
       mbti: profile.mbti || '',
       constellation: profile.constellation || '',
+      avatar: profile.avatar || '',
       genderIndex: genderOptions.findIndex((item) => item.value === profile.gender),
       mbtiIndex: mbtiOptions.findIndex((item) => item.value === profile.mbti),
       constellationIndex: constellationOptions.findIndex((item) => item.value === profile.constellation)
@@ -68,9 +94,52 @@ Page({
     });
   },
 
+  async chooseAvatar() {
+    const { avatarUploading, saving } = this.data;
+    if (avatarUploading || saving) return;
+
+    try {
+      const chooseResult = await chooseImage({
+        count: 1,
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera']
+      });
+      const filePath = chooseResult && chooseResult.tempFilePaths && chooseResult.tempFilePaths[0];
+      if (!filePath) {
+        return;
+      }
+
+      this.setData({ avatarUploading: true });
+      wx.showLoading({ title: '上传中...' });
+
+      const userId = app.getCurrentUserId() || 'anonymous';
+      const extensionMatch = filePath.match(/\.[^.]+$/);
+      const extension = extensionMatch ? extensionMatch[0] : '.jpg';
+      const cloudPath = `avatars/${userId}/${Date.now()}${extension}`;
+      const uploadResult = await uploadFile({
+        cloudPath,
+        filePath
+      });
+
+      this.setData({
+        avatar: uploadResult.fileID || '',
+        avatarUploading: false
+      });
+      wx.hideLoading();
+      wx.showToast({ title: '头像已上传', icon: 'success' });
+    } catch (error) {
+      this.setData({ avatarUploading: false });
+      wx.hideLoading();
+      if (error && error.errMsg && error.errMsg.indexOf('cancel') >= 0) {
+        return;
+      }
+      wx.showToast({ title: error.message || '头像上传失败', icon: 'none' });
+    }
+  },
+
   async handleSave() {
-    const { nickname, gender, mbti, constellation, saving } = this.data;
-    if (saving) return;
+    const { nickname, gender, mbti, constellation, avatar, saving, avatarUploading } = this.data;
+    if (saving || avatarUploading) return;
 
     if (!nickname || !nickname.trim()) {
       wx.showToast({ title: '请输入昵称', icon: 'none' });
@@ -82,7 +151,7 @@ Page({
       gender,
       mbti,
       constellation,
-      avatar: 'https://picsum.photos/100'
+      avatar
     };
 
     this.setData({ saving: true });

@@ -39,6 +39,10 @@
   border-bottom: 1rpx solid #f0f0f0;
 }
 
+.avatar-form-item {
+  align-items: flex-start;
+}
+
 .form-item:last-child {
   border-bottom: none;
 }
@@ -69,6 +73,33 @@
   color: #ccc;
   margin-left: var(--spacing-xs);
   line-height: 1;
+}
+
+.avatar-editor {
+  flex: 1;
+  margin-left: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.avatar-preview {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: var(--radius-circle);
+  background: #F5F5F5;
+  flex-shrink: 0;
+}
+
+.avatar-editor-meta {
+  display: flex;
+  align-items: center;
+  margin-left: var(--spacing-md);
+}
+
+.avatar-editor-text {
+  font-size: 28rpx;
+  color: var(--text-muted);
 }
 
 .save-btn {
