@@ -89,7 +89,7 @@
   <view class="form" wx:if="{{type === 'anniversary'}}">
     <view class="form-group">
       <text class="label">名称</text>
-      <input class="input" placeholder="如：疯狂星期四" bindinput="onAnniversaryNameInput" value="{{anniversaryForm.name}}" />
+      <input class="input" placeholder="如：建群三周年" bindinput="onAnniversaryNameInput" value="{{anniversaryForm.name}}" />
     </view>
 
     <view class="form-group">
