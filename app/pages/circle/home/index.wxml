@@ -158,12 +158,12 @@
       <view class="ai-header">
         <view>
           <text class="analysis-title">AI 解读</text>
-          <text class="ai-description">给这个圈子一段短一点、好读一点的小观察。</text>
+          <text class="ai-description">关于这个圈子的一些的小观察</text>
         </view>
         <view class="ai-badge">轻量画像</view>
       </view>
       <button class="btn btn-primary ai-button" loading="{{llmLoading}}" bindtap="handleGenerateInterpretation">
-        {{llmLoading ? '解读生成中...' : '生成圈子解读'}}
+        {{llmLoading ? '解读生成中...' : '生成圈子画像'}}
       </button>
       <view class="ai-result" wx:if="{{llmInterpretation}}">
         <view class="ai-result-header">
@@ -202,7 +202,6 @@
       <view class="ai-error" wx:if="{{llmError}}">
         <text class="ai-error-text">{{llmError}}</text>
       </view>
-      <text class="empty-text" wx:if="{{!llmInterpretation && !llmError && !llmLoading}}">点一下按钮，看看这个圈子现在更像哪一种小气候。</text>
     </view>
 
     <!-- 性别分布 -->

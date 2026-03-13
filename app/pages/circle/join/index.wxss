@@ -39,9 +39,9 @@
   background: #fff;
   border-radius: 16rpx;
   padding: 32rpx;
-  font-size: 56rpx;
+  font-size: 28rpx;
   text-align: center;
-  letter-spacing: 8rpx;
+  letter-spacing: 18rpx;
   font-weight: 700;
   color: var(--primary);
 }
@@ -53,12 +53,13 @@
 
 /* 提交按钮 */
 .submit-btn {
-  padding: 24rpx 32rpx;
+  padding: 32rpx 32rpx;
+  text-align: center;
 }
 
 .btn-block {
   width: 100%;
-  padding: 24rpx 0;
+  padding: 24rpx;
   font-size: 32rpx;
 }
 
