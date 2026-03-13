@@ -9,6 +9,7 @@ App({
     currentCircleId: null,
     currentCircle: null,
     circles: [],
+    circleListData: null,
     currentCircleData: null,
     cloudReady: false,
     bootstrapped: false
@@ -95,7 +96,22 @@ App({
     }
 
     if (this.globalData.currentCircleId) {
-      await this.loadCurrentCircleData({ silent: true });
+      const contentResult = await this.invokeCloudFunction('getCircleContent', {
+        circleId: this.globalData.currentCircleId
+      }).catch(() => null);
+      const circle = contentResult && contentResult.circle ? contentResult.circle : null;
+      if (circle) {
+        this.globalData.currentCircle = circle;
+        this.globalData.currentCircleData = {
+          circle,
+          members: Array.isArray(contentResult.members) ? contentResult.members : [],
+          wishes: Array.isArray(contentResult.wishes) ? contentResult.wishes : [],
+          anniversaries: Array.isArray(contentResult.anniversaries) ? contentResult.anniversaries : [],
+          feedItems: Array.isArray(contentResult.feedItems) ? contentResult.feedItems : [],
+          pets: Array.isArray(contentResult.pets) ? contentResult.pets : [],
+          babies: Array.isArray(contentResult.babies) ? contentResult.babies : []
+        };
+      }
     }
 
     return {
@@ -153,6 +169,7 @@ App({
   clearCurrentCircle() {
     this.globalData.currentCircleId = null;
     this.globalData.currentCircle = null;
+    this.globalData.circleListData = null;
     this.globalData.currentCircleData = null;
     this.persistCurrentCircleId('');
   },
@@ -196,6 +213,7 @@ App({
     this.globalData.currentUserId = result && result.openid ? result.openid : this.globalData.currentUserId;
     this.globalData.userProfile = result && result.userProfile ? result.userProfile : null;
     this.globalData.circles = Array.isArray(result && result.circles) ? result.circles : [];
+    this.globalData.circleListData = null;
 
     if (this.globalData.currentCircleId) {
       const currentCircle = this.globalData.circles.find((item) => item._id === this.globalData.currentCircleId);
@@ -217,11 +235,16 @@ App({
     };
   },
 
-  async loadCircleList() {
+  async loadCircleList(options = {}) {
     await this.ensureBootstrap();
+    if (!options.force && this.globalData.circleListData) {
+      return this.globalData.circleListData;
+    }
+
     const result = await this.callCloud('getCircleListData');
     const circles = Array.isArray(result && result.circles) ? result.circles : [];
     this.globalData.circles = circles;
+    this.globalData.circleListData = result;
 
     if (this.globalData.currentCircleId) {
       const currentCircle = circles.find((item) => item._id === this.globalData.currentCircleId);
@@ -264,6 +287,10 @@ App({
     if (!this.globalData.currentCircleId) {
       this.globalData.currentCircleData = null;
       return null;
+    }
+
+    if (!options.force && this.globalData.currentCircleData && this.globalData.currentCircleData.circle && this.globalData.currentCircleData.circle._id === this.globalData.currentCircleId) {
+      return this.globalData.currentCircleData;
     }
 
     const result = await this.callCloud('getCircleContent', {
@@ -336,7 +363,7 @@ App({
   async reviewJoinRequest(payload) {
     await this.ensureBootstrap();
     const result = await this.callCloud('reviewJoinRequest', payload);
-    await this.loadCircleList();
+    await this.loadCircleList({ force: true });
     if (this.globalData.currentCircleId === payload.circleId) {
       await this.loadCurrentCircleData({ silent: true });
     }
@@ -352,7 +379,7 @@ App({
       circleId: this.globalData.currentCircleId,
       name
     });
-    await this.loadCircleList();
+    await this.loadCircleList({ force: true });
     await this.loadCurrentCircleData({ silent: true });
     return result;
   },
@@ -401,7 +428,7 @@ App({
     await this.ensureBootstrap();
     const result = await this.callCloud('saveUserProfile', profile);
     this.globalData.userProfile = result && result.userProfile ? result.userProfile : profile;
-    await this.loadCircleList();
+    await this.loadCircleList({ force: true });
     if (this.globalData.currentCircleId) {
       await this.loadCurrentCircleData({ silent: true });
     }

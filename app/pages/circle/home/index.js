@@ -35,7 +35,9 @@ Page({
   },
 
   onShow() {
-    this.loadData();
+    if (this.hasLoadedOnce) {
+      this.loadData();
+    }
   },
 
   async loadData() {
@@ -54,47 +56,17 @@ Page({
         return;
       }
 
-      const circleData = await app.loadCurrentCircleData();
-      const circle = circleData ? circleData.circle : null;
-      const members = circleData ? circleData.members || [] : [];
-      const wishes = circleData ? circleData.wishes || [] : [];
-      const currentUserId = app.getCurrentUserId();
-      const isOwner = !!(circle && circle.ownerId === currentUserId);
-      const pendingRequests = isOwner
-        ? await this.loadPendingRequests(circle ? circle._id : '')
-        : [];
+      const cachedData = app.getCurrentCircleData();
+      const initialData = cachedData && cachedData.circle && cachedData.circle._id === circleId
+        ? cachedData
+        : await app.loadCurrentCircleData();
 
-      const genderMap = {};
-      const mbtiMap = {};
-      const constellationMap = {};
-      members.forEach((member) => {
-        const genderLabel = this.getGenderLabel(member.gender);
-        genderMap[genderLabel] = (genderMap[genderLabel] || 0) + 1;
-        if (member.mbti) {
-          mbtiMap[member.mbti] = (mbtiMap[member.mbti] || 0) + 1;
-        }
-        const constellationLabel = this.getConstellationLabel(member.constellation);
-        if (constellationLabel) {
-          constellationMap[constellationLabel] = (constellationMap[constellationLabel] || 0) + 1;
-        }
-      });
+      await this.applyCircleData(initialData);
+      this.hasLoadedOnce = true;
 
-      this.setData({
-        circle,
-        members,
-        pendingRequests,
-        isOwner,
-        loading: false,
-        pageError: '',
-        analysis: {
-          gender: Object.entries(genderMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 })),
-          mbti: Object.entries(mbtiMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 })),
-          constellation: Object.entries(constellationMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 }))
-        },
-        leaderboard: this.calculateLeaderboard(members, wishes),
-        stats: this.calculateStats(wishes),
-        llmError: ''
-      });
+      app.loadCurrentCircleData({ force: true })
+        .then((freshData) => this.applyCircleData(freshData))
+        .catch(() => null);
     } catch (error) {
       this.setData({
         loading: false,
@@ -102,6 +74,57 @@ Page({
         pageError: error.message || '加载圈子失败'
       });
       wx.showToast({ title: error.message || '加载圈子失败', icon: 'none' });
+    }
+  },
+
+  async applyCircleData(circleData) {
+    const circle = circleData ? circleData.circle : null;
+    const members = circleData ? circleData.members || [] : [];
+    const wishes = circleData ? circleData.wishes || [] : [];
+    const currentUserId = app.getCurrentUserId();
+    const isOwner = !!(circle && circle.ownerId === currentUserId);
+
+    const genderMap = {};
+    const mbtiMap = {};
+    const constellationMap = {};
+    members.forEach((member) => {
+      const genderLabel = this.getGenderLabel(member.gender);
+      genderMap[genderLabel] = (genderMap[genderLabel] || 0) + 1;
+      if (member.mbti) {
+        mbtiMap[member.mbti] = (mbtiMap[member.mbti] || 0) + 1;
+      }
+      const constellationLabel = this.getConstellationLabel(member.constellation);
+      if (constellationLabel) {
+        constellationMap[constellationLabel] = (constellationMap[constellationLabel] || 0) + 1;
+      }
+    });
+
+    this.setData({
+      circle,
+      members,
+      isOwner,
+      loading: false,
+      pageError: '',
+      analysis: {
+        gender: Object.entries(genderMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 })),
+        mbti: Object.entries(mbtiMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 })),
+        constellation: Object.entries(constellationMap).map(([name, count]) => ({ name, count, percentage: members.length ? Math.round(count / members.length * 100) : 0 }))
+      },
+      leaderboard: this.calculateLeaderboard(members, wishes),
+      stats: this.calculateStats(wishes),
+      llmError: ''
+    });
+
+    if (isOwner && circle && circle._id) {
+      this.loadPendingRequests(circle._id)
+        .then((pendingRequests) => {
+          this.setData({ pendingRequests });
+        })
+        .catch(() => {
+          this.setData({ pendingRequests: [] });
+        });
+    } else {
+      this.setData({ pendingRequests: [] });
     }
   },
 
